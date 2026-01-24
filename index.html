@@ -71,6 +71,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin-top: 3.5rem;
+            /* Push down to avoid overlap with top buttons */
         }
 
         /* Medical Heartbeat Animation */
@@ -83,6 +85,19 @@
             pointer-events: none;
             z-index: 0;
             opacity: 0.1;
+        }
+
+        /* ... existing code ... */
+
+        /* --- UI COMPONENTS --- */
+        .utility-bar {
+            position: fixed;
+            /* Fixed to stay on screen */
+            top: 1rem;
+            left: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 100;
         }
 
         .ecg-path {
@@ -853,6 +868,12 @@
             }
         }
 
+        body.no-scroll {
+            overflow: hidden;
+            height: 100vh;
+            /* Lock height to prevent movement */
+        }
+
         /* --- NEW SKINS --- */
         /* Holographic Skin (5M) */
         .envelope.skin-holo .envelope-body {
@@ -891,15 +912,7 @@
             background: linear-gradient(135deg, #b2ebf2 0%, #4dd0e1 100%);
         }
 
-        /* --- UI COMPONENTS --- */
-        .utility-bar {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            display: flex;
-            gap: 0.5rem;
-            z-index: 100;
-        }
+
 
         .icon-btn {
             background: rgba(0, 0, 0, 0.4);
@@ -1265,7 +1278,7 @@
             </div>
         </div>
 
-        <p class="click-hint" id="clickHint">👆 Nhấn vào bao lì xì để mở</p>
+        <p class="click-hint" id="clickHint">👆 Nhấn hoặc Lắc điện thoại 📳 để mở</p>
 
         <div class="result-card" id="resultCard">
             <div class="amount" id="amount">0</div>
@@ -1701,13 +1714,14 @@
         // Shake to Open Logic
         let lastX, lastY, lastZ;
         let lastShakeTime = 0;
-        const SHAKE_THRESHOLD = 15; // m/s^2
+        const SHAKE_THRESHOLD = 25; // Increased from 15 to prevent accidental opens
 
         function handleMotion(event) {
             if (isOpened) return;
 
             const current = event.accelerationIncludingGravity;
             if (!current) return;
+            // ...
 
             const currentTime = Date.now();
             if ((currentTime - lastShakeTime) > 100) {
@@ -2046,6 +2060,7 @@
 
         // --- UI LOGIC (Modals & New Features) ---
         function openStats() {
+            document.body.classList.add('no-scroll');
             document.getElementById('statsModal').classList.add('open');
             renderStats();
             renderHistory();
@@ -2054,11 +2069,13 @@
         }
 
         function openInfo() {
+            document.body.classList.add('no-scroll');
             document.getElementById('infoModal').classList.add('open');
         }
 
         function closeModal(e, id) {
             if (e && e.target !== e.currentTarget && e.target.className !== 'close-btn') return;
+            document.body.classList.remove('no-scroll');
             document.getElementById(id).classList.remove('open');
         }
 
