@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>🧧 Lì Xì May Mắn - IT Department</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --red-primary: #C41E3A;
+            --red-dark: #8B0000;
+            --red-light: #FF4444;
+            --gold-primary: #FFD700;
+            --gold-light: #FFEC8B;
+            --gold-dark: #DAA520;
+            --cream: #FFF8DC;
+            --white: #FFFFFF;
+            --medical-blue: #008080;
+            --medical-light: #E0F2F1;
+            --medical-glass: rgba(0, 128, 128, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: clamp(14px, 2vw, 16px);
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background: linear-gradient(135deg, var(--red-dark) 0%, var(--red-primary) 60%, var(--medical-blue) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(1rem, 4vw, 2rem);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(0, 128, 128, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0v60M0 30h60' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3Cpath d='M25 25h10v10H25z' fill='rgba(255,215,0,0.05)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            width: 100%;
+            max-width: min(500px, 95vw);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Medical Heartbeat Animation */
+        .ecg-line {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.1;
+        }
+
+        .ecg-path {
+            fill: none;
+            stroke: var(--white);
+            stroke-width: 2;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: ecgDraw 3s linear infinite;
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: clamp(1.25rem, 4vw, 2rem);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.75rem, 7vw, 3.5rem);
+            color: var(--gold-primary);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.3);
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+
+        .header p {
+            color: var(--cream);
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            opacity: 0.9;
+        }
+
+        .department-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--medical-blue), #004D40);
+            color: var(--white);
+            padding: clamp(0.5rem, 1.5vw, 0.7rem) clamp(1.2rem, 3vw, 1.8rem);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: clamp(0.75rem, 2.5vw, 0.95rem);
+            margin-top: 0.75rem;
+            box-shadow: 0 4px 15px rgba(0, 128, 128, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Envelope */
+        .envelope-container {
+            perspective: 1000px;
+            margin: clamp(5rem, 15vw, 6rem) auto 2rem;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .envelope {
+            width: clamp(220px, 70vw, 300px);
+            height: clamp(145px, 46vw, 195px);
+            margin: 0 auto;
+            position: relative;
+            transition: transform 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .envelope:hover,
+        .envelope:active {
+            transform: scale(1.05);
+        }
+
+        .envelope-body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, var(--red-primary) 0%, var(--red-dark) 100%);
+            border-radius: clamp(8px, 2vw, 12px);
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.1);
+            border: 3px solid var(--gold-primary);
+            overflow: hidden;
+        }
+
+        .envelope-body::before {
+            content: '福';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(3rem, 15vw, 5rem);
+            color: var(--gold-primary);
+            opacity: 0.3;
+            font-weight: bold;
+        }
+
+        .envelope-pattern {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(45deg, transparent 45%, var(--gold-primary) 45%, var(--gold-primary) 55%, transparent 55%),
+                linear-gradient(-45deg, transparent 45%, var(--gold-primary) 45%, var(--gold-primary) 55%, transparent 55%);
+            background-size: 20px 20px;
+            opacity: 0.1;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 55%;
+            background: linear-gradient(180deg, var(--red-dark) 0%, var(--red-primary) 100%);
+            clip-path: polygon(0 0, 50% 70%, 100% 0);
+            border: 3px solid var(--gold-primary);
+            border-bottom: none;
+            border-radius: clamp(8px, 2vw, 12px) clamp(8px, 2vw, 12px) 0 0;
+            transform-origin: top center;
+            transition: transform 0.6s ease;
+            z-index: 2;
+        }
+
+        .envelope-seal {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: clamp(36px, 12vw, 50px);
+            height: clamp(36px, 12vw, 50px);
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary), var(--gold-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.25rem, 5vw, 1.75rem);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 3;
+            transition: all 0.3s ease;
+        }
+
+        .envelope.opened .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .envelope.opened .envelope-seal {
+            opacity: 0;
+            transform: translateX(-50%) scale(0);
+        }
+
+        .click-hint {
+            color: var(--gold-light);
+            font-size: clamp(0.85rem, 3vw, 1rem);
+            margin-top: 1rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .click-hint.hidden {
+            display: none;
+        }
+
+        /* Result Card */
+        .result-card {
+            background: linear-gradient(135deg, var(--cream) 0%, #FFF 100%);
+            border-radius: clamp(1rem, 4vw, 1.5rem);
+            padding: clamp(1.25rem, 5vw, 2.5rem);
+            margin-top: clamp(1.25rem, 4vw, 2rem);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 4px var(--gold-primary);
+            display: none;
+            animation: popIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: min(450px, 95vw);
+        }
+
+        .result-card.show {
+            display: block;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            animation: shimmer 3s linear infinite;
+        }
+
+        .result-card .amount {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 10vw, 4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--red-primary), var(--red-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .result-card .currency {
+            font-size: clamp(1rem, 3.5vw, 1.3rem);
+            color: var(--red-primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Money Display with Flip Card */
+        .money-display {
+            margin: 1.5rem 0;
+            position: relative;
+            z-index: 1;
+            perspective: 1000px;
+        }
+
+        .money-card {
+            width: 100%;
+            max-width: clamp(260px, 70vw, 340px);
+            aspect-ratio: 2.2 / 1;
+            margin: 0 auto;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .money-card:active {
+            transform: scale(0.98);
+        }
+
+        .money-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .money-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(255, 255, 255, 0.2);
+        }
+
+        .money-face img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .money-back {
+            transform: rotateY(180deg);
+        }
+
+        .flip-hint {
+            font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+            color: #888;
+            margin-top: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .flip-icon {
+            animation: flipHint 2s ease-in-out infinite;
+        }
+
+        /* Wish */
+        .result-card .wish {
+            font-size: clamp(0.95rem, 3.5vw, 1.15rem);
+            color: #333;
+            line-height: 1.6;
+            padding: clamp(1rem, 4vw, 1.25rem);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+            border-radius: 12px;
+            border-left: 4px solid var(--gold-primary);
+            margin-bottom: 1.25rem;
+            position: relative;
+            z-index: 1;
+            text-align: left;
+        }
+
+        .result-card .wish::before {
+            content: '"';
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            color: var(--gold-primary);
+            position: absolute;
+            top: -5px;
+            left: 8px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Buttons */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: clamp(0.5rem, 2vw, 1rem);
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: clamp(0.7rem, 2.5vw, 0.9rem) clamp(1.5rem, 5vw, 2.5rem);
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            position: relative;
+            z-index: 1;
+            -webkit-tap-highlight-color: transparent;
+            flex: 1;
+            min-width: 120px;
+            max-width: 180px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            color: var(--red-dark);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-primary:hover,
+        .btn-primary:active {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--red-primary);
+            border: 2px solid var(--red-primary);
+        }
+
+        .btn-secondary:hover,
+        .btn-secondary:active {
+            background: var(--red-primary);
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: clamp(1.5rem, 5vw, 2.5rem);
+            color: var(--cream);
+            opacity: 0.7;
+            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+        }
+
+        /* Confetti & Particles */
+        .confetti-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+        }
+
+        .lucky-particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--gold-primary);
+            border-radius: 50%;
+            animation: particleFloat 15s linear infinite;
+            opacity: 0.3;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100vh) rotate(0deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.3;
+            }
+
+            90% {
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes flipHint {
+
+            0%,
+            100% {
+                transform: rotateY(0deg);
+            }
+
+            50% {
+                transform: rotateY(180deg);
+            }
+        }
+
+        @keyframes ecgDraw {
+            0% {
+                stroke-dashoffset: 1000;
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                stroke-dashoffset: 0;
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 360px) {
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 550px;
+            }
+
+            .money-card {
+                max-width: 380px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Safe area for notched phones */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lucky-particles" id="particles"></div>
+    <div class="confetti-container" id="confetti"></div>
+
+    <svg class="ecg-line" viewBox="0 0 500 100" preserveAspectRatio="none">
+        <path class="ecg-path" d="M0,50 L50,50 L60,20 L70,80 L80,50 L400,50 L410,20 L420,80 L430,50 L500,50" />
+    </svg>
+
+    <div class="container">
+        <header class="header">
+            <h1>🧧 Lì Xì May Mắn</h1>
+            <p>Chúc Mừng Năm Mới 2025</p>
+            <div class="department-badge">🏥 Phòng CNTT - Bệnh Viện Đa Khoa Hoàn Mỹ Sài Gòn</div>
+        </header>
+
+        <div class="envelope-container" id="envelopeContainer">
+            <div class="envelope" id="envelope">
+                <div class="envelope-flap"></div>
+                <div class="envelope-seal">🧧</div>
+                <div class="envelope-body">
+                    <div class="envelope-pattern"></div>
+                </div>
+            </div>
+        </div>
+
+        <p class="click-hint" id="clickHint">👆 Nhấn vào bao lì xì để mở</p>
+
+        <div class="result-card" id="resultCard">
+            <div class="amount" id="amount">0</div>
+            <div class="currency">VNĐ</div>
+
+            <div class="money-display">
+                <div class="money-card" id="moneyCard">
+                    <div class="money-face money-front">
+                        <img id="moneyFront" src="" alt="Mặt trước">
+                    </div>
+                    <div class="money-face money-back">
+                        <img id="moneyBack" src="" alt="Mặt sau">
+                    </div>
+                </div>
+                <div class="flip-hint">
+                    <span class="flip-icon">🔄</span> Nhấn để lật xem mặt sau
+                </div>
+            </div>
+
+            <div class="wish" id="wish"></div>
+
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="resetEnvelope()">
+                    🔄 Thử Lại
+                </button>
+                <button class="btn btn-secondary" onclick="shareResult()">
+                    📤 Chia Sẻ
+                </button>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>Made with ❤️ by IT Department • Tết 2025</p>
+        </footer>
+    </div>
+
+    <script>
+        // Money data with real banknote images (Front is -2, Back is -1)
+        const moneyAmounts = [
+            { value: 1000, display: '1.000', front: 'images/1k-2.jpg', back: 'images/1k-1.jpg' },
+            { value: 5000, display: '5.000', front: 'images/5k-2.jpg', back: 'images/5k-1.jpg' },
+            { value: 10000, display: '10.000', front: 'images/10k-2.jpg', back: 'images/10k-1.jpg' },
+            { value: 20000, display: '20.000', front: 'images/20k-2.jpg', back: 'images/20k-1.jpg' },
+            { value: 50000, display: '50.000', front: 'images/50k-2.jpg', back: 'images/50k-1.jpg' },
+            { value: 100000, display: '100.000', front: 'images/100k-2.jpg', back: 'images/100k-1.jpg' },
+            { value: 200000, display: '200.000', front: 'images/200k-2.jpg', back: 'images/200k-1.jpg' },
+            { value: 500000, display: '500.000', front: 'images/500k-2.jpg', back: 'images/500k-1.jpg' }
+        ];
+
+        // Weighted random - higher denominations are rarer
+        const weightedMoney = [
+            ...Array(8).fill(moneyAmounts[0]),  // 1k - common
+            ...Array(7).fill(moneyAmounts[1]),  // 5k
+            ...Array(6).fill(moneyAmounts[2]),  // 10k
+            ...Array(5).fill(moneyAmounts[3]),  // 20k
+            ...Array(4).fill(moneyAmounts[4]),  // 50k
+            ...Array(3).fill(moneyAmounts[5]),  // 100k
+            ...Array(2).fill(moneyAmounts[6]),  // 200k
+            ...Array(1).fill(moneyAmounts[7])   // 500k - rare!
+        ];
+
+        // Vietnamese wishes for Hospital IT
+        const wishes = [
+            "Hệ thống HIS vận hành trơn tru, không ticket nào treo! 🏥",
+            "PACS load hình siêu tốc, bác sĩ khen nức nở! ⚡",
+            "Server uptime 100%, trực Tết nhàn tênh! 🖥️",
+            "Mạng bệnh viện mạnh như rồng, VPN không bao giờ rớt! 🐉",
+            "Máy in hoạt động êm ái, giấy không bao giờ kẹt! 🖨️",
+            "Các khoa phòng vui vẻ, yêu thương đội IT! ❤️",
+            "Code bệnh án điện tử không bug, data chuẩn chỉ! 📊",
+            "Lương thưởng ngập tràn, sức khỏe dồi dào như thanh RAM 64GB! 💪",
+            "Năm mới fix bug nhanh hơn bác sĩ chẩn đoán! 🩺",
+            "An toàn thông tin vững chãi, virus/ransomware tránh xa! 🛡️",
+            "Triển khai phần mềm mới suôn sẻ, user training 1 lần hiểu ngay! 📚",
+            "Hệ thống Lab kết nối mượt mà, kết quả trả về trong một nốt nhạc! 🎵"
+        ];
+
+        let isOpened = false;
+        let currentResult = null;
+
+        // Elements
+        const envelope = document.getElementById('envelope');
+        const envelopeContainer = document.getElementById('envelopeContainer');
+        const clickHint = document.getElementById('clickHint');
+        const resultCard = document.getElementById('resultCard');
+        const amountEl = document.getElementById('amount');
+        const wishEl = document.getElementById('wish');
+        const moneyCard = document.getElementById('moneyCard');
+        const moneyFront = document.getElementById('moneyFront');
+        const moneyBack = document.getElementById('moneyBack');
+
+        // Event listeners
+        envelopeContainer.addEventListener('click', openEnvelope);
+        moneyCard.addEventListener('click', () => moneyCard.classList.toggle('flipped'));
+
+        // Create floating particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Create confetti
+        function createConfetti() {
+            const container = document.getElementById('confetti');
+            const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F39C12', '#E74C3C'];
+
+            for (let i = 0; i < 80; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.animation = `confettiFall ${Math.random() * 3 + 2}s linear forwards`;
+                    container.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 25);
+            }
+        }
+
+        // Get random item
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // Format number
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        // Animate count up
+        function animateValue(element, start, end, duration) {
+            const range = end - start;
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(start + range * easeOut);
+                element.textContent = formatNumber(current);
+                if (progress < 1) requestAnimationFrame(update);
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        // Open envelope
+        function openEnvelope() {
+            if (isOpened) return;
+            isOpened = true;
+
+            envelope.classList.add('opened');
+            clickHint.classList.add('hidden');
+
+            // Get random result (weighted)
+            currentResult = {
+                money: getRandomItem(weightedMoney),
+                wish: getRandomItem(wishes)
+            };
+
+            // Show result after animation
+            setTimeout(() => {
+                resultCard.classList.add('show');
+
+                // Set money images
+                moneyFront.src = currentResult.money.front;
+                moneyBack.src = currentResult.money.back;
+                moneyCard.classList.remove('flipped');
+
+                // Animate amount
+                animateValue(amountEl, 0, currentResult.money.value, 1500);
+
+                // Show wish
+                wishEl.textContent = currentResult.wish;
+
+                // Create confetti
+                createConfetti();
+            }, 600);
+        }
+
+        // Reset envelope
+        function resetEnvelope() {
+            isOpened = false;
+            resultCard.classList.remove('show');
+
+            setTimeout(() => {
+                envelope.classList.remove('opened');
+                clickHint.classList.remove('hidden');
+            }, 300);
+        }
+
+        // Share result
+        function shareResult() {
+            if (!currentResult) return;
+
+            const text = `🧧 Tôi vừa nhận được ${currentResult.money.display} VNĐ lì xì từ IT Department!\n\n"${currentResult.wish}"\n\n🎊 Thử vận may của bạn: ${window.location.href}`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Lì Xì May Mắn - IT Department',
+                    text: text
+                });
+            } else {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Đã sao chép vào clipboard! 📋');
+                });
+            }
+        }
+
+        // Initialize
+        createParticles();
+    </script>
+</body>
+
+</html>
