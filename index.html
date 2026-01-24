@@ -139,12 +139,43 @@
         }
 
         .envelope {
-            width: clamp(220px, 70vw, 300px);
-            height: clamp(145px, 46vw, 195px);
+            width: clamp(200px, 60vw, 240px);
+            height: clamp(300px, 90vw, 360px);
             margin: 0 auto;
             position: relative;
             transition: transform 0.3s ease;
             animation: float 3s ease-in-out infinite;
+        }
+
+        .envelope:hover {
+            animation: shake 0.5s ease-in-out infinite;
+            cursor: pointer;
+        }
+
+        .envelope.shake-click {
+            animation: shake 0.5s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            25% {
+                transform: translateY(0) rotate(-2deg);
+            }
+
+            50% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            75% {
+                transform: translateY(0) rotate(2deg);
+            }
+
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
         }
 
         .envelope:hover,
@@ -190,12 +221,12 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 55%;
+            height: 20%;
             background: linear-gradient(180deg, var(--red-dark) 0%, var(--red-primary) 100%);
-            clip-path: polygon(0 0, 50% 70%, 100% 0);
+            clip-path: ellipse(80% 100% at 50% 0%);
             border: 3px solid var(--gold-primary);
-            border-bottom: none;
-            border-radius: clamp(8px, 2vw, 12px) clamp(8px, 2vw, 12px) 0 0;
+            border-top: none;
+            border-radius: 0 0 50% 50%;
             transform-origin: top center;
             transition: transform 0.6s ease;
             z-index: 2;
@@ -203,7 +234,7 @@
 
         .envelope-seal {
             position: absolute;
-            top: 25%;
+            top: 15%;
             left: 50%;
             transform: translateX(-50%);
             width: clamp(36px, 12vw, 50px);
@@ -219,8 +250,26 @@
             transition: all 0.3s ease;
         }
 
+        /* Gold Skin (Unlocked at 1M) */
+        .envelope.skin-gold .envelope-body {
+            background: linear-gradient(135deg, #FFD700, #FDB931, #FFD700);
+            border-color: #FFF;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+        }
+
+        .envelope.skin-gold .envelope-flap {
+            background: linear-gradient(180deg, #FDB931, #FFD700);
+            border-color: #FFF;
+        }
+
+        .envelope.skin-gold .envelope-seal {
+            background: #FFF;
+            color: #DAA520;
+            box-shadow: 0 0 15px #FFF;
+        }
+
         .envelope.opened .envelope-flap {
-            transform: rotateX(180deg);
+            transform: rotateX(180deg) !important;
         }
 
         .envelope.opened .envelope-seal {
@@ -252,6 +301,21 @@
             overflow: hidden;
             width: 100%;
             max-width: min(450px, 95vw);
+            transition: box-shadow 0.3s ease;
+        }
+
+        /* Rarity Styles */
+        .result-card[data-rarity="SSR"] {
+            box-shadow: 0 20px 60px rgba(255, 0, 0, 0.5), 0 0 0 6px #FFD700, 0 0 50px #FFD700;
+            border: 2px solid #FFD700;
+        }
+
+        .result-card[data-rarity="SR"] {
+            box-shadow: 0 20px 60px rgba(138, 43, 226, 0.4), 0 0 0 5px #9932CC;
+        }
+
+        .result-card[data-rarity="R"] {
+            box-shadow: 0 20px 60px rgba(0, 191, 255, 0.3), 0 0 0 4px #00BFFF;
         }
 
         .result-card.show {
@@ -449,6 +513,23 @@
             color: white;
         }
 
+        .btn-danger {
+            background: linear-gradient(135deg, #FF4444, #8B0000);
+            color: white;
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.4);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 0, 0, 0.6);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
         /* Footer */
         .footer {
             margin-top: clamp(1.5rem, 5vw, 2.5rem);
@@ -593,6 +674,77 @@
             }
         }
 
+        /* Jackpot Effects */
+        .jackpot-mode body {
+            animation: shake-hard 0.5s ease-in-out;
+        }
+
+        .jackpot-mode .container {
+            animation: shake-hard 0.5s ease-in-out;
+        }
+
+        @keyframes shake-hard {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            10% {
+                transform: translate(-10px, -10px) rotate(-5deg);
+            }
+
+            20% {
+                transform: translate(10px, 10px) rotate(5deg);
+            }
+
+            30% {
+                transform: translate(-10px, 10px) rotate(-5deg);
+            }
+
+            40% {
+                transform: translate(10px, -10px) rotate(5deg);
+            }
+
+            50% {
+                transform: translate(-5px, -5px) rotate(-2deg);
+            }
+
+            60% {
+                transform: translate(5px, 5px) rotate(2deg);
+            }
+
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+        }
+
+        .jackpot-overlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+            mix-blend-mode: overlay;
+        }
+
+        .jackpot-active .jackpot-overlay {
+            opacity: 1;
+            animation: pulse-gold 2s infinite;
+        }
+
+        @keyframes pulse-gold {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
         @keyframes ecgDraw {
             0% {
                 stroke-dashoffset: 1000;
@@ -609,6 +761,40 @@
             }
         }
 
+        /* Wallet styles */
+        .wallet-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--gold-primary);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 100;
+            color: var(--gold-primary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .wallet-container.update {
+            transform: scale(1.1);
+        }
+
+        .wallet-balance {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .wallet-currency {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
         /* Responsive */
         @media (max-width: 360px) {
             .buttons {
@@ -619,6 +805,21 @@
             .btn {
                 width: 100%;
                 max-width: 200px;
+            }
+        }
+
+
+
+        /* Typewriter Cursor */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s step-end infinite;
+            color: var(--red-primary);
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
             }
         }
 
@@ -651,21 +852,406 @@
                 padding-bottom: max(1rem, env(safe-area-inset-bottom));
             }
         }
+
+        /* --- NEW SKINS --- */
+        /* Holographic Skin (5M) */
+        .envelope.skin-holo .envelope-body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            /* Simple fallback, real holo needs complex gradients */
+            background: linear-gradient(135deg,
+                    rgba(255, 0, 0, 1) 0%,
+                    rgba(255, 154, 0, 1) 10%,
+                    rgba(208, 222, 33, 1) 20%,
+                    rgba(79, 220, 74, 1) 30%,
+                    rgba(63, 218, 216, 1) 40%,
+                    rgba(47, 201, 226, 1) 50%,
+                    rgba(28, 127, 238, 1) 60%,
+                    rgba(95, 21, 242, 1) 70%,
+                    rgba(186, 12, 248, 1) 80%,
+                    rgba(251, 7, 217, 1) 90%,
+                    rgba(255, 0, 0, 1) 100%);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .envelope.skin-holo .envelope-flap {
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+        }
+
+        /* Diamond Skin (10M) */
+        .envelope.skin-diamond .envelope-body {
+            background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
+            border: 3px solid #fff;
+            box-shadow: 0 0 30px #00e5ff;
+            backdrop-filter: blur(5px);
+        }
+
+        .envelope.skin-diamond .envelope-flap {
+            background: linear-gradient(135deg, #b2ebf2 0%, #4dd0e1 100%);
+        }
+
+        /* --- UI COMPONENTS --- */
+        .utility-bar {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 100;
+        }
+
+        .icon-btn {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 1rem;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid var(--gold-primary);
+            animation: popIn 0.3s ease-out;
+        }
+
+        .modal-header {
+            padding: 1rem;
+            background: var(--red-primary);
+            color: var(--white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .modal-body {
+            padding: 1rem;
+            overflow-y: auto;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* History List */
+        .history-list {
+            list-style: none;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .history-item.gain {
+            color: #008000;
+        }
+
+        .history-item.loss {
+            color: #cc0000;
+        }
+
+        .tier-badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .tier-SSR {
+            background: gold;
+            color: red;
+        }
+
+        .tier-SR {
+            background: #9932CC;
+            color: white;
+        }
+
+        .tier-R {
+            background: #00BFFF;
+            color: white;
+        }
+
+        .tier-N {
+            background: #eee;
+            color: #555;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-box {
+            background: #f9f9f9;
+            padding: 0.8rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--red-primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Achievement Toast */
+        .achievement-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #222;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 3000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--gold-primary);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .achievement-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .achievement-toast .icon {
+            font-size: 2rem;
+        }
+
+        .achievement-toast .info .title {
+            font-weight: bold;
+            color: var(--gold-primary);
+            font-size: 0.9rem;
+        }
+
+        .achievement-toast .info .desc {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        /* Info Table */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .info-table th,
+        .info-table td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-table th {
+            color: var(--red-primary);
+        }
+
+        /* Zodiac Selector */
+        .zodiac-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+
+        .zodiac-btn {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .zodiac-btn:hover {
+            background: var(--gold-light);
+            transform: scale(1.1);
+        }
+
+        .fortune-text {
+            font-style: italic;
+            color: var(--medical-blue);
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f0f8ff;
+            border-radius: 8px;
+        }
     </style>
 </head>
 
 <body>
     <div class="lucky-particles" id="particles"></div>
     <div class="confetti-container" id="confetti"></div>
+    <div class="jackpot-overlay"></div>
+
+    <!-- Utility Buttons -->
+    <div class="utility-bar">
+        <button class="icon-btn" onclick="openStats()">📊</button>
+        <button class="icon-btn" onclick="openInfo()">ℹ️</button>
+    </div>
+
+    <!-- Stats Modal -->
+    <div class="modal-overlay" id="statsModal" onclick="closeModal(event, 'statsModal')">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>Thống Kê & Lịch Sử</div>
+                <button class="close-btn" onclick="closeModal(null, 'statsModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-val" id="statTotalPulls">0</div>
+                        <div class="stat-label">Lần mở</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val" id="statSSRCount">0</div>
+                        <div class="stat-label">Số lần SSR</div>
+                    </div>
+                </div>
+
+                <!-- Tabs / Sections -->
+                <h3
+                    style="margin: 1rem 0; color: var(--red-dark); border-bottom: 2px solid var(--gold-primary); display: inline-block;">
+                    Thành Tựu 🏆</h3>
+                <div id="achievementsList" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                    <!-- Achievements injected here -->
+                </div>
+
+                <h3
+                    style="margin: 1rem 0; color: var(--red-dark); border-bottom: 2px solid var(--gold-primary); display: inline-block;">
+                    Năm Mới Bính Ngọ 🔮</h3>
+                <div id="zodiacSection">
+                    <div class="zodiac-grid" id="zodiacGrid">
+                        <!-- Zodiac buttons injected here -->
+                    </div>
+                    <div id="fortuneResult" class="fortune-text" style="display: none;"></div>
+                </div>
+
+                <h3
+                    style="margin: 1rem 0; color: var(--red-dark); border-bottom: 2px solid var(--gold-primary); display: inline-block;">
+                    Lịch Sử Gần Đây 📜</h3>
+                <ul class="history-list" id="historyList">
+                    <!-- History items injected here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div class="modal-overlay" id="infoModal" onclick="closeModal(event, 'infoModal')">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>Tỷ Lệ Rơi & Thông Tin</div>
+                <button class="close-btn" onclick="closeModal(null, 'infoModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <table class="info-table">
+                    <tr>
+                        <th>Hạng (Tier)</th>
+                        <th>Tỷ Lệ</th>
+                        <th>Phần Thưởng</th>
+                    </tr>
+                    <tr style="background: rgba(255, 215, 0, 0.2)">
+                        <td><strong>SSR</strong></td>
+                        <td>2%</td>
+                        <td>500.000 VNĐ</td>
+                    </tr>
+                    <tr style="background: rgba(153, 50, 204, 0.1)">
+                        <td><strong>SR</strong></td>
+                        <td>13%</td>
+                        <td>200.000 VNĐ</td>
+                    </tr>
+                    <tr style="background: rgba(0, 191, 255, 0.1)">
+                        <td><strong>R</strong></td>
+                        <td>25%</td>
+                        <td>50k - 100k</td>
+                    </tr>
+                    <tr>
+                        <td><strong>N</strong></td>
+                        <td>60%</td>
+                        <td>1k - 20k</td>
+                    </tr>
+                </table>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
+                    * Skin Vàng mở khóa khi đạt 1 Triệu.<br>
+                    * Skin Hologram mở khóa khi đạt 5 Triệu.<br>
+                    * Skin Kim Cương mở khóa khi đạt 10 Triệu.
+                </p>
+            </div>
+        </div>
+    </div>
 
     <svg class="ecg-line" viewBox="0 0 500 100" preserveAspectRatio="none">
         <path class="ecg-path" d="M0,50 L50,50 L60,20 L70,80 L80,50 L400,50 L410,20 L420,80 L430,50 L500,50" />
     </svg>
 
+    <div class="wallet-container">
+        <div class="wallet-icon">💰</div>
+        <div class="wallet-balance" id="walletBalance">0</div>
+        <div class="wallet-currency">VNĐ</div>
+    </div>
+
     <div class="container">
         <header class="header">
             <h1>🧧 Lì Xì May Mắn</h1>
-            <p>Chúc Mừng Năm Mới 2025</p>
+            <p>Chúc Mừng Năm Mới 2026 - Xuân Bính Ngọ 🐎</p>
             <div class="department-badge">🏥 Phòng CNTT - Bệnh Viện Đa Khoa Hoàn Mỹ Sài Gòn</div>
         </header>
 
@@ -707,6 +1293,9 @@
                 </button>
                 <button class="btn btn-secondary" onclick="shareResult()">
                     📤 Chia Sẻ
+                </button>
+                <button class="btn btn-danger" id="gambleBtn" onclick="gambleAll()">
+                    🎲 Cược Tất Tay
                 </button>
             </div>
         </div>
@@ -760,7 +1349,13 @@
             "Không bao giờ bị gọi hotline lúc nửa đêm! 😴",
             "Họp giao ban toàn lời khen, không ai phàn nàn về IT! 👏",
             "API kết nối bên thứ 3 luôn stable, không timeout! 🔗",
-            "Năm mới code sung, deploy một phát ăn ngay! 🚀"
+            "Năm mới code sung, deploy một phát ăn ngay! 🚀",
+            "Server mát hơn tủ lạnh trữ thuốc của Khoa Dược! ❄️",
+            "Máy in tự sửa lỗi khi thấy bóng dáng IT đi tới! 🖨️✨",
+            "User tự reset password, không bao giờ quên mật khẩu! 🧠",
+            "Code không có Bug, chỉ có Tính Năng Ẩn thôi! 🐛🚫",
+            "Trực Tết êm ru, chỉ có tiếng nhai hạt dưa, không có tiếng điện thoại! 🍉",
+            "Bác sĩ khen phần mềm nhanh hơn người yêu cũ trở mặt! ⚡",
         ];
 
         // Shuffle deck for better randomization (no repeats until all shown)
@@ -809,25 +1404,45 @@
             }
         }
 
-        // Create confetti
-        function createConfetti() {
-            const container = document.getElementById('confetti');
-            const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F39C12', '#E74C3C'];
+        // Audio
+        const sounds = {
+            open: new Audio('sounds/open.mp3'),
+            coin: new Audio('sounds/coin.mp3'),
+            ssr: new Audio('sounds/ssr.mp3'),
+            sr: new Audio('sounds/sr.mp3')
+        };
 
-            for (let i = 0; i < 80; i++) {
-                setTimeout(() => {
-                    const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.style.left = Math.random() * 100 + '%';
-                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
-                    confetti.style.height = (Math.random() * 10 + 5) + 'px';
-                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                    confetti.style.animation = `confettiFall ${Math.random() * 3 + 2}s linear forwards`;
-                    container.appendChild(confetti);
-                    setTimeout(() => confetti.remove(), 5000);
-                }, i * 25);
+        // Preload sounds
+        sounds.open.load();
+        sounds.coin.load();
+        sounds.ssr.load();
+        sounds.sr.load();
+
+        function playSound(name) {
+            try {
+                sounds[name].currentTime = 0;
+                sounds[name].play().catch(e => console.log('Audio play failed:', e));
+            } catch (err) {
+                console.log('Audio error', err);
             }
+        }
+
+
+
+        function typeWriter(element, text, speed = 30) {
+            element.innerHTML = '';
+            element.classList.add('typing-cursor');
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    element.classList.remove('typing-cursor');
+                }
+            }
+            type();
         }
 
         // Get random item
@@ -862,18 +1477,80 @@
             if (isOpened) return;
             isOpened = true;
 
+            // Play sound
+            playSound('open');
+
+            // Force clear inline drag transform so CSS class takes over
+            document.querySelector('.envelope-flap').style.transform = '';
+
             envelope.classList.add('opened');
             clickHint.classList.add('hidden');
 
-            // Get random result (weighted)
+            // Gacha Logic - Tier System
+            // SSR (2%): 500k - Boosted!
+            // SR (13%): 200k - Boosted!
+            // R (25%): 50k, 100k
+            // N (60%): 20k and below
+
+            // Define tiers and their prize pools
+            const gachaTiers = {
+                SSR: { chance: 2, items: [moneyAmounts[7]] }, // 500k
+                SR: { chance: 13, items: [moneyAmounts[6]] }, // 200k
+                R: { chance: 25, items: [moneyAmounts[4], moneyAmounts[5]] }, // 50k, 100k
+                N: { chance: 60, items: [moneyAmounts[0], moneyAmounts[1], moneyAmounts[2], moneyAmounts[3]] } // 1k, 5k, 10k, 20k
+            };
+
+            function getGachaResult() {
+                const rand = Math.random() * 100;
+                let currentThreshold = 0;
+
+                // SSR Check
+                currentThreshold += gachaTiers.SSR.chance;
+                if (rand < currentThreshold) return { tier: 'SSR', ...getRandomItem(gachaTiers.SSR.items) };
+
+                // SR Check
+                currentThreshold += gachaTiers.SR.chance;
+                if (rand < currentThreshold) return { tier: 'SR', ...getRandomItem(gachaTiers.SR.items) };
+
+                // R Check
+                currentThreshold += gachaTiers.R.chance;
+                if (rand < currentThreshold) return { tier: 'R', ...getRandomItem(gachaTiers.R.items) };
+
+                // N (Fallthrough)
+                return { tier: 'N', ...getRandomItem(gachaTiers.N.items) };
+            }
+
+            // Get gacha result with rarity
+            const happyResult = getGachaResult();
+
+            // Apply rarity effects logic here (can be expanded later for visual flare)
+            console.log(`Gacha Pull: ${happyResult.tier} - ${happyResult.display}`);
+
             currentResult = {
-                money: getRandomItem(weightedMoney),
+                money: happyResult,
                 wish: getNextWish()
             };
+
+            // Play sound based on tier
+            if (currentResult.money.tier === 'SSR') playSound('ssr');
+            else if (currentResult.money.tier === 'SR') playSound('sr');
+            else playSound('coin');
 
             // Show result after animation
             setTimeout(() => {
                 resultCard.classList.add('show');
+                resultCard.setAttribute('data-rarity', currentResult.money.tier); // Add tier for styling
+
+                // Update Stats
+                updateStats(currentResult.money.tier, currentResult.money.value);
+
+                // Add to History
+                addToHistory({
+                    timestamp: Date.now(),
+                    amount: currentResult.money.value,
+                    tier: currentResult.money.tier,
+                    action: 'pull'
+                });
 
                 // Set money images
                 moneyFront.src = currentResult.money.front;
@@ -881,24 +1558,122 @@
                 moneyCard.classList.remove('flipped');
 
                 // Animate amount
+                // playSound('coin'); // Moved to start
                 animateValue(amountEl, 0, currentResult.money.value, 1500);
 
-                // Show wish
-                wishEl.textContent = currentResult.wish;
+                // Add to wallet
+                addToWallet(currentResult.money.value);
+
+                // Show wish (Typewriter)
+                typeWriter(wishEl, currentResult.wish);
 
                 // Create confetti
                 createConfetti();
+
+                // Trigger Jackpot effects if SSR
+                if (currentResult.money.tier === 'SSR') {
+                    triggerJackpot();
+                }
             }, 600);
+        }
+
+        function triggerJackpot() {
+            // Visuals
+            document.body.classList.add('jackpot-active');
+
+            // Shake effect
+            document.body.style.animation = 'none';
+            document.body.offsetHeight; /* trigger reflow */
+            document.body.style.animation = 'shake-hard 0.8s ease-in-out';
+
+            // Huge Gold Confetti Explosion
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => createConfetti(true), i * 300);
+            }
+
+            // Sound Frenzy (Cha-ching effect using coin sound)
+            const burstCount = 5;
+            for (let i = 0; i < burstCount; i++) {
+                setTimeout(() => {
+                    const clone = sounds.coin.cloneNode();
+                    clone.volume = 1.0;
+                    clone.play().catch(e => { });
+                }, i * 150);
+            }
+        }
+
+        // Create confetti (Emoji Rain)
+        function createConfetti(isJackpot = false) {
+            const container = document.getElementById('confetti');
+            let emojis = ['🐎', '🧧', '💰', '🌸', '🏮', '✨', '🍀'];
+
+            if (isJackpot) {
+                emojis = ['💰', '✨', '👑', '💎', '🌕']; // Gold theme
+            }
+
+            // Explosion center
+            const centerX = 50;
+            const centerY = 50;
+
+            const particleCount = isJackpot ? 100 : 60;
+
+            for (let i = 0; i < particleCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+                // Random angle and distance for explosion
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = (15 + Math.random() * 30) * (isJackpot ? 1.5 : 1); // faster for jackpot
+                const tx = Math.cos(angle) * velocity; // horizontal velocity
+                const ty = Math.sin(angle) * velocity - 20; // vertical velocity (upward)
+
+                confetti.style.left = '50%';
+                confetti.style.top = '50%';
+                confetti.style.position = 'absolute';
+                confetti.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+
+                if (isJackpot) {
+                    confetti.style.textShadow = '0 0 10px gold';
+                    confetti.style.zIndex = 2000;
+                }
+
+                // Custom animation for each particle
+                confetti.style.transition = `all ${1 + Math.random()}s cubic-bezier(0.25, 1, 0.5, 1)`;
+                confetti.style.opacity = '1';
+                // Remove default background used for square confetti
+                confetti.style.background = 'transparent';
+                confetti.style.width = 'auto';
+                confetti.style.height = 'auto';
+
+                container.appendChild(confetti);
+
+                // Trigger animation next frame
+                requestAnimationFrame(() => {
+                    confetti.style.transform = `translate(${tx}vw, ${ty}vh) rotate(${Math.random() * 360}deg)`;
+                    confetti.style.opacity = '0';
+                });
+
+                setTimeout(() => confetti.remove(), 2000);
+            }
         }
 
         // Reset envelope
         function resetEnvelope() {
             isOpened = false;
             resultCard.classList.remove('show');
+            document.body.classList.remove('jackpot-active'); // Remove jackpot state
+
+            // Reset Gambling State
+            document.getElementById('gambleBtn').disabled = false;
+            amountEl.style.color = ''; // Reset color
 
             setTimeout(() => {
                 envelope.classList.remove('opened');
                 clickHint.classList.remove('hidden');
+
+                // Check for skin unlock (Auto-apply for now)
+                checkSkinUnlock();
             }, 300);
         }
 
@@ -922,6 +1697,468 @@
 
         // Initialize
         createParticles();
+
+        // Shake to Open Logic
+        let lastX, lastY, lastZ;
+        let lastShakeTime = 0;
+        const SHAKE_THRESHOLD = 15; // m/s^2
+
+        function handleMotion(event) {
+            if (isOpened) return;
+
+            const current = event.accelerationIncludingGravity;
+            if (!current) return;
+
+            const currentTime = Date.now();
+            if ((currentTime - lastShakeTime) > 100) {
+                const diffTime = currentTime - lastShakeTime;
+                lastShakeTime = currentTime;
+
+                if (lastX === undefined) {
+                    lastX = current.x;
+                    lastY = current.y;
+                    lastZ = current.z;
+                    return;
+                }
+
+                const deltaX = Math.abs(lastX - current.x);
+                const deltaY = Math.abs(lastY - current.y);
+                const deltaZ = Math.abs(lastZ - current.z);
+
+                if (deltaX > SHAKE_THRESHOLD || deltaY > SHAKE_THRESHOLD || deltaZ > SHAKE_THRESHOLD) {
+                    // Shake detected!
+                    openEnvelope();
+                }
+
+                lastX = current.x;
+                lastY = current.y;
+                lastZ = current.z;
+            }
+        }
+
+        // Request permission for iOS 13+
+        if (typeof DeviceMotionEvent !== 'undefined') {
+            if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                // We need a user interaction to request permission. 
+                // We can bind this to the first click on the page or add a button.
+                // For now, let's try to bind it to the "clickHint" if clicked? 
+                // Or simply rely on the fact that user might click the envelope first.
+                // Actually, let's add a small listener to body for first interaction.
+                const permissionHandler = () => {
+                    DeviceMotionEvent.requestPermission()
+                        .then(response => {
+                            if (response == 'granted') {
+                                window.addEventListener('devicemotion', handleMotion, true);
+                            }
+                        })
+                        .catch(console.error);
+                    document.body.removeEventListener('click', permissionHandler);
+                };
+                document.body.addEventListener('click', permissionHandler);
+            } else {
+                window.addEventListener('devicemotion', handleMotion, true);
+            }
+        }
+        // Drag to Open Logic
+        const flap = document.querySelector('.envelope-flap');
+        let isDragging = false;
+        let startY = 0;
+        let currentRotation = 0;
+
+        function startDrag(e) {
+            if (isOpened) return;
+            isDragging = true;
+            startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            flap.style.transition = 'none'; // Disable transition for direct control
+
+            // Prevent default scroll on touch
+            if (e.cancelable) e.preventDefault();
+        }
+
+        function onDrag(e) {
+            if (!isDragging || isOpened) return;
+
+            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            const deltaY = clientY - startY;
+
+            // Only allow dragging down
+            if (deltaY > 0) {
+                // Map deltaY to rotation (0 to 180 degrees)
+                // Assuming 100px drag = 180 degrees
+                currentRotation = Math.min((deltaY / 150) * 180, 180);
+                flap.style.transform = `rotateX(${currentRotation}deg)`;
+            }
+        }
+
+        function endDrag() {
+            if (!isDragging) return;
+            isDragging = false;
+            flap.style.transition = 'transform 0.6s ease'; // Re-enable transition
+
+            if (currentRotation > 90) {
+                // Open if dragged past 90 degrees
+                openEnvelope();
+            } else {
+                // Snap back
+                flap.style.transform = 'rotateX(0deg)';
+            }
+            currentRotation = 0;
+        }
+
+        // Mouse Events
+        flap.addEventListener('mousedown', startDrag);
+        window.addEventListener('mousemove', onDrag);
+        window.addEventListener('mouseup', endDrag);
+
+        // Touch Events
+        flap.addEventListener('touchstart', startDrag, { passive: false });
+        window.addEventListener('touchmove', onDrag, { passive: false });
+        window.addEventListener('touchend', endDrag);
+        // --- DATA MANAGER ---
+        const DEFAULT_DATA = {
+            totalMoney: 0,
+            history: [], // { timestamp, amount, tier, gambleResult }
+            stats: {
+                totalPulls: 0,
+                tierCounts: { SSR: 0, SR: 0, R: 0, N: 0 },
+                luckiestStreak: 0,
+                consecutiveLosses: 0,
+                consecutiveN: 0
+            },
+            achievements: [],
+            settings: {
+                zodiac: null
+            }
+        };
+
+        function getData() {
+            const stored = localStorage.getItem('luckyMoney_data');
+            if (!stored) return DEFAULT_DATA;
+            return { ...DEFAULT_DATA, ...JSON.parse(stored) }; // Safe merge
+        }
+
+        function saveData(data) {
+            localStorage.setItem('luckyMoney_data', JSON.stringify(data));
+            updateWalletDisplay(); // Auto sync UI
+        }
+
+        function addToHistory(entry) {
+            const data = getData();
+            data.history.unshift(entry); // Add to top
+            if (data.history.length > 50) data.history.pop(); // Keep last 50
+            saveData(data);
+        }
+
+        function updateStats(tier, amount) {
+            const data = getData();
+            data.stats.totalPulls++;
+            data.stats.tierCounts[tier] = (data.stats.tierCounts[tier] || 0) + 1;
+
+            // Consecutive N logic
+            if (tier === 'N') {
+                data.stats.consecutiveN++;
+            } else {
+                data.stats.consecutiveN = 0;
+            }
+
+            // Streak logic (placeholder, maybe just high score tracking?)
+
+            saveData(data);
+            checkAchievements(data);
+        }
+
+        // Wallet Logic via Data Manager
+        // let totalMoney = parseInt(localStorage.getItem('luckyMoney_total') || '0'); // MIGRATION
+        // Migrate old data if exists
+        (function migrateOldData() {
+            const oldTotal = localStorage.getItem('luckyMoney_total');
+            if (oldTotal) {
+                const data = getData();
+                if (data.totalMoney === 0 && parseInt(oldTotal) > 0) {
+                    data.totalMoney = parseInt(oldTotal);
+                    saveData(data);
+                }
+                localStorage.removeItem('luckyMoney_total');
+            }
+        })();
+
+        const walletEl = document.getElementById('walletBalance');
+        const walletContainer = document.querySelector('.wallet-container');
+
+        function updateWalletDisplay() {
+            const data = getData();
+            walletEl.textContent = formatNumber(data.totalMoney);
+        }
+
+        function addToWallet(amount) {
+            const data = getData();
+            data.totalMoney += amount;
+            saveData(data);
+
+            // Pop animation
+            walletContainer.classList.add('update');
+            setTimeout(() => walletContainer.classList.remove('update'), 300);
+
+            // Check achievements on every wallet update
+            checkAchievements(data);
+        }
+
+        // Initialize Wallet
+        updateWalletDisplay();
+
+        // --- ACHIEVEMENTS ---
+        const ACHIEVEMENTS = {
+            'first_500k': { icon: '🥉', title: 'Khởi Nghiệp', desc: 'Có 500k trong ví' },
+            'millionaire': { icon: '💎', title: 'Triệu Phú', desc: 'Có 1 Triệu trong ví' },
+            'multimillionaire': { icon: '👑', title: 'Đại Gia', desc: 'Có 10 Triệu trong ví' },
+            'unlucky_10': { icon: '🌧️', title: 'Thánh Nhọ', desc: '10 lần liên tiếp ra N' },
+            'gambler_fail_5': { icon: '💸', title: 'Cờ Bạc Bác Thằng Bần', desc: 'Thua cược 5 lần liên tiếp' }
+        };
+
+        function checkAchievements(data) {
+            const newUnlocks = [];
+
+            // Money Based
+            if (data.totalMoney >= 500000 && !data.achievements.includes('first_500k')) newUnlocks.push('first_500k');
+            if (data.totalMoney >= 1000000 && !data.achievements.includes('millionaire')) newUnlocks.push('millionaire');
+            if (data.totalMoney >= 10000000 && !data.achievements.includes('multimillionaire')) newUnlocks.push('multimillionaire');
+
+            // Streak Based
+            if (data.stats.consecutiveN >= 10 && !data.achievements.includes('unlucky_10')) newUnlocks.push('unlucky_10');
+            if (data.stats.consecutiveLosses >= 5 && !data.achievements.includes('gambler_fail_5')) newUnlocks.push('gambler_fail_5');
+
+            if (newUnlocks.length > 0) {
+                data.achievements.push(...newUnlocks);
+                saveData(data);
+                newUnlocks.forEach(id => showAchievementToast(ACHIEVEMENTS[id]));
+            }
+        }
+
+        function showAchievementToast(achi) {
+            const toast = document.createElement('div');
+            toast.className = 'achievement-toast';
+            toast.innerHTML = `
+                <div class="icon">${achi.icon}</div>
+                <div class="info">
+                    <div class="title">Danh Hiệu Mới!</div>
+                    <div class="desc">${achi.title}: ${achi.desc}</div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+
+            // Sound?
+            playSound('ssr'); // Reuse fanfare for now
+
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+
+        // Gambling Logic
+        function gambleAll() {
+            const btn = document.getElementById('gambleBtn');
+            btn.disabled = true; // One shot only
+
+            const currentAmount = currentResult.money.value;
+            // Adjusting odds: 10% Win, 90% Lose (User requested "way lower")
+            const rand = Math.random();
+            const isWin = rand < 0.1;
+            console.log(`Gambling: Rolled ${rand.toFixed(2)} (Need < 0.1 for Win) -> ${isWin ? 'WIN' : 'LOSE'}`);
+
+            if (isWin) {
+                // WIN DOUBLE
+                const newAmount = currentAmount * 2;
+
+                // Track stats
+                const data = getData();
+                data.stats.consecutiveLosses = 0;
+                saveData(data);
+
+                addToHistory({
+                    timestamp: Date.now(),
+                    amount: newAmount,
+                    tier: 'GAMBLE_WIN', // Special tier
+                    action: 'gamble'
+                });
+
+                // Update Wallet (add the difference)
+                addToWallet(currentAmount); // We already added the base amount, so add it again = double total
+
+                // Update UI visually
+                amountEl.style.color = '#00FF00'; // Green
+                amountEl.textContent = formatNumber(newAmount);
+                playSound('ssr'); // Win sound
+
+                // Show happy message
+                wishEl.textContent = "🎉 KHÔNG TIN ĐƯỢC! Bạn đã thắng cược và gấp đôi tài sản! 🎲";
+
+                createConfetti(true); // Jackpot confetti
+            } else {
+                // LOSE ALL
+
+                // Track stats
+                const data = getData();
+                data.stats.consecutiveLosses++;
+                saveData(data);
+                checkAchievements(data); // Check for gambling addict
+
+                addToHistory({
+                    timestamp: Date.now(),
+                    amount: -currentAmount,
+                    tier: 'GAMBLE_LOSE',
+                    action: 'gamble'
+                });
+
+                // Deduct from wallet (remove the base amount we just added)
+                addToWallet(-currentAmount);
+
+                // Update UI visually
+                amountEl.style.color = '#555'; // Grey
+                amountEl.textContent = "0";
+
+                // Show sad message
+                wishEl.textContent = "💸 Tiếc quá! Chúc bạn may mắn lần sau. (Mất trắng!)";
+            }
+        }
+
+        // Skin Logic
+        function checkSkinUnlock() {
+            const envelope = document.getElementById('envelope');
+            const data = getData();
+            const total = data.totalMoney;
+
+            // Remove all skins first
+            envelope.classList.remove('skin-gold', 'skin-holo', 'skin-diamond');
+
+            if (total >= 10000000) {
+                envelope.classList.add('skin-diamond');
+            } else if (total >= 5000000) {
+                envelope.classList.add('skin-holo');
+            } else if (total >= 1000000) {
+                envelope.classList.add('skin-gold');
+            }
+        }
+
+        // Initial Check
+        checkSkinUnlock();
+
+        // --- UI LOGIC (Modals & New Features) ---
+        function openStats() {
+            document.getElementById('statsModal').classList.add('open');
+            renderStats();
+            renderHistory();
+            renderAchievements();
+            renderZodiac();
+        }
+
+        function openInfo() {
+            document.getElementById('infoModal').classList.add('open');
+        }
+
+        function closeModal(e, id) {
+            if (e && e.target !== e.currentTarget && e.target.className !== 'close-btn') return;
+            document.getElementById(id).classList.remove('open');
+        }
+
+        function renderStats() {
+            const data = getData();
+            document.getElementById('statTotalPulls').textContent = data.stats.totalPulls;
+            document.getElementById('statSSRCount').textContent = data.stats.tierCounts.SSR;
+        }
+
+        function renderHistory() {
+            const data = getData();
+            const list = document.getElementById('historyList');
+            list.innerHTML = '';
+
+            data.history.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'history-item';
+                if (item.action === 'gamble') {
+                    li.classList.add(item.amount > 0 ? 'gain' : 'loss');
+                }
+
+                const timeStr = new Date(item.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+                const tierClass = item.tier.includes('GAMBLE') ? 'tier-SSR' : `tier-${item.tier}`;
+
+                li.innerHTML = `
+                    <span><span class="tier-badge ${tierClass}">${item.tier}</span> ${timeStr}</span>
+                    <span>${item.amount > 0 ? '+' : ''}${formatNumber(item.amount)}</span>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function renderAchievements() {
+            const data = getData();
+            const list = document.getElementById('achievementsList');
+            list.innerHTML = '';
+
+            data.achievements.forEach(id => {
+                const chi = ACHIEVEMENTS[id];
+                const badge = document.createElement('div');
+                badge.className = 'icon-btn'; // Reuse style
+                badge.style.width = '50px';
+                badge.style.height = '50px';
+                badge.title = `${chi.title}: ${chi.desc}`;
+                badge.textContent = chi.icon;
+                badge.style.background = '#444';
+                badge.style.cursor = 'help';
+                list.appendChild(badge);
+            });
+
+            if (data.achievements.length === 0) {
+                list.innerHTML = '<span style="color:#888; font-style:italic;">Chưa có thành tựu nào...</span>';
+            }
+        }
+
+        // Zodiac Feature
+        const ZODIACS = [
+            { icon: '🐁', name: 'Tý' }, { icon: '🐂', name: 'Sửu' }, { icon: '🐅', name: 'Dần' }, { icon: '🐈', name: 'Mão' },
+            { icon: '🐉', name: 'Thìn' }, { icon: '🐍', name: 'Tỵ' }, { icon: '🐎', name: 'Ngọ' }, { icon: '🐐', name: 'Mùi' },
+            { icon: '🐒', name: 'Thân' }, { icon: '🐓', name: 'Dậu' }, { icon: '🐕', name: 'Tuất' }, { icon: '🐖', name: 'Hợi' }
+        ];
+
+        function renderZodiac() {
+            const grid = document.getElementById('zodiacGrid');
+            const data = getData();
+
+            if (grid.children.length === 0) {
+                ZODIACS.forEach((z, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'zodiac-btn';
+                    btn.textContent = z.icon;
+                    btn.title = z.name;
+                    btn.onclick = () => showFortune(idx);
+                    grid.appendChild(btn);
+                });
+            }
+
+            // If already picked today? (Optional logic, keep simple for now)
+        }
+
+        function showFortune(zodiacIndex) {
+            const fortunes = [
+                "Đầu tư sinh lời, code không bug! 🚀",
+                "Tình duyên thăng hoa, server cũng 'kết nối' tốt! ❤️",
+                "Cẩn thận deadline, nhưng tiền về như nước! 💧",
+                "Quý nhân phù trợ, deploy một phát ăn ngay! ✨",
+                "Sức khỏe dồi dào, code xuyên đêm không mệt! 💪",
+                "May mắn bất ngờ, trúng số độc đắc (hoặc SSR)! 🎰",
+                "Năm tuổi rực rỡ (nếu là Ngọ), sự nghiệp thăng tiến! 🐎",
+                "Bình an vô sự, mọi ticket đều được resolved! ✅",
+                "Thông minh đột xuất, giải được bug khó nhất năm! 🧠",
+                "Lộc lá đầy nhà, lì xì mỏi tay! 🧧",
+                "Được sếp khen thưởng, thăng chức tăng lương! 📈",
+                "Ăn ngon mặc đẹp, tâm hồn phơi phới! 🌸"
+            ];
+
+            const resultEl = document.getElementById('fortuneResult');
+            resultEl.style.display = 'block';
+            resultEl.textContent = `Vận mệnh tuổi ${ZODIACS[zodiacIndex].name}: ${fortunes[Math.floor(Math.random() * fortunes.length)]}`;
+        }
     </script>
 </body>
 
