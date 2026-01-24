@@ -355,27 +355,48 @@
 
         /* Wish */
         .result-card .wish {
-            font-size: clamp(0.95rem, 3.5vw, 1.15rem);
-            color: #333;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            font-style: italic;
+            color: var(--red-dark);
             line-height: 1.6;
-            padding: clamp(1rem, 4vw, 1.25rem);
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
-            border-radius: 12px;
-            border-left: 4px solid var(--gold-primary);
-            margin-bottom: 1.25rem;
+            padding: clamp(3rem, 6vw, 4rem) clamp(1.5rem, 5vw, 2.5rem);
+            background-color: #FFF;
+            background-image:
+                radial-gradient(var(--gold-light) 1px, transparent 1px),
+                linear-gradient(to bottom, transparent, rgba(255, 248, 220, 0.3) 100%);
+            background-size: 20px 20px, 100% 100%;
+            border: 1px solid var(--gold-light);
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
             position: relative;
             z-index: 1;
-            text-align: left;
+            text-align: center;
+            box-shadow:
+                inset 0 0 20px rgba(255, 215, 0, 0.1),
+                0 5px 15px rgba(0, 0, 0, 0.05);
         }
 
         .result-card .wish::before {
-            content: '"';
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            content: '❦';
+            font-size: 2rem;
             color: var(--gold-primary);
             position: absolute;
-            top: -5px;
-            left: 8px;
-            font-family: 'Playfair Display', serif;
+            top: 0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0.6;
+        }
+
+        .result-card .wish::after {
+            content: '❦';
+            font-size: 2rem;
+            color: var(--gold-primary);
+            position: absolute;
+            bottom: 0.5rem;
+            left: 50%;
+            transform: translateX(-50%) rotate(180deg);
+            opacity: 0.6;
         }
 
         /* Buttons */
@@ -691,21 +712,21 @@
         </div>
 
         <footer class="footer">
-            <p>Made with ❤️ by IT Department • Tết 2025</p>
+            <p>Made with ❤️ by HuyPG • Tết 2026</p>
         </footer>
     </div>
 
     <script>
-        // Money data with real banknote images (Front is -2, Back is -1)
+        // Money data with real banknote images (Front is -1, Back is -2)
         const moneyAmounts = [
-            { value: 1000, display: '1.000', front: 'images/1k-2.jpg', back: 'images/1k-1.jpg' },
-            { value: 5000, display: '5.000', front: 'images/5k-2.jpg', back: 'images/5k-1.jpg' },
-            { value: 10000, display: '10.000', front: 'images/10k-2.jpg', back: 'images/10k-1.jpg' },
-            { value: 20000, display: '20.000', front: 'images/20k-2.jpg', back: 'images/20k-1.jpg' },
-            { value: 50000, display: '50.000', front: 'images/50k-2.jpg', back: 'images/50k-1.jpg' },
-            { value: 100000, display: '100.000', front: 'images/100k-2.jpg', back: 'images/100k-1.jpg' },
-            { value: 200000, display: '200.000', front: 'images/200k-2.jpg', back: 'images/200k-1.jpg' },
-            { value: 500000, display: '500.000', front: 'images/500k-2.jpg', back: 'images/500k-1.jpg' }
+            { value: 1000, display: '1.000', front: 'images/1k-1.jpg', back: 'images/1k-2.jpg' },
+            { value: 5000, display: '5.000', front: 'images/5k-1.jpg', back: 'images/5k-2.jpg' },
+            { value: 10000, display: '10.000', front: 'images/10k-1.jpg', back: 'images/10k-2.jpg' },
+            { value: 20000, display: '20.000', front: 'images/20k-1.jpg', back: 'images/20k-2.jpg' },
+            { value: 50000, display: '50.000', front: 'images/50k-1.jpg', back: 'images/50k-2.jpg' },
+            { value: 100000, display: '100.000', front: 'images/100k-1.jpg', back: 'images/100k-2.jpg' },
+            { value: 200000, display: '200.000', front: 'images/200k-1.jpg', back: 'images/200k-2.jpg' },
+            { value: 500000, display: '500.000', front: 'images/500k-1.jpg', back: 'images/500k-2.jpg' }
         ];
 
         // Weighted random - higher denominations are rarer
@@ -733,8 +754,29 @@
             "Năm mới fix bug nhanh hơn bác sĩ chẩn đoán! 🩺",
             "An toàn thông tin vững chãi, virus/ransomware tránh xa! 🛡️",
             "Triển khai phần mềm mới suôn sẻ, user training 1 lần hiểu ngay! 📚",
-            "Hệ thống Lab kết nối mượt mà, kết quả trả về trong một nốt nhạc! 🎵"
+            "Hệ thống Lab kết nối mượt mà, kết quả trả về trong một nốt nhạc! 🎵",
+            "Wi-Fi phủ sóng mọi ngóc ngách, không điểm chết nào dám tồn tại! 📶",
+            "Backup dữ liệu thành công 100%, restore trong chớp mắt! 💾",
+            "Không bao giờ bị gọi hotline lúc nửa đêm! 😴",
+            "Họp giao ban toàn lời khen, không ai phàn nàn về IT! 👏",
+            "API kết nối bên thứ 3 luôn stable, không timeout! 🔗",
+            "Năm mới code sung, deploy một phát ăn ngay! 🚀"
         ];
+
+        // Shuffle deck for better randomization (no repeats until all shown)
+        let wishDeck = [];
+
+        function getNextWish() {
+            if (wishDeck.length === 0) {
+                // Refill and shuffle
+                wishDeck = [...wishes];
+                for (let i = wishDeck.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [wishDeck[i], wishDeck[j]] = [wishDeck[j], wishDeck[i]];
+                }
+            }
+            return wishDeck.pop();
+        }
 
         let isOpened = false;
         let currentResult = null;
@@ -826,7 +868,7 @@
             // Get random result (weighted)
             currentResult = {
                 money: getRandomItem(weightedMoney),
-                wish: getRandomItem(wishes)
+                wish: getNextWish()
             };
 
             // Show result after animation
