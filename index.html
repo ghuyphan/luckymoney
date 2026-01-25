@@ -1649,22 +1649,36 @@
         // Share & QR Logic
         let qrcodeObj = null;
 
+        function getSmartShareUrl() {
+            const url = new URL(window.location.href);
+            const params = new URLSearchParams(url.search);
+            const theme = params.get('theme');
+
+            if (theme === 'normal') {
+                params.set('theme', 'normal');
+            } else {
+                params.delete('theme');
+            }
+            url.search = params.toString();
+            return url.toString();
+        }
+
         function showShareModal() {
             const modal = document.getElementById('shareModal');
             const qrContainer = document.getElementById('qrcode');
             const urlDisplay = document.getElementById('shareUrl');
-            const currentUrl = window.location.href;
+            const shareUrl = getSmartShareUrl();
 
             // Show modal
             modal.style.display = 'flex';
-            urlDisplay.textContent = currentUrl;
+            urlDisplay.textContent = shareUrl;
 
             // Clear previous QR
             qrContainer.innerHTML = '';
 
             // Generate QR
             qrcodeObj = new QRCode(qrContainer, {
-                text: currentUrl,
+                text: shareUrl,
                 width: 180,
                 height: 180,
                 colorDark: "#d90429", // Red-primary
@@ -1678,7 +1692,8 @@
         }
 
         function copyLink() {
-            navigator.clipboard.writeText(window.location.href).then(() => {
+            const shareUrl = getSmartShareUrl();
+            navigator.clipboard.writeText(shareUrl).then(() => {
                 const btn = document.querySelector('.btn-copy');
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '✅ Đã chép';
