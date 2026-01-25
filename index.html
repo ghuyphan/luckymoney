@@ -90,6 +90,35 @@
 
         /* ... existing code ... */
 
+        /* --- THEMES --- */
+        body.theme-normal {
+            background-color: #900000;
+            background-image:
+                /* Horizontal Line - Subtle */
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                /* Vertical Line - Subtle */
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 80px 80px;
+            background-position: center center;
+        }
+
+        body.theme-normal::before {
+            /* The squares at intersections - Subtle */
+            background-image: 
+                radial-gradient(rgba(255, 220, 0, 0.15) 2px, transparent 3px);
+            background-size: 80px 80px;
+            background-position: center center;
+            
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        body.theme-normal::after {
+            content: none;
+        }
         /* --- UI COMPONENTS --- */
         .utility-bar {
             position: fixed;
@@ -1639,7 +1668,8 @@
                 if (headerDesc) headerDesc.textContent = 'Chúc Mừng Năm Mới 2026 - Xuân Bính Ngọ 🐎';
 
                 // 5. Update Background (Remove medical blue influence)
-                document.body.style.background = 'linear-gradient(135deg, var(--red-dark) 0%, var(--red-primary) 100%)';
+                // 5. Update Background (Remove medical blue influence)
+                document.body.classList.add('theme-normal');
             }
         }
 
