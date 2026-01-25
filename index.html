@@ -10,6 +10,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
         rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             --red-primary: #C41E3A;
@@ -129,6 +130,129 @@
             color: var(--cream);
             font-size: clamp(0.9rem, 3vw, 1.1rem);
             opacity: 0.9;
+        }
+
+        /* Share Button */
+        .share-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--red-primary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+        }
+
+        .share-btn:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Share Modal */
+        .share-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .share-modal {
+            background: #fffafa;
+            width: 90%;
+            max-width: 350px;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            border: 2px solid var(--gold-primary);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .qr-container {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 1.5rem auto;
+            display: flex;
+            justify-content: center;
+            width: fit-content;
+        }
+
+        .share-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .share-action-btn {
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn-copy {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-copy:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-download {
+            background: var(--red-primary);
+            color: var(--gold-light);
+        }
+
+        .btn-download:hover {
+            background: var(--red-dark);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 50%;
+            background: #f5f5f5;
+        }
+
+        .close-modal:hover {
+            background: #eee;
+            color: #333;
         }
 
         .department-badge {
@@ -1153,6 +1277,36 @@
     <div class="confetti-container" id="confetti"></div>
     <div class="jackpot-overlay"></div>
 
+    <!-- Share Button -->
+    <div class="share-btn" onclick="showShareModal()">
+        🔗
+    </div>
+
+    <!-- Share Modal -->
+    <div class="share-modal-overlay" id="shareModal" onclick="if(event.target === this) hideShareModal()">
+        <div class="share-modal">
+            <div class="close-modal" onclick="hideShareModal()">×</div>
+            <h3
+                style="color: var(--red-primary); font-size: 1.5rem; margin-bottom: 0.5rem; font-family: 'Playfair Display', serif;">
+                Chia Sẻ May Mắn</h3>
+            <p style="color: #666; font-size: 0.9rem;">Quét mã QR để nhận lì xì ngay!</p>
+
+            <div class="qr-container" id="qrcode"></div>
+
+            <p id="shareUrl"
+                style="font-size: 0.8rem; color: #999; word-break: break-all; margin-bottom: 1rem; display: none;"></p>
+
+            <div class="share-actions">
+                <button class="share-action-btn btn-copy" onclick="copyLink()">
+                    📋 Sao chép
+                </button>
+                <button class="share-action-btn btn-download" onclick="downloadQR()">
+                    ⬇️ Tải QR
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Utility Buttons -->
     <div class="utility-bar">
         <button class="icon-btn" onclick="openStats()">📊</button>
@@ -1223,23 +1377,23 @@
                     </tr>
                     <tr style="background: rgba(255, 215, 0, 0.2)">
                         <td><strong>SSR</strong></td>
-                        <td>2%</td>
+                        <td>5%</td>
                         <td>500.000 VNĐ</td>
                     </tr>
                     <tr style="background: rgba(153, 50, 204, 0.1)">
                         <td><strong>SR</strong></td>
-                        <td>13%</td>
+                        <td>20%</td>
                         <td>200.000 VNĐ</td>
                     </tr>
                     <tr style="background: rgba(0, 191, 255, 0.1)">
                         <td><strong>R</strong></td>
-                        <td>25%</td>
+                        <td>35%</td>
                         <td>50k - 100k</td>
                     </tr>
                     <tr>
                         <td><strong>N</strong></td>
-                        <td>60%</td>
-                        <td>1k - 20k</td>
+                        <td>40%</td>
+                        <td>10k - 20k</td>
                     </tr>
                 </table>
                 <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
@@ -1320,9 +1474,8 @@
 
     <script>
         // Money data with real banknote images (Front is -1, Back is -2)
+        // Removed 1k and 5k as requested
         const moneyAmounts = [
-            { value: 1000, display: '1.000', front: 'images/1k-1.jpg', back: 'images/1k-2.jpg' },
-            { value: 5000, display: '5.000', front: 'images/5k-1.jpg', back: 'images/5k-2.jpg' },
             { value: 10000, display: '10.000', front: 'images/10k-1.jpg', back: 'images/10k-2.jpg' },
             { value: 20000, display: '20.000', front: 'images/20k-1.jpg', back: 'images/20k-2.jpg' },
             { value: 50000, display: '50.000', front: 'images/50k-1.jpg', back: 'images/50k-2.jpg' },
@@ -1332,19 +1485,18 @@
         ];
 
         // Weighted random - higher denominations are rarer
+        // Note: This array is not directly used in the new gacha logic but kept for reference or fallback
         const weightedMoney = [
-            ...Array(8).fill(moneyAmounts[0]),  // 1k - common
-            ...Array(7).fill(moneyAmounts[1]),  // 5k
-            ...Array(6).fill(moneyAmounts[2]),  // 10k
-            ...Array(5).fill(moneyAmounts[3]),  // 20k
-            ...Array(4).fill(moneyAmounts[4]),  // 50k
-            ...Array(3).fill(moneyAmounts[5]),  // 100k
-            ...Array(2).fill(moneyAmounts[6]),  // 200k
-            ...Array(1).fill(moneyAmounts[7])   // 500k - rare!
+            ...Array(6).fill(moneyAmounts[0]),  // 10k
+            ...Array(5).fill(moneyAmounts[1]),  // 20k
+            ...Array(4).fill(moneyAmounts[2]),  // 50k
+            ...Array(3).fill(moneyAmounts[3]),  // 100k
+            ...Array(2).fill(moneyAmounts[4]),  // 200k
+            ...Array(1).fill(moneyAmounts[5])   // 500k
         ];
 
-        // Vietnamese wishes for Hospital IT
-        const wishes = [
+        // Vietnamese wishes for Hospital IT (Default)
+        const wishesIT = [
             "Hệ thống HIS vận hành trơn tru, không ticket nào treo! 🏥",
             "PACS load hình siêu tốc, bác sĩ khen nức nở! ⚡",
             "Server uptime 100%, trực Tết nhàn tênh! 🖥️",
@@ -1370,6 +1522,36 @@
             "Trực Tết êm ru, chỉ có tiếng nhai hạt dưa, không có tiếng điện thoại! 🍉",
             "Bác sĩ khen phần mềm nhanh hơn người yêu cũ trở mặt! ⚡",
         ];
+
+        // Generic Wishes (Normal Theme)
+        const wishesGeneral = [
+            "An khang thịnh vượng - Vạn sự như ý! 🌸",
+            "Tấn tài tấn lộc - Mã đáo thành công! 🐎",
+            "Sức khỏe dồi dào, tiền vào như nước! 💰",
+            "Năm mới bình an, hạnh phúc tràn đầy! ❤️",
+            "Công việc thuận lợi, thăng tiến vù vù! 🚀",
+            "Gia đình hòa thuận, tiếng cười rộn rã! 😂",
+            "Lộc biếc mai vàng, xuân sang như ý! 🌼",
+            "Tình duyên phơi phới, hạnh phúc thăng hoa! 💑",
+            "Tiền đầy túi, tim đầy tình, xăng đầy bình! ⛽",
+            "Ăn ngon ngủ kỹ, không lo deadline! 😴",
+            "May mắn gõ cửa, rước lộc vào nhà! 🚪",
+            "Cung hỷ phát tài, cả năm sung túc! 🧧",
+            "Sự nghiệp vững chắc, tương lai rạng ngời! ✨",
+            "Mua may bán đắt, làm ăn phát đạt! 📈",
+            "Đi đâu cũng gạp quý nhân phù trợ! 👼",
+            "Vạn sự khởi đầu nan, gian nan đừng có nản! 💪",
+            "Tiền ra nhỏ giọt, tiền vào như thác lũ! 🌊",
+            "Năm mới Bính Ngọ, chạy nhanh như ngựa! 🐎",
+            "Sống vui sống khỏe, tươi trẻ mỗi ngày! 🌱",
+            "Hạnh phúc đong đầy, vàng bạc đầy kho! 💎",
+            "Cả năm may mắn, cười tươi như hoa! 🌺",
+            "Sức khỏe vô biên, kiếm được nhiều tiền! 💵",
+            "Đời đẹp như mơ, thơ thẩn cả ngày! 🎵",
+            "Muộn phiền bay biến, niềm vui ùa về! 🌈"
+        ];
+
+        let wishes = wishesIT; // Default to IT
 
         // Shuffle deck for better randomization (no repeats until all shown)
         let wishDeck = [];
@@ -1429,7 +1611,100 @@
         sounds.open.load();
         sounds.coin.load();
         sounds.ssr.load();
-        sounds.sr.load();
+        // sounds.sr.load(); // SR sound missing, skipping
+
+        // Theme Initialization
+        function initTheme() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const theme = urlParams.get('theme');
+
+            if (theme === 'normal') {
+                // Apply Normal Theme
+
+                // 1. Change Wishes
+                wishes = wishesGeneral;
+
+                // 2. Hide Hospital Badge
+                const departmentBadge = document.querySelector('.department-badge');
+                if (departmentBadge) departmentBadge.style.display = 'none';
+
+                // 3. Hide ECG Line
+                const ecgLine = document.querySelector('.ecg-line');
+                if (ecgLine) ecgLine.style.display = 'none';
+
+                // 4. Update Header
+                const headerTitle = document.querySelector('.header h1');
+                const headerDesc = document.querySelector('.header p');
+                if (headerTitle) headerTitle.textContent = '🧧 Lì Xì May Mắn'; // Keep same or specific generic title
+                if (headerDesc) headerDesc.textContent = 'Chúc Mừng Năm Mới 2026 - Xuân Bính Ngọ 🐎';
+
+                // 5. Update Background (Remove medical blue influence)
+                document.body.style.background = 'linear-gradient(135deg, var(--red-dark) 0%, var(--red-primary) 100%)';
+            }
+        }
+
+        // Initialize Theme
+        initTheme();
+
+        // Share & QR Logic
+        let qrcodeObj = null;
+
+        function showShareModal() {
+            const modal = document.getElementById('shareModal');
+            const qrContainer = document.getElementById('qrcode');
+            const urlDisplay = document.getElementById('shareUrl');
+            const currentUrl = window.location.href;
+
+            // Show modal
+            modal.style.display = 'flex';
+            urlDisplay.textContent = currentUrl;
+
+            // Clear previous QR
+            qrContainer.innerHTML = '';
+
+            // Generate QR
+            qrcodeObj = new QRCode(qrContainer, {
+                text: currentUrl,
+                width: 180,
+                height: 180,
+                colorDark: "#d90429", // Red-primary
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function hideShareModal() {
+            document.getElementById('shareModal').style.display = 'none';
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const btn = document.querySelector('.btn-copy');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Đã chép';
+                setTimeout(() => btn.innerHTML = originalText, 2000);
+            });
+        }
+
+        function downloadQR() {
+            const qrCanvas = document.querySelector('#qrcode canvas');
+            if (!qrCanvas) {
+                // Fallback for img tag (qrcode.js sometimes renders img)
+                const qrImg = document.querySelector('#qrcode img');
+                if (qrImg) {
+                    const link = document.createElement('a');
+                    link.download = 'lucky-money-qr.png';
+                    link.href = qrImg.src;
+                    link.click();
+                }
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.download = 'lucky-money-qr.png';
+            link.href = qrCanvas.toDataURL("image/png");
+            link.click();
+        }
 
         function playSound(name) {
             try {
@@ -1443,12 +1718,12 @@
 
 
         function typeWriter(element, text, speed = 30) {
-            element.innerHTML = '';
+            element.textContent = '';
             element.classList.add('typing-cursor');
             let i = 0;
             function type() {
                 if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
+                    element.textContent += text.charAt(i); // Use textContent for better performance
                     i++;
                     setTimeout(type, speed);
                 } else {
@@ -1505,12 +1780,16 @@
             // R (25%): 50k, 100k
             // N (60%): 20k and below
 
-            // Define tiers and their prize pools
+            // Define tiers and their prize pools (Updated for better drop rates)
+            // SSR (5%): 500k
+            // SR (20%): 200k
+            // R (35%): 50k, 100k
+            // N (40%): 10k, 20k
             const gachaTiers = {
-                SSR: { chance: 2, items: [moneyAmounts[7]] }, // 500k
-                SR: { chance: 13, items: [moneyAmounts[6]] }, // 200k
-                R: { chance: 25, items: [moneyAmounts[4], moneyAmounts[5]] }, // 50k, 100k
-                N: { chance: 60, items: [moneyAmounts[0], moneyAmounts[1], moneyAmounts[2], moneyAmounts[3]] } // 1k, 5k, 10k, 20k
+                SSR: { chance: 5, items: [moneyAmounts[5]] }, // 500k (index 5 now)
+                SR: { chance: 20, items: [moneyAmounts[4]] }, // 200k (index 4)
+                R: { chance: 35, items: [moneyAmounts[2], moneyAmounts[3]] }, // 50k, 100k (index 2, 3)
+                N: { chance: 40, items: [moneyAmounts[0], moneyAmounts[1]] } // 10k, 20k (index 0, 1)
             };
 
             function getGachaResult() {
@@ -1587,6 +1866,11 @@
                 if (currentResult.money.tier === 'SSR') {
                     triggerJackpot();
                 }
+
+                // Smooth scroll to result
+                requestAnimationFrame(() => {
+                    resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
             }, 600);
         }
 
