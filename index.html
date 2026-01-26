@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>🧧 Lì Xì May Mắn - IT Department</title>
+    <title>🧧 Lì Xì May Mắn</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -30,6 +30,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         html {
@@ -104,21 +105,22 @@
 
         body.theme-normal::before {
             /* The squares at intersections - Subtle */
-            background-image: 
+            background-image:
                 radial-gradient(rgba(255, 220, 0, 0.15) 2px, transparent 3px);
             background-size: 80px 80px;
             background-position: center center;
-            
+
             content: '';
             position: fixed;
             inset: 0;
             pointer-events: none;
             z-index: 0;
         }
-        
+
         body.theme-normal::after {
             content: none;
         }
+
         /* --- UI COMPONENTS --- */
         .utility-bar {
             position: fixed;
@@ -199,7 +201,7 @@
             display: none;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(5px);
+            /* backdrop-filter: blur(5px); Removed for performance */
         }
 
         .share-modal {
@@ -295,7 +297,7 @@
             margin-top: 0.75rem;
             box-shadow: 0 4px 15px rgba(0, 128, 128, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(4px);
+            /* backdrop-filter: blur(4px); Removed for performance */
         }
 
         /* Envelope */
@@ -528,26 +530,37 @@
             margin: 1.5rem 0;
             position: relative;
             z-index: 1;
+        }
+
+        .money-stack-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: clamp(260px, 70vw, 340px);
+            aspect-ratio: 2.2 / 1;
+            margin: 0 auto;
             perspective: 1000px;
         }
 
         .money-card {
             width: 100%;
-            max-width: clamp(260px, 70vw, 340px);
-            aspect-ratio: 2.2 / 1;
-            margin: 0 auto;
-            position: relative;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
             transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
+            /* Default stack transform is none if not set */
+            --stack-transform: translate(0, 0) rotate(0deg);
+            transform: var(--stack-transform);
         }
 
         .money-card:active {
-            transform: scale(0.98);
+            transform: var(--stack-transform) scale(0.98);
         }
 
         .money-card.flipped {
-            transform: rotateY(180deg);
+            transform: var(--stack-transform) rotateY(180deg);
         }
 
         .money-face {
@@ -584,6 +597,54 @@
         .flip-icon {
             animation: flipHint 2s ease-in-out infinite;
         }
+
+        /* Bounce Animation */
+        @keyframes bounce {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            70% {
+                transform: scale(0.9);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Holo Animations */
+        @keyframes holoShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* Shine moves diagonally */
+        @keyframes holoShineMove {
+            0% {
+                background-position: 200% 200%;
+            }
+
+            100% {
+                background-position: -100% -100%;
+            }
+        }
+
+
+
 
         /* Wish */
         .result-card .wish {
@@ -935,7 +996,7 @@
             top: 1rem;
             right: 1rem;
             background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(10px);
+            /* backdrop-filter: blur(10px); */
             border: 1px solid var(--gold-primary);
             border-radius: 50px;
             padding: 0.5rem 1rem;
@@ -956,6 +1017,106 @@
         .wallet-balance {
             font-weight: 700;
             font-size: 1.1rem;
+        }
+
+        .withdraw-btn {
+            background: var(--red-primary);
+            color: #fff;
+            border: none;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .withdraw-btn:hover {
+            transform: scale(1.05);
+            background: var(--red-dark);
+        }
+
+        .withdraw-btn:active {
+            transform: scale(0.95);
+        }
+
+        .fake-notification {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-150%);
+            width: 95%;
+            max-width: 380px;
+            background: rgba(240, 240, 240, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 12px 15px;
+            border-radius: 18px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 10000;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #000;
+        }
+
+        .fake-notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .fake-notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #666;
+            /* iOS Secondary Label Color */
+        }
+
+        .fake-notification-header .app-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .fake-notification-header .app-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            background: #004D40;
+            /* Bank Green */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .fake-notification-header .app-name {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.02em;
+        }
+
+        .fake-notification-header .time {
+            font-size: 0.75rem;
+        }
+
+        .fake-notification-content {
+            font-size: 0.95rem;
+            line-height: 1.3;
+            color: #000;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-weight: 400;
         }
 
         .wallet-currency {
@@ -1028,29 +1189,48 @@
         }
 
         /* --- NEW SKINS --- */
-        /* Holographic Skin (5M) */
+        /* Holographic Skin (Pokemon Style) */
         .envelope.skin-holo .envelope-body {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-            /* Simple fallback, real holo needs complex gradients */
+            /* Base: Rainbow Holo */
             background: linear-gradient(135deg,
-                    rgba(255, 0, 0, 1) 0%,
-                    rgba(255, 154, 0, 1) 10%,
-                    rgba(208, 222, 33, 1) 20%,
-                    rgba(79, 220, 74, 1) 30%,
-                    rgba(63, 218, 216, 1) 40%,
-                    rgba(47, 201, 226, 1) 50%,
-                    rgba(28, 127, 238, 1) 60%,
-                    rgba(95, 21, 242, 1) 70%,
-                    rgba(186, 12, 248, 1) 80%,
-                    rgba(251, 7, 217, 1) 90%,
-                    rgba(255, 0, 0, 1) 100%);
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+                    #c0c0ff 0%, #ffc0cb 20%, #ffffc0 40%,
+                    #c0ffc0 60%, #c0ffff 80%, #c0c0ff 100%);
+            background-size: 300% 300%;
+            animation: holoShift 4s ease infinite;
+
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow:
+                0 4px 20px rgba(192, 192, 255, 0.4),
+                inset 0 0 30px rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            /* Ensure shine doesn't spill */
+        }
+
+        /* Shine Layer */
+        .envelope.skin-holo .envelope-body::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(125deg,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.4) 45%,
+                    rgba(255, 255, 255, 0) 50%,
+                    rgba(255, 255, 255, 0) 100%);
+            background-size: 200% 200%;
+            background-repeat: no-repeat;
+            /* Prevent square edges */
+            animation: holoShineMove 3s ease infinite;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            /* Better blending */
         }
 
         .envelope.skin-holo .envelope-flap {
-            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
-            border: 3px solid rgba(255, 255, 255, 0.8);
+            background: linear-gradient(135deg, #c0c0ff 0%, #ffc0cb 50%, #ffffc0 100%);
+            background-size: 200% 200%;
+            animation: holoShift 4s ease infinite;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-top: none;
         }
 
         /* Diamond Skin (10M) */
@@ -1058,7 +1238,7 @@
             background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
             border: 3px solid #fff;
             box-shadow: 0 0 30px #00e5ff;
-            backdrop-filter: blur(5px);
+            /* backdrop-filter: blur(5px); Removed for performance */
         }
 
         .envelope.skin-diamond .envelope-flap {
@@ -1079,7 +1259,7 @@
             justify-content: center;
             font-size: 1.2rem;
             cursor: pointer;
-            backdrop-filter: blur(5px);
+            /* backdrop-filter: blur(5px); */
         }
 
         /* Modal */
@@ -1092,7 +1272,7 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
-            backdrop-filter: blur(5px);
+            /* backdrop-filter: blur(5px); */
         }
 
         .modal-overlay.open {
@@ -1298,6 +1478,45 @@
             background: #f0f8ff;
             border-radius: 8px;
         }
+
+        /* Sound Control */
+        .sound-control {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sound-control:hover {
+            transform: scale(1.1);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Reset Link */
+        .reset-link {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+
+        .reset-link:hover {
+            color: var(--red-primary);
+        }
     </style>
 </head>
 
@@ -1370,7 +1589,7 @@
                     <!-- Achievements injected here -->
                 </div>
 
-                <h3
+                <h3 id="yearTitle"
                     style="margin: 1rem 0; color: var(--red-dark); border-bottom: 2px solid var(--gold-primary); display: inline-block;">
                     Năm Mới Bính Ngọ 🔮</h3>
                 <div id="zodiacSection">
@@ -1442,9 +1661,15 @@
         <div class="wallet-icon">💰</div>
         <div class="wallet-balance" id="walletBalance">0</div>
         <div class="wallet-currency">VNĐ</div>
+        <button class="withdraw-btn" onclick="withdrawMoney()">Rút</button>
     </div>
 
     <div class="container">
+        <!-- Sound Control -->
+        <div class="sound-control" id="muteBtn" onclick="toggleMute()">
+            🔊
+        </div>
+
         <header class="header">
             <h1>🧧 Lì Xì May Mắn</h1>
             <p>Chúc Mừng Năm Mới 2026 - Xuân Bính Ngọ 🐎</p>
@@ -1468,12 +1693,14 @@
             <div class="currency">VNĐ</div>
 
             <div class="money-display">
-                <div class="money-card" id="moneyCard">
-                    <div class="money-face money-front">
-                        <img id="moneyFront" src="" alt="Mặt trước">
-                    </div>
-                    <div class="money-face money-back">
-                        <img id="moneyBack" src="" alt="Mặt sau">
+                <div class="money-stack-wrapper" id="moneyStackWrapper">
+                    <div class="money-card" id="moneyCard">
+                        <div class="money-face money-front">
+                            <img id="moneyFront" src="" alt="Mặt trước">
+                        </div>
+                        <div class="money-face money-back">
+                            <img id="moneyBack" src="" alt="Mặt sau">
+                        </div>
                     </div>
                 </div>
                 <div class="flip-hint">
@@ -1498,6 +1725,7 @@
 
         <footer class="footer">
             <p>Made with ❤️ by HuyPG • Tết 2026</p>
+            <div class="reset-link" onclick="resetData()">Xóa dữ liệu & Chơi lại</div>
         </footer>
     </div>
 
@@ -1552,10 +1780,10 @@
             "Bác sĩ khen phần mềm nhanh hơn người yêu cũ trở mặt! ⚡",
         ];
 
-        // Generic Wishes (Normal Theme)
+        // Generic Wishes (Base)
         const wishesGeneral = [
             "An khang thịnh vượng - Vạn sự như ý! 🌸",
-            "Tấn tài tấn lộc - Mã đáo thành công! 🐎",
+            "Tấn tài tấn lộc - Mã đáo thành công! 🧧",
             "Sức khỏe dồi dào, tiền vào như nước! 💰",
             "Năm mới bình an, hạnh phúc tràn đầy! ❤️",
             "Công việc thuận lợi, thăng tiến vù vù! 🚀",
@@ -1568,10 +1796,9 @@
             "Cung hỷ phát tài, cả năm sung túc! 🧧",
             "Sự nghiệp vững chắc, tương lai rạng ngời! ✨",
             "Mua may bán đắt, làm ăn phát đạt! 📈",
-            "Đi đâu cũng gạp quý nhân phù trợ! 👼",
+            "Đi đâu cũng gặp quý nhân phù trợ! 👼",
             "Vạn sự khởi đầu nan, gian nan đừng có nản! 💪",
             "Tiền ra nhỏ giọt, tiền vào như thác lũ! 🌊",
-            "Năm mới Bính Ngọ, chạy nhanh như ngựa! 🐎",
             "Sống vui sống khỏe, tươi trẻ mỗi ngày! 🌱",
             "Hạnh phúc đong đầy, vàng bạc đầy kho! 💎",
             "Cả năm may mắn, cười tươi như hoa! 🌺",
@@ -1579,6 +1806,100 @@
             "Đời đẹp như mơ, thơ thẩn cả ngày! 🎵",
             "Muộn phiền bay biến, niềm vui ùa về! 🌈"
         ];
+
+        // Specific Zodiac Wishes
+        const zodiacWishes = {
+            'Tý': [
+                "Năm Tý thông minh, tài lộc rủng rỉnh! 🐭",
+                "Chuột sa chĩnh gạo, tiền vào như nước! 🍚",
+                "Năm Tý nhanh nhẹn, vượt mọi khó khăn! ⚡"
+            ],
+            'Sửu': [
+                "Năm Sửu chăm chỉ, tiền tỷ về tay! 🐮",
+                "Khỏe như trâu, cày đâu thắng đó! 💪",
+                "Sự nghiệp vững chắc như kiềng ba chân! 🏔️"
+            ],
+            'Dần': [
+                "Năm Dần mạnh mẽ, uy lực như Hổ! 🐯",
+                "Tiền vào như nước, khí thế ngút trời! 🔥",
+                "Vạn sự hanh thông, hổ mọc thêm cánh! 🦅"
+            ],
+            'Mão': [
+                "Năm Mèo nhanh nhẹn, khéo léo làm giàu! 🐱",
+                "Tài lộc vờn quanh, may mắn gõ cửa! 🧶",
+                "Sống thảnh thơi vàng bạc đầy kho! 🐟"
+            ],
+            'Thìn': [
+                "Năm Rồng thăng hoa, sự nghiệp bay cao! 🐉",
+                "Long phụng sum vầy, gia đạo bình an! ☁️",
+                "Như cá chép hóa rồng, đổi đời ngoạn mục! 🌊"
+            ],
+            'Tỵ': [
+                "Năm Tỵ khôn khéo, tiền vào như nước! 🐍",
+                "Năm Rắn linh hoạt, vận may bất ngờ! 🎁",
+                "Lột xác thành công, vươn tầm cao mới! ✨"
+            ],
+            'Ngọ': [
+                "Mã đáo thành công, tấn tài tấn lộc! 🐎",
+                "Năm Ngọ phi nước đại, tiền về như bay! 💨",
+                "Sức khỏe dẻo dai, đường dài không nản! 🛣️"
+            ],
+            'Mùi': [
+                "Năm Mùi an khang, cả làng yêu mến! 🐐",
+                "Tam dương khai thái, vạn sự cát tường! ☀️",
+                "Cuộc sống êm đềm, ngọt ngào như kẹo! 🍬"
+            ],
+            'Thân': [
+                "Năm Thân lanh lợi, tiền bạc rủng rỉnh! 🐵",
+                "Thông minh sáng tạo, vạn người nể phục! 💡",
+                "Vui vẻ như khỉ, lộc lá đầy nhà! 🍌"
+            ],
+            'Dậu': [
+                "Năm Dậu rực rỡ, gáy vang trời đất! 🐓",
+                "Kim kê đắc lộc, tiền vàng đầy sân! 🌕",
+                "Chăm chỉ nhặt nhạnh, núi vàng sẽ thành! ⛰️"
+            ],
+            'Tuất': [
+                "Năm Tuất trung thành, bạn bè tin cậy! 🐶",
+                "Chó canh giữ nhà, tiền không thất thoát! 🏠",
+                "Vượng khí dồi dào, phát tài phát lộc! 🍀"
+            ],
+            'Hợi': [
+                "Năm Hợi an nhàn, ăn no ngủ kỹ! 🐷",
+                "Heo vàng gõ cửa, tài lộc đầy kho! 💰",
+                "Cuộc sống sung túc, vạn sự bình an! 🏘️"
+            ]
+        };
+
+        // Lunar Year Logic
+        function calculateLunarYear(year) {
+            const can = ['Canh', 'Tân', 'Nhâm', 'Quý', 'Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ'];
+            const chi = ['Thân', 'Dậu', 'Tuất', 'Hợi', 'Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi'];
+            // year % 10 -> Can
+            // year % 12 -> Chi
+            return {
+                can: can[year % 10],
+                chi: chi[year % 12],
+                name: `${can[year % 10]} ${chi[year % 12]}`
+            };
+        }
+
+        function getZodiacEmoji(chiName) {
+            const emojis = {
+                'Tý': '🐭', 'Sửu': '🐮', 'Dần': '🐯', 'Mão': '🐱',
+                'Thìn': '🐉', 'Tỵ': '🐍', 'Ngọ': '🐎', 'Mùi': '🐐',
+                'Thân': '🐵', 'Dậu': '🐓', 'Tuất': '🐶', 'Hợi': '🐷'
+            };
+            return emojis[chiName] || '🎆';
+        }
+
+        function getWishesForYear(year, baseWishes) {
+            const lunar = calculateLunarYear(year);
+            const specificWishes = zodiacWishes[lunar.chi] || [];
+
+            // Add specific year wishes to the general or IT wishes
+            return [...baseWishes, ...specificWishes];
+        }
 
         let wishes = wishesIT; // Default to IT
 
@@ -1612,8 +1933,13 @@
         const moneyBack = document.getElementById('moneyBack');
 
         // Event listeners
+        // Event listeners
         envelopeContainer.addEventListener('click', openEnvelope);
-        moneyCard.addEventListener('click', () => moneyCard.classList.toggle('flipped'));
+        // Delegate click for dynamically created cards
+        document.getElementById('moneyStackWrapper').addEventListener('click', () => {
+            const cards = document.querySelectorAll('.money-card');
+            cards.forEach(card => card.classList.toggle('flipped'));
+        });
 
         // Create floating particles
         function createParticles() {
@@ -1636,6 +1962,9 @@
             sr: new Audio('sounds/sr.mp3')
         };
 
+        // Reduce volume (too loud default)
+        Object.values(sounds).forEach(s => s.volume = 0.4);
+
         // Preload sounds
         sounds.open.load();
         sounds.coin.load();
@@ -1647,11 +1976,44 @@
             const urlParams = new URLSearchParams(window.location.search);
             const theme = urlParams.get('theme');
 
+            // Dynamic Year Logic
+            const paramYear = parseInt(urlParams.get('year'));
+            const currentYear = !isNaN(paramYear) ? paramYear : new Date().getFullYear();
+            const lunar = calculateLunarYear(currentYear);
+            const emoji = getZodiacEmoji(lunar.chi);
+
+            // Update UI with dynamic year
+            const yearTitle = `Chúc Mừng Năm Mới ${currentYear} - Xuân ${lunar.name} ${emoji}`;
+
+            // Update Page Title based on Theme
+            if (theme === 'normal') {
+                document.title = '🧧 Lì Xì May Mắn';
+            } else {
+                document.title = '🧧 Lì Xì May Mắn - Phòng CNTT';
+            }
+
+            // Update Header Description
+            const headerDesc = document.querySelector('.header p');
+            if (headerDesc) headerDesc.textContent = yearTitle;
+
+            // In case there is an h3 title
+            const h3Title = document.getElementById('yearTitle');
+            if (h3Title) h3Title.textContent = `Năm Mới ${lunar.name} ${emoji}`;
+
+            // Update Wishes
+            if (theme === 'normal') {
+                document.body.classList.add('theme-normal');
+                wishes = getWishesForYear(currentYear, wishesGeneral);
+            } else {
+                // Default is IT theme
+                wishes = getWishesForYear(currentYear, wishesIT);
+            }
+
+            // Re-shuffle with new wishes
+            wishDeck = [];
+
             if (theme === 'normal') {
                 // Apply Normal Theme
-
-                // 1. Change Wishes
-                wishes = wishesGeneral;
 
                 // 2. Hide Hospital Badge
                 const departmentBadge = document.querySelector('.department-badge');
@@ -1663,11 +2025,12 @@
 
                 // 4. Update Header
                 const headerTitle = document.querySelector('.header h1');
-                const headerDesc = document.querySelector('.header p');
+                const headerDescOld = document.querySelector('.header p'); // Renamed to avoid conflict
                 if (headerTitle) headerTitle.textContent = '🧧 Lì Xì May Mắn'; // Keep same or specific generic title
-                if (headerDesc) headerDesc.textContent = 'Chúc Mừng Năm Mới 2026 - Xuân Bính Ngọ 🐎';
+                // The dynamic year logic above already handles the headerDesc, so this line is redundant if headerDesc is the same element.
+                // If it's a different element, it should be updated here. Assuming it's the same, we'll keep the dynamic one.
+                // if (headerDescOld) headerDescOld.textContent = 'Chúc Mừng Năm Mới 2026 - Xuân Bính Ngọ 🐎';
 
-                // 5. Update Background (Remove medical blue influence)
                 // 5. Update Background (Remove medical blue influence)
                 document.body.classList.add('theme-normal');
             }
@@ -1675,6 +2038,37 @@
 
         // Initialize Theme
         initTheme();
+
+        // --- Sound Control Logic ---
+        let isMuted = localStorage.getItem('luckyMoney_muted') === 'true';
+        const muteBtn = document.getElementById('muteBtn');
+
+        function updateMuteUI() {
+            muteBtn.textContent = isMuted ? '🔇' : '🔊';
+            muteBtn.style.opacity = isMuted ? '0.7' : '1';
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            localStorage.setItem('luckyMoney_muted', isMuted);
+            updateMuteUI();
+        }
+
+        // Apply initial state
+        updateMuteUI();
+
+        // Override playSound to respect mute
+        const originalPlaySound = playSound;
+        playSound = function (name) {
+            if (isMuted) return;
+            if (sounds[name]) {
+                sounds[name].currentTime = 0;
+                sounds[name].play().catch(e => { });
+            }
+        };
+
+        // Also need to patch the manual plays in triggerJackpot/renderMoneyStack if any
+        // ... (See below patch)
 
         // Share & QR Logic
         let qrcodeObj = null;
@@ -1839,34 +2233,84 @@
 
             function getGachaResult() {
                 const rand = Math.random() * 100;
-                let currentThreshold = 0;
+                let tier = 'N';
+                let mainItem = gachaTiers.N.items[0];
 
-                // SSR Check
-                currentThreshold += gachaTiers.SSR.chance;
-                if (rand < currentThreshold) return { tier: 'SSR', ...getRandomItem(gachaTiers.SSR.items) };
+                // Determine Main Tier & Item
+                if (rand < gachaTiers.SSR.chance) {
+                    tier = 'SSR';
+                    mainItem = getRandomItem(gachaTiers.SSR.items);
+                } else if (rand < gachaTiers.SSR.chance + gachaTiers.SR.chance) {
+                    tier = 'SR';
+                    mainItem = getRandomItem(gachaTiers.SR.items);
+                } else if (rand < gachaTiers.SSR.chance + gachaTiers.SR.chance + gachaTiers.R.chance) {
+                    tier = 'R';
+                    mainItem = getRandomItem(gachaTiers.R.items);
+                } else {
+                    tier = 'N';
+                    mainItem = getRandomItem(gachaTiers.N.items);
+                }
 
-                // SR Check
-                currentThreshold += gachaTiers.SR.chance;
-                if (rand < currentThreshold) return { tier: 'SR', ...getRandomItem(gachaTiers.SR.items) };
+                // Initialize bills array with the main item
+                let bills = [mainItem];
 
-                // R Check
-                currentThreshold += gachaTiers.R.chance;
-                if (rand < currentThreshold) return { tier: 'R', ...getRandomItem(gachaTiers.R.items) };
+                // Bonus Bills Logic (Mixed Stacks)
+                // Chance to add extra bills based on Main Tier
+                let bonusChance = 0;
+                let maxBonus = 0;
 
-                // N (Fallthrough)
-                return { tier: 'N', ...getRandomItem(gachaTiers.N.items) };
+                if (tier === 'N') {
+                    bonusChance = 40; // High chance for extra small bills
+                    maxBonus = 5;
+                } else if (tier === 'R') {
+                    bonusChance = 30;
+                    maxBonus = 3;
+                } else if (tier === 'SR') {
+                    bonusChance = 20;
+                    maxBonus = 2;
+                } else if (tier === 'SSR') {
+                    bonusChance = 10;
+                    maxBonus = 1;
+                }
+
+                // Roll for extra bills
+                for (let i = 0; i < maxBonus; i++) {
+                    if (Math.random() * 100 < bonusChance) {
+                        // Add a random bill (mostly N or R)
+                        const bonusRand = Math.random() * 100;
+                        let bonusItem;
+                        if (bonusRand < 5) bonusItem = getRandomItem(gachaTiers.SR.items); // Small chance for big bonus
+                        else if (bonusRand < 30) bonusItem = getRandomItem(gachaTiers.R.items);
+                        else bonusItem = getRandomItem(gachaTiers.N.items);
+
+                        bills.push(bonusItem);
+                    }
+                }
+
+                // Return structure with bills array
+                // Use the highest tier in the stack as the overall tier for effects
+                // (Already determined by main pull, but could upgrade if bonus is better? keeping simple for now)
+
+                return { tier, bills };
             }
 
             // Get gacha result with rarity
             const happyResult = getGachaResult();
 
             // Apply rarity effects logic here (can be expanded later for visual flare)
-            console.log(`Gacha Pull: ${happyResult.tier} - ${happyResult.display}`);
+            // Apply rarity effects logic here
+            console.log(`Gacha Pull: ${happyResult.tier} - ${happyResult.bills.length} bills`);
+
+            // Calculate Total Value
+            const totalValue = happyResult.bills.reduce((sum, bill) => sum + bill.value, 0);
 
             currentResult = {
-                money: happyResult,
+                money: happyResult, // Contains .bills array
+                totalValue: totalValue, // Store explicitly
                 wish: getNextWish()
             };
+
+
 
             // Play sound based on tier
             if (currentResult.money.tier === 'SSR') playSound('ssr');
@@ -1879,27 +2323,25 @@
                 resultCard.setAttribute('data-rarity', currentResult.money.tier); // Add tier for styling
 
                 // Update Stats
-                updateStats(currentResult.money.tier, currentResult.money.value);
+                updateStats(currentResult.money.tier, currentResult.totalValue);
 
                 // Add to History
                 addToHistory({
                     timestamp: Date.now(),
-                    amount: currentResult.money.value,
-                    tier: currentResult.money.tier,
+                    amount: currentResult.totalValue,
+                    tier: 'PULL', // Changed from 'pull' to 'PULL' for consistency with GAMBLE_WIN/LOSE
                     action: 'pull'
                 });
 
-                // Set money images
-                moneyFront.src = currentResult.money.front;
-                moneyBack.src = currentResult.money.back;
-                moneyCard.classList.remove('flipped');
+                // Set money images & Render Stack
+                renderMoneyStack(currentResult.money.bills);
 
-                // Animate amount
-                // playSound('coin'); // Moved to start
-                animateValue(amountEl, 0, currentResult.money.value, 1500);
+                // Animate amount (Total Value)
+                const totalValue = currentResult.totalValue;
+                animateValue(amountEl, 0, totalValue, 1500);
 
                 // Add to wallet
-                addToWallet(currentResult.money.value);
+                addToWallet(totalValue);
 
                 // Show wish (Typewriter)
                 typeWriter(wishEl, currentResult.wish);
@@ -1919,6 +2361,110 @@
             }, 600);
         }
 
+        // Render Money Stack
+        function renderMoneyStack(bills) {
+            const container = document.getElementById('moneyStackWrapper');
+            container.innerHTML = ''; // Clear existing
+
+            const count = bills.length;
+            // Limit max visual cards to avoid clutter (e.g. max 5)
+            const visualCount = Math.min(count, 5);
+
+            for (let i = 0; i < visualCount; i++) {
+                const card = document.createElement('div');
+                card.className = 'money-card';
+
+                // Offset calculation (reverse order so first one is on top logically, but last one in DOM is on top z-index wise? 
+                // Actually DOM order: last is top.
+                // We want the CLICKABLE one to be top.
+                // Let's loop 0 to visualCount. i=0 is bottom, i=count-1 is top.
+
+                let randomRot = 0;
+                let offsetX = 0;
+                let offsetY = 0;
+                let jitterX = 0;
+                let jitterY = 0;
+
+                // Only apply messy look if it's actually a stack
+                if (count > 1) {
+                    // Randomish offset for "messy stack" look
+                    randomRot = (Math.random() - 0.5) * 12; // +/- 6deg
+
+                    // Fan them out
+                    offsetX = i * 6;
+                    offsetY = i * -6;
+
+                    // Random jitter
+                    jitterX = (Math.random() - 0.5) * 4;
+                    jitterY = (Math.random() - 0.5) * 4;
+                }
+
+                // Use CSS Variable so we don't overwrite the rotation on flip
+                card.style.setProperty('--stack-transform', `translate(${offsetX + jitterX}px, ${offsetY + jitterY}px) rotate(${randomRot}deg)`);
+                card.style.zIndex = i;
+
+                // Staggered flip animation
+                // Top card (last one) flips first if we iterate normally? 
+                // Let's make them flip in sequence from top to bottom or bottom to top.
+                // i=0 is bottom. i=max is top.
+                // If we want top to flip first: delay = (max - i) * 0.1s
+                const delay = (visualCount - 1 - i) * 0.05;
+                card.style.transitionDelay = `${delay}s`;
+
+                // Inner HTML
+                const bill = bills[i]; // Get specific bill for this card
+                // If visualCount < count, the top card (last one rendered) should probably be the Main Item (index 0)?
+                // Actually the render order: i=0 is bottom
+                // If we want the BEST bill on top, we should sort or handle bills array carefully.
+                // Currently bills[0] is main item.
+                // Let's ensure bills[0] (Main) is on TOP.
+                // Loop i=0 to visualCount.
+                // visualCount-1 (Top Card) -> bills[0]
+                // visualCount-2 -> bills[1]
+                // ...
+
+                // Mapping visual index 'i' to bill index
+                // i=visualCount-1 (Top Visual) should display bills[0]
+                // i=visualCount-2 should display bills[1]
+
+                const billIndex = visualCount - 1 - i;
+                const currentBill = bills[billIndex] || bills[0]; // Fallback
+
+                card.innerHTML = `
+                    <div class="money-face money-front">
+                        <img src="${currentBill.front}" alt="Mặt trước">
+                    </div>
+                    <div class="money-face money-back">
+                        <img src="${currentBill.back}" alt="Mặt sau">
+                    </div>
+                `;
+
+                container.appendChild(card);
+            }
+
+            // Add a badge if count > 1
+            if (count > 1) {
+                const badge = document.createElement('div');
+                badge.className = 'stack-badge';
+                badge.textContent = `x${count}`;
+                badge.style.cssText = `
+                    position: absolute;
+                    top: -10px;
+                    right: -10px;
+                    background: var(--red-primary);
+                    color: #fff;
+                    font-weight: bold;
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 12px;
+                    z-index: 100;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+                    border: 2px solid #fff;
+                    animation: bounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s both;
+                `;
+                container.appendChild(badge);
+            }
+        }
+
         function triggerJackpot() {
             // Visuals
             document.body.classList.add('jackpot-active');
@@ -1929,7 +2475,7 @@
             document.body.style.animation = 'shake-hard 0.8s ease-in-out';
 
             // Huge Gold Confetti Explosion
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 3; i++) { // Reduced from 5 to 3
                 setTimeout(() => createConfetti(true), i * 300);
             }
 
@@ -1937,9 +2483,11 @@
             const burstCount = 5;
             for (let i = 0; i < burstCount; i++) {
                 setTimeout(() => {
-                    const clone = sounds.coin.cloneNode();
-                    clone.volume = 1.0;
-                    clone.play().catch(e => { });
+                    if (!isMuted) { // Check mute
+                        const clone = sounds.coin.cloneNode();
+                        clone.volume = 0.4; // Maintain lower volume
+                        clone.play().catch(e => { });
+                    }
                 }, i * 150);
             }
         }
@@ -1957,7 +2505,8 @@
             const centerX = 50;
             const centerY = 50;
 
-            const particleCount = isJackpot ? 100 : 60;
+            // Reduced particle count for performance
+            const particleCount = isJackpot ? 60 : 30; // Was 100/60
 
             for (let i = 0; i < particleCount; i++) {
                 const confetti = document.createElement('div');
@@ -1976,7 +2525,7 @@
                 confetti.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
 
                 if (isJackpot) {
-                    confetti.style.textShadow = '0 0 10px gold';
+                    // confetti.style.textShadow = '0 0 10px gold'; // Removed expensive shadow
                     confetti.style.zIndex = 2000;
                 }
 
@@ -2006,6 +2555,8 @@
             resultCard.classList.remove('show');
             document.body.classList.remove('jackpot-active'); // Remove jackpot state
 
+            // Stop any playing sounds if resetting immediately (optional)
+
             // Reset Gambling State
             document.getElementById('gambleBtn').disabled = false;
             amountEl.style.color = ''; // Reset color
@@ -2019,15 +2570,33 @@
             }, 300);
         }
 
+        function resetData() {
+            if (confirm('Bạn có chắc chắn muốn xóa toàn bộ dữ liệu (Tiền, Lịch sử, Thành tựu)?')) {
+                localStorage.removeItem('luckyMoney_data');
+                location.reload();
+            }
+        }
+
         // Share result
         function shareResult() {
             if (!currentResult) return;
 
-            const text = `🧧 Tôi vừa nhận được ${currentResult.money.display} VNĐ lì xì từ IT Department!\n\n"${currentResult.wish}"\n\n🎊 Thử vận may của bạn: ${window.location.href}`;
+            const urlParams = new URLSearchParams(window.location.search);
+            const theme = urlParams.get('theme');
+
+            let senderName = 'Phòng CNTT';
+            let title = 'Lì Xì May Mắn - Phòng CNTT';
+
+            if (theme === 'normal') {
+                senderName = 'Lì Xì May Mắn'; // Generic
+                title = 'Lì Xì May Mắn';
+            }
+
+            const text = `🧧 Tôi vừa nhận được ${currentResult.money.display} VNĐ lì xì từ ${senderName}!\n\n"${currentResult.wish}"\n\n🎊 Thử vận may của bạn: ${window.location.href}`;
 
             if (navigator.share) {
                 navigator.share({
-                    title: 'Lì Xì May Mắn - IT Department',
+                    title: title,
                     text: text
                 });
             } else {
@@ -2188,8 +2757,17 @@
         function addToHistory(entry) {
             const data = getData();
             data.history.unshift(entry); // Add to top
-            if (data.history.length > 50) data.history.pop(); // Keep last 50
+            // Limit history to last 50 items to prevent lag
+            if (data.history.length > 50) {
+                data.history = data.history.slice(0, 50);
+            }
             saveData(data);
+
+            // Update Stats Display if modal is open
+            if (document.getElementById('statsModal').classList.contains('open')) {
+                renderStats(); // Assuming renderStats updates the UI
+                renderHistory(); // Re-render history to show latest
+            }
         }
 
         function updateStats(tier, amount) {
@@ -2504,6 +3082,93 @@
             const resultEl = document.getElementById('fortuneResult');
             resultEl.style.display = 'block';
             resultEl.textContent = `Vận mệnh tuổi ${ZODIACS[zodiacIndex].name}: ${fortunes[Math.floor(Math.random() * fortunes.length)]}`;
+        }
+
+        // --- Fake Withdraw Feature ---
+        function withdrawMoney() {
+            const data = getData();
+            if (data.totalMoney <= 0) {
+                // Use simple alert for error to distinguish from the "real" notification
+                alert('⚠️ Số dư không đủ để thực hiện giao dịch.');
+                return;
+            }
+
+            // 1. Processing (Simulate network delay)
+            const btn = document.querySelector('.withdraw-btn');
+            const originalText = btn.textContent;
+            btn.textContent = '...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+
+                // 2. Format Data
+                const now = new Date();
+                const day = String(now.getDate()).padStart(2, '0');
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const year = String(now.getFullYear()).slice(-2); // 24
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const timeStr = `${hours}:${minutes}`;
+                const dateStr = `${day}/${month}/${year}`;
+
+                const amount = data.totalMoney;
+                const fakeBankBalance = 124500000; // Fake base balance
+                const totalBankBalance = fakeBankBalance + amount;
+
+                // 3. Deduct Money (Real Logic!)
+                addToWallet(-amount);
+
+                // 4. Construct Message
+                // Format: TK 1234xxxxx +[Amount]VND [Time] [Date]. SD: [Balance]VND. ND: Rut tien li xi
+                const msg = `TK 1032xxxxx +${formatNumber(amount)}VND ${timeStr} ${day}/${month}. SD: ${formatNumber(totalBankBalance)}VND. ND: Rut tien li xi tu Lucky Money`;
+
+                // 5. Show Notification
+                showFakeNotification('VIETCOMBANK', msg, 'bây giờ');
+
+            }, 2000);
+        }
+
+        let notificationTimeout;
+        function showFakeNotification(appName, msg, timeAgo = 'bây giờ', iconChar = 'VCB') {
+            // Remove existing
+            const existing = document.querySelector('.fake-notification');
+            if (existing) existing.remove();
+
+            const notif = document.createElement('div');
+            notif.className = 'fake-notification';
+            // iOS Style Structure
+            notif.innerHTML = `
+                <div class="fake-notification-header">
+                    <div class="app-info">
+                        <div class="app-icon">${iconChar}</div>
+                        <span class="app-name">${appName}</span>
+                    </div>
+                    <span class="time">${timeAgo}</span>
+                </div>
+                <div class="fake-notification-content">
+                    ${msg}
+                </div>
+            `;
+
+            // Add click listener to dismiss
+            notif.onclick = () => {
+                notif.classList.remove('show');
+                setTimeout(() => notif.remove(), 500);
+            };
+
+            document.body.appendChild(notif);
+
+            // Animate in
+            requestAnimationFrame(() => notif.classList.add('show'));
+
+            // Auto dismiss after 7 seconds (iOS notifications stay longer)
+            if (notificationTimeout) clearTimeout(notificationTimeout);
+            notificationTimeout = setTimeout(() => {
+                notif.classList.remove('show');
+                setTimeout(() => notif.remove(), 500);
+            }, 7000);
         }
     </script>
 </body>
