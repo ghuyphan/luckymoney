@@ -1056,7 +1056,8 @@
 
         .fake-notification {
             position: fixed;
-            top: 10px;
+            top: 20px;
+            /* Increased from 10px to avoid status bar overlap */
             left: 50%;
             /* Optimized transform transition */
             transform: translate3d(-50%, -150%, 0);
@@ -1203,8 +1204,9 @@
 
         body.no-scroll {
             overflow: hidden;
-            height: 100vh;
-            /* Lock height to prevent movement */
+            /* height: 100vh; Removed to prevent scroll resetting to top */
+            padding-right: 15px;
+            /* Approximate scrollbar width to prevent horizontal shift */
         }
 
         /* --- NEW SKINS --- */
@@ -2201,6 +2203,27 @@
         // Initialize Theme
         initTheme();
 
+        // Preload Money Images
+        function preloadImages() {
+            moneyAmounts.forEach(item => {
+                const img1 = new Image();
+                img1.src = item.front;
+                const img2 = new Image();
+                img2.src = item.back;
+            });
+            // Preload bank images
+            BANKS_DATA.forEach(bank => {
+                const img = new Image();
+                img.src = `images/banks/${bank.code}.png`;
+            });
+
+            // Pre-render bank list so modal opens instantly
+            setTimeout(() => {
+                renderBanks();
+            }, 100);
+        }
+        window.addEventListener('load', preloadImages);
+
         // --- Sound Control Logic ---
         let isMuted = localStorage.getItem('luckyMoney_muted') === 'true';
         const muteBtn = document.getElementById('muteBtn');
@@ -2319,16 +2342,22 @@
 
 
         function typeWriter(element, text, speed = 30) {
+            // Safety: Clear previous timeout if active
+            if (element._typingTimeout) {
+                clearTimeout(element._typingTimeout);
+            }
+
             element.textContent = '';
             element.classList.add('typing-cursor');
             let i = 0;
             function type() {
                 if (i < text.length) {
-                    element.textContent += text.charAt(i); // Use textContent for better performance
+                    element.textContent += text.charAt(i);
                     i++;
-                    setTimeout(type, speed);
+                    element._typingTimeout = setTimeout(type, speed);
                 } else {
                     element.classList.remove('typing-cursor');
+                    element._typingTimeout = null;
                 }
             }
             type();
@@ -2509,18 +2538,21 @@
                 // Show wish (Typewriter)
                 typeWriter(wishEl, currentResult.wish);
 
-                // Create confetti
-                createConfetti();
-
-                // Trigger Jackpot effects if SSR
-                if (currentResult.money.tier === 'SSR') {
-                    triggerJackpot();
-                }
-
-                // Smooth scroll to result
+                // Smooth scroll to result FIRST
                 requestAnimationFrame(() => {
                     resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 });
+
+                // Delay visuals so they happen AFTER scroll enters view
+                setTimeout(() => {
+                    // Create confetti
+                    createConfetti();
+
+                    // Trigger Jackpot effects if SSR
+                    if (currentResult.money.tier === 'SSR') {
+                        triggerJackpot();
+                    }
+                }, 800); // 800ms delay for scroll to finish
             }, 600);
         }
 
@@ -2641,10 +2673,11 @@
             // Visuals
             document.body.classList.add('jackpot-active');
 
-            // Shake effect
-            document.body.style.animation = 'none';
-            document.body.offsetHeight; /* trigger reflow */
-            document.body.style.animation = 'shake-hard 0.8s ease-in-out';
+            // Shake effect on CONTAINER, not body (prevents scroll jump)
+            const container = document.querySelector('.container');
+            container.style.animation = 'none';
+            container.offsetHeight; /* trigger reflow */
+            container.style.animation = 'shake-hard 0.8s ease-in-out';
 
             // Huge Gold Confetti Explosion
             for (let i = 0; i < 3; i++) { // Reduced from 5 to 3
@@ -2674,11 +2707,13 @@
             }
 
             // Explosion center
-            const centerX = 50;
-            const centerY = 50;
+            // const centerX = 50; // Unused
+            // const centerY = 50; // Unused
 
             // Reduced particle count for performance
-            const particleCount = isJackpot ? 60 : 30; // Was 100/60
+            const particleCount = isJackpot ? 60 : 30;
+
+            const fragment = document.createDocumentFragment();
 
             for (let i = 0; i < particleCount; i++) {
                 const confetti = document.createElement('div');
@@ -2687,9 +2722,9 @@
 
                 // Random angle and distance for explosion
                 const angle = Math.random() * Math.PI * 2;
-                const velocity = (15 + Math.random() * 30) * (isJackpot ? 1.5 : 1); // faster for jackpot
-                const tx = Math.cos(angle) * velocity; // horizontal velocity
-                const ty = Math.sin(angle) * velocity - 20; // vertical velocity (upward)
+                const velocity = (15 + Math.random() * 30) * (isJackpot ? 1.5 : 1);
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity - 20;
 
                 confetti.style.left = '50%';
                 confetti.style.top = '50%';
@@ -2697,28 +2732,46 @@
                 confetti.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
 
                 if (isJackpot) {
-                    // confetti.style.textShadow = '0 0 10px gold'; // Removed expensive shadow
                     confetti.style.zIndex = 2000;
                 }
 
                 // Custom animation for each particle
                 confetti.style.transition = `all ${1 + Math.random()}s cubic-bezier(0.25, 1, 0.5, 1)`;
                 confetti.style.opacity = '1';
-                // Remove default background used for square confetti
                 confetti.style.background = 'transparent';
                 confetti.style.width = 'auto';
                 confetti.style.height = 'auto';
 
-                container.appendChild(confetti);
+                // Store target transform for later
+                confetti.dataset.tx = tx;
+                confetti.dataset.ty = ty;
+                confetti.dataset.rot = Math.random() * 360;
 
-                // Trigger animation next frame
-                requestAnimationFrame(() => {
-                    confetti.style.transform = `translate(${tx}vw, ${ty}vh) rotate(${Math.random() * 360}deg)`;
-                    confetti.style.opacity = '0';
-                });
-
-                setTimeout(() => confetti.remove(), 2000);
+                fragment.appendChild(confetti);
             }
+
+            container.appendChild(fragment);
+
+            // Animate all in next frame (Batch layout/paint)
+            requestAnimationFrame(() => {
+                // Select only the new ones? Or just all children?
+                // For simplicity, animate children that don't have style.transform set yet?
+                // Actually, accessing container.children is live.
+                Array.from(container.children).forEach(child => {
+                    // Check if it's new (transient hack or just overwriting is fine)
+                    if (child.dataset.tx) {
+                        child.style.transform = `translate(${child.dataset.tx}vw, ${child.dataset.ty}vh) rotate(${child.dataset.rot}deg)`;
+                        child.style.opacity = '0';
+                        // Cleanup dataset
+                        delete child.dataset.tx;
+                        delete child.dataset.ty;
+                        delete child.dataset.rot;
+
+                        // Auto remove
+                        setTimeout(() => child.remove(), 2000);
+                    }
+                });
+            });
         }
 
         // Reset envelope
@@ -3192,6 +3245,8 @@
         function renderHistory() {
             const data = getData();
             const list = document.getElementById('historyList');
+            const fragment = document.createDocumentFragment();
+
             list.innerHTML = '';
 
             data.history.forEach(item => {
@@ -3208,8 +3263,9 @@
                     <span><span class="tier-badge ${tierClass}">${item.tier}</span> ${timeStr}</span>
                     <span>${item.amount > 0 ? '+' : ''}${formatNumber(item.amount)}</span>
                 `;
-                list.appendChild(li);
+                fragment.appendChild(li);
             });
+            list.appendChild(fragment);
         }
 
         function renderAchievements() {
@@ -3412,6 +3468,8 @@
             const grid = document.getElementById('bankGrid');
             if (grid.children.length > 0) return; // Already rendered
 
+            const fragment = document.createDocumentFragment();
+
             BANKS_DATA.forEach(bank => {
                 const div = document.createElement('div');
                 div.className = `bank-item ${bank.code === selectedBank ? 'selected' : ''}`;
@@ -3427,8 +3485,10 @@
 
                 div.appendChild(img);
                 div.appendChild(name);
-                grid.appendChild(div);
+                fragment.appendChild(div);
             });
+
+            grid.appendChild(fragment);
         }
 
         function selectBank(bank, el) {
@@ -3471,7 +3531,11 @@
             renderBanks();
         }
 
+        let isProcessingWithdraw = false; // Guard flag
+
         function confirmWithdraw() {
+            if (isProcessingWithdraw) return; // Prevent double click
+
             const stk = document.getElementById('stkInput').value;
             if (!stk) {
                 alert('Vui lòng nhập số tài khoản!');
@@ -3486,6 +3550,11 @@
                 alert('Số dư không đủ! Giao dịch thất bại.');
                 return;
             }
+
+            // Lock UI
+            isProcessingWithdraw = true;
+            const withdrawButton = document.querySelector('#withdrawModal .btn-primary');
+            if (withdrawButton) withdrawButton.disabled = true;
 
             // Close modal
             closeModal(null, 'withdrawModal');
@@ -3519,6 +3588,10 @@
             setTimeout(() => {
                 showFakeNotification(selectedBank, msg, 'bây giờ', selectedBank);
                 playSound('coin');
+
+                // Unlock
+                isProcessingWithdraw = false;
+                if (withdrawButton) withdrawButton.disabled = false;
             }, 1000);
         }
     </script>
