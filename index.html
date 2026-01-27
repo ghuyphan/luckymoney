@@ -1005,6 +1005,8 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             font-family: 'Be Vietnam Pro', sans-serif;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: calc(100vw - 160px);
+            /* Prevent overlap with utility bar */
         }
 
         .wallet-container.update {
@@ -1041,10 +1043,11 @@
             position: fixed;
             top: 20px;
             left: 50%;
-            transform: translate3d(-50%, -150%, 0);
+            transform: translateX(-50%) translateY(-150%);
+            opacity: 0;
             width: 95%;
             max-width: 380px;
-            background: rgba(240, 240, 240, 0.9);
+            background: rgba(240, 240, 240, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             padding: 12px 15px;
@@ -1054,15 +1057,19 @@
             flex-direction: column;
             gap: 8px;
             z-index: 10000;
-            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
             border: 1px solid rgba(255, 255, 255, 0.4);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: #000;
-            will-change: transform;
+            will-change: transform, opacity;
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+                opacity 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            pointer-events: none;
         }
 
         .fake-notification.show {
-            transform: translate3d(-50%, 0, 0);
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .fake-notification-header {
@@ -1131,6 +1138,179 @@
                 width: 100%;
                 max-width: 200px;
             }
+
+            .utility-bar {
+                gap: 0.3rem;
+            }
+
+            .icon-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+
+            .wallet-container {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+
+            .wallet-balance {
+                font-size: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .department-badge {
+                font-size: 0.7rem;
+                padding: 0.4rem 1rem;
+            }
+
+            .result-card .wish {
+                padding: 2rem 1rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            .container {
+                margin-top: 4rem;
+            }
+
+            .envelope {
+                width: clamp(180px, 55vw, 220px);
+                height: clamp(270px, 82vw, 330px);
+            }
+
+            .money-stack-container {
+                max-width: clamp(220px, 65vw, 300px);
+            }
+
+            .modal-content {
+                width: 98%;
+                max-height: 85vh;
+            }
+
+            .bank-grid {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+                gap: 8px;
+                max-height: 220px;
+            }
+
+            .bank-item {
+                min-height: 60px;
+                padding: 8px 4px;
+            }
+
+            .bank-item img {
+                height: 24px;
+            }
+
+            .bank-item span {
+                font-size: 0.6rem;
+            }
+
+            .share-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+
+        /* Medium screens */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .container {
+                max-width: 480px;
+            }
+
+            .result-card {
+                max-width: 420px;
+            }
+        }
+
+        /* Large screens */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 550px;
+            }
+
+            .money-card {
+                max-width: 380px;
+            }
+
+            .modal-content {
+                max-width: 520px;
+            }
+
+            .bank-grid {
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            }
+
+            .utility-bar {
+                top: 1.5rem;
+                left: 1.5rem;
+                gap: 0.75rem;
+            }
+
+            .icon-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+
+            .wallet-container {
+                top: 1.5rem;
+                right: 1.5rem;
+            }
+        }
+
+        /* Landscape phones */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .container {
+                margin-top: 1rem;
+            }
+
+            .envelope {
+                width: 140px;
+                height: 210px;
+            }
+
+            .envelope-container {
+                margin: 2rem auto 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 0.85rem;
+            }
+
+            .department-badge {
+                display: none;
+            }
+
+            .result-card {
+                padding: 1rem;
+            }
+
+            .result-card .amount {
+                font-size: 2rem;
+            }
+
+            .money-stack-container {
+                max-width: 200px;
+            }
+
+            .result-card .wish {
+                padding: 1.5rem 1rem;
+                font-size: 0.95rem;
+            }
         }
 
         /* Typewriter Cursor */
@@ -1143,16 +1323,6 @@
         @keyframes blink {
             50% {
                 opacity: 0;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .container {
-                max-width: 550px;
-            }
-
-            .money-card {
-                max-width: 380px;
             }
         }
 
@@ -1246,6 +1416,16 @@
             justify-content: center;
             font-size: 1.2rem;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            background: rgba(0, 0, 0, 0.6);
+            transform: scale(1.1);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
         }
 
         /* Modal - FIXED */
@@ -1364,9 +1544,15 @@
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
             margin-bottom: 1rem;
+        }
+
+        @media (min-width: 400px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         .stat-box {
@@ -1392,28 +1578,45 @@
             position: fixed;
             top: 20px;
             left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: #222;
+            transform: translateX(-50%) translateY(-120px);
+            opacity: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
             color: #fff;
-            padding: 1rem;
-            border-radius: 50px;
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             gap: 1rem;
             z-index: 3000;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             border: 2px solid var(--gold-primary);
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             width: 90%;
-            max-width: 400px;
+            max-width: 360px;
+            will-change: transform, opacity;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                opacity 0.4s ease;
+            pointer-events: none;
         }
 
         .achievement-toast.show {
             transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .achievement-toast .icon {
             font-size: 2rem;
+            min-width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.15);
+            border-radius: 12px;
+        }
+
+        .achievement-toast .info {
+            flex: 1;
         }
 
         .achievement-toast .info .title {
@@ -1425,6 +1628,14 @@
         .achievement-toast .info .desc {
             font-size: 0.85rem;
             opacity: 0.9;
+        }
+
+        .achievement-toast .skin-unlock {
+            font-size: 0.8rem;
+            color: #FFD700;
+            margin-top: 0.25rem;
+            font-weight: bold;
+            animation: pulse 1s ease-in-out infinite;
         }
 
         /* Info Table */
@@ -1475,29 +1686,173 @@
             border-radius: 8px;
         }
 
-        /* Sound Control */
-        .sound-control {
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 100;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            border: 1px solid var(--gold-primary);
-            color: var(--gold-primary);
-            width: 40px;
-            height: 40px;
+        /* Achievement badges */
+        .achievement-badge {
+            width: 50px;
+            height: 50px;
+            background: #444;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            cursor: help;
+            position: relative;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
         }
 
-        .sound-control:hover {
-            transform: scale(1.1);
-            background: rgba(0, 0, 0, 0.8);
+        .achievement-badge:hover {
+            transform: scale(1.15);
+            z-index: 10;
+        }
+
+        .achievement-badge .achi-icon {
+            font-size: 1.5rem;
+        }
+
+        .achievement-badge .skin-indicator {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            font-size: 0.8rem;
+            background: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Skin-specific achievement styles */
+        .achievement-badge.skin-gold {
+            background: linear-gradient(135deg, #FFD700, #FDB931);
+            border-color: #FFF;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .achievement-badge.skin-holo {
+            background: linear-gradient(135deg, #c0c0ff, #ffc0cb, #ffffc0, #c0ffc0);
+            background-size: 200% 200%;
+            animation: holoShift 3s ease infinite;
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(192, 192, 255, 0.5);
+        }
+
+        .achievement-badge.skin-diamond {
+            background: linear-gradient(135deg, #e0f7fa, #80deea);
+            border-color: #FFF;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+        }
+
+        .achievement-progress {
+            width: 100%;
+            text-align: center;
+            margin-top: 0.5rem;
+            color: #666;
+        }
+
+        #achievementsList {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        /* Skin Collection */
+        .skin-collection {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .skin-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 8px;
+            background: #f5f5f5;
+            border: 2px solid #ddd;
+            transition: all 0.2s;
+        }
+
+        .skin-item.unlocked {
+            border-color: var(--gold-primary);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .skin-preview {
+            width: 40px;
+            height: 50px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .default-preview {
+            background: linear-gradient(180deg, var(--red-primary), var(--red-dark));
+            border: 2px solid var(--gold-primary);
+        }
+
+        .gold-preview {
+            background: linear-gradient(135deg, #FFD700, #FDB931);
+            border: 2px solid #FFF;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .holo-preview {
+            background: linear-gradient(135deg, #c0c0ff, #ffc0cb, #ffffc0);
+            background-size: 200% 200%;
+            animation: holoShift 3s ease infinite;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .diamond-preview {
+            background: linear-gradient(135deg, #e0f7fa, #80deea);
+            border: 2px solid #FFF;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        }
+
+        .skin-item span {
+            font-size: 0.7rem;
+            text-align: center;
+        }
+
+        .skin-status {
+            font-size: 0.65rem !important;
+            color: #999;
+        }
+
+        .skin-status.unlocked {
+            color: #2e7d32;
+        }
+
+        .skin-item.locked {
+            opacity: 0.6;
+        }
+
+        @media (max-width: 400px) {
+            .skin-collection {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Mute button state */
+        .icon-btn.muted {
+            opacity: 0.6;
+            color: #999;
+            border-color: #999;
         }
 
         /* Reset Link */
@@ -1714,8 +2069,9 @@
         </div>
     </div>
 
-    <!-- Utility Buttons -->
+    <!-- Utility Buttons (includes sound control) -->
     <div class="utility-bar">
+        <button class="icon-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
         <button class="icon-btn" onclick="openStats()">📊</button>
         <button class="icon-btn" onclick="openInfo()">ℹ️</button>
     </div>
@@ -1736,14 +2092,49 @@
                     </div>
                     <div class="stat-box">
                         <div class="stat-val" id="statSSRCount">0</div>
-                        <div class="stat-label">Số lần SSR</div>
+                        <div class="stat-label">SSR 🌟</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val" id="statSRCount">0</div>
+                        <div class="stat-label">SR 💜</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val" id="statGambleWins">0</div>
+                        <div class="stat-label">Thắng cược 🎰</div>
+                    </div>
+                </div>
+
+                <!-- Skin Progress -->
+                <h3
+                    style="margin: 1rem 0; color: var(--red-dark); border-bottom: 2px solid var(--gold-primary); display: inline-block;">
+                    Bộ Sưu Tập Skin 🎨</h3>
+                <div class="skin-collection" id="skinCollection">
+                    <div class="skin-item" data-skin="default">
+                        <div class="skin-preview default-preview">🧧</div>
+                        <span>Mặc định</span>
+                        <span class="skin-status unlocked">✓</span>
+                    </div>
+                    <div class="skin-item" data-skin="gold" id="skinGold">
+                        <div class="skin-preview gold-preview">🧧</div>
+                        <span>Vàng</span>
+                        <span class="skin-status locked">🔒 1M</span>
+                    </div>
+                    <div class="skin-item" data-skin="holo" id="skinHolo">
+                        <div class="skin-preview holo-preview">🧧</div>
+                        <span>Hologram</span>
+                        <span class="skin-status locked">🔒 5M</span>
+                    </div>
+                    <div class="skin-item" data-skin="diamond" id="skinDiamond">
+                        <div class="skin-preview diamond-preview">🧧</div>
+                        <span>Kim Cương</span>
+                        <span class="skin-status locked">🔒 10M</span>
                     </div>
                 </div>
 
                 <h3
                     style="margin: 1rem 0; color: var(--red-dark); border-bottom: 2px solid var(--gold-primary); display: inline-block;">
                     Thành Tựu 🏆</h3>
-                <div id="achievementsList" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                <div id="achievementsList">
                 </div>
 
                 <h3 id="yearTitle"
@@ -1860,11 +2251,6 @@
     </div>
 
     <div class="container">
-        <!-- Sound Control -->
-        <div class="sound-control" id="muteBtn" onclick="toggleMute()">
-            🔊
-        </div>
-
         <header class="header">
             <h1>🧧 Lì Xì May Mắn</h1>
             <p>Chúc Mừng Năm Mới 2026 - Xuân Bính Ngọ 🐎</p>
@@ -2100,7 +2486,10 @@
                 totalPulls: 0,
                 tierCounts: { SSR: 0, SR: 0, R: 0, N: 0 },
                 consecutiveN: 0,
-                consecutiveLosses: 0
+                consecutiveLosses: 0,
+                gambleWins: 0,
+                totalWithdrawn: 0,
+                hitZero: false
             },
             achievements: [],
             maxBalance: 0
@@ -2330,6 +2719,12 @@
             closeModal('withdrawModal');
             addToWallet(-pendingAmount);
 
+            // Track withdrawal stats
+            const updatedData = getData();
+            updatedData.stats.totalWithdrawn = (updatedData.stats.totalWithdrawn || 0) + pendingAmount;
+            saveData(updatedData);
+            checkAchievements(updatedData);
+
             if (withdrawMode === 'current') {
                 const wBtn = document.getElementById('actionWithdrawBtn');
                 if (wBtn) {
@@ -2354,6 +2749,7 @@
             setTimeout(() => {
                 showFakeNotification(selectedBank, msg, 'bây giờ', selectedBank);
                 playSound('coin');
+                vibrate(100);
                 isProcessingWithdraw = false;
                 if (withdrawButton) withdrawButton.disabled = false;
             }, 1000);
@@ -2366,6 +2762,38 @@
             renderHistory();
             renderAchievements();
             renderZodiac();
+            renderSkinCollection();
+        }
+
+        function renderSkinCollection() {
+            const data = getData();
+            const achievements = data.achievements || [];
+
+            // Update skin items based on achievements
+            const skinGold = document.getElementById('skinGold');
+            const skinHolo = document.getElementById('skinHolo');
+            const skinDiamond = document.getElementById('skinDiamond');
+
+            if (achievements.includes('millionaire')) {
+                skinGold.classList.add('unlocked');
+                skinGold.classList.remove('locked');
+                skinGold.querySelector('.skin-status').textContent = '✓';
+                skinGold.querySelector('.skin-status').classList.add('unlocked');
+            }
+
+            if (achievements.includes('five_million')) {
+                skinHolo.classList.add('unlocked');
+                skinHolo.classList.remove('locked');
+                skinHolo.querySelector('.skin-status').textContent = '✓';
+                skinHolo.querySelector('.skin-status').classList.add('unlocked');
+            }
+
+            if (achievements.includes('multimillionaire')) {
+                skinDiamond.classList.add('unlocked');
+                skinDiamond.classList.remove('locked');
+                skinDiamond.querySelector('.skin-status').textContent = '✓';
+                skinDiamond.querySelector('.skin-status').classList.add('unlocked');
+            }
         }
 
         function openInfo() {
@@ -2374,8 +2802,20 @@
 
         function renderStats() {
             const data = getData();
-            document.getElementById('statTotalPulls').textContent = data.stats.totalPulls;
-            document.getElementById('statSSRCount').textContent = data.stats.tierCounts.SSR || 0;
+            const s = data.stats;
+
+            document.getElementById('statTotalPulls').textContent = s.totalPulls || 0;
+            document.getElementById('statSSRCount').textContent = s.tierCounts?.SSR || 0;
+
+            // Update additional stats if elements exist
+            const srEl = document.getElementById('statSRCount');
+            if (srEl) srEl.textContent = s.tierCounts?.SR || 0;
+
+            const winsEl = document.getElementById('statGambleWins');
+            if (winsEl) winsEl.textContent = s.gambleWins || 0;
+
+            const withdrawnEl = document.getElementById('statWithdrawn');
+            if (withdrawnEl) withdrawnEl.textContent = formatNumber(s.totalWithdrawn || 0);
         }
 
         function renderHistory() {
@@ -2406,27 +2846,214 @@
             list.appendChild(fragment);
         }
 
+        // ==================== TOAST QUEUE SYSTEM ====================
+        // Handles both notifications and achievements with reliable animations
+        const ToastQueue = {
+            queue: [],
+            isShowing: false,
+            currentToast: null,
+            currentTimeout: null,
+
+            // Force browser to acknowledge element before animating
+            forceReflow(element) {
+                // Reading offsetHeight forces a reflow
+                void element.offsetHeight;
+            },
+
+            // Show next toast in queue
+            showNext() {
+                if (this.queue.length === 0) {
+                    this.isShowing = false;
+                    return;
+                }
+
+                this.isShowing = true;
+                const { element, duration, onShow, onHide } = this.queue.shift();
+
+                // Remove any existing toast of same type
+                if (this.currentToast) {
+                    this.currentToast.remove();
+                }
+
+                this.currentToast = element;
+                document.body.appendChild(element);
+
+                // Force reflow before adding show class
+                this.forceReflow(element);
+
+                // Use double rAF for maximum compatibility
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        element.classList.add('show');
+                        if (onShow) onShow();
+                    });
+                });
+
+                // Set up auto-hide
+                if (this.currentTimeout) clearTimeout(this.currentTimeout);
+                this.currentTimeout = setTimeout(() => {
+                    this.hide(element, onHide);
+                }, duration);
+
+                // Click to dismiss
+                element.onclick = () => this.hide(element, onHide);
+            },
+
+            // Hide a toast
+            hide(element, onHide) {
+                if (!element || !element.parentNode) return;
+
+                element.classList.remove('show');
+
+                setTimeout(() => {
+                    if (element.parentNode) element.remove();
+                    if (onHide) onHide();
+                    if (this.currentToast === element) {
+                        this.currentToast = null;
+                    }
+                    // Show next in queue after a small gap
+                    setTimeout(() => this.showNext(), 300);
+                }, 500); // Match CSS transition duration
+            },
+
+            // Add to queue
+            add(element, duration = 4000, onShow = null, onHide = null) {
+                this.queue.push({ element, duration, onShow, onHide });
+
+                // If not currently showing, start
+                if (!this.isShowing) {
+                    this.showNext();
+                }
+            },
+
+            // Clear all pending toasts
+            clear() {
+                this.queue = [];
+                if (this.currentTimeout) clearTimeout(this.currentTimeout);
+                if (this.currentToast) {
+                    this.currentToast.remove();
+                    this.currentToast = null;
+                }
+                this.isShowing = false;
+            }
+        };
+
         // ==================== ACHIEVEMENTS ====================
         const ACHIEVEMENTS = {
+            // Milestone achievements
+            'first_pull': { icon: '🎒', title: 'Khởi Đầu', desc: 'Mở lì xì lần đầu tiên' },
+            'pull_10': { icon: '🎯', title: 'Người Chơi Hệ Siêng', desc: 'Mở 10 lì xì' },
+            'pull_50': { icon: '🔥', title: 'Nghiện Lì Xì', desc: 'Mở 50 lì xì' },
+            'pull_100': { icon: '💯', title: 'Trăm Phát Trăm Trúng', desc: 'Mở 100 lì xì' },
+
+            // Money milestones (linked to skins)
             'first_500k': { icon: '🥉', title: 'Khởi Nghiệp', desc: 'Có 500k trong ví' },
-            'millionaire': { icon: '💎', title: 'Triệu Phú', desc: 'Có 1 Triệu trong ví' },
-            'multimillionaire': { icon: '👑', title: 'Đại Gia', desc: 'Có 10 Triệu trong ví' },
-            'unlucky_10': { icon: '🌧️', title: 'Thánh Nhọ', desc: '10 lần liên tiếp ra N' },
-            'gambler_fail_5': { icon: '💸', title: 'Cờ Bạc Bác Thằng Bần', desc: 'Thua cược 5 lần liên tiếp' }
+            'millionaire': { icon: '🥇', title: 'Triệu Phú', desc: 'Có 1 Triệu trong ví', skin: 'gold' },
+            'five_million': { icon: '🌈', title: 'Đại Triệu Phú', desc: 'Có 5 Triệu trong ví', skin: 'holo' },
+            'multimillionaire': { icon: '💎', title: 'Tỷ Phú Mini', desc: 'Có 10 Triệu trong ví', skin: 'diamond' },
+
+            // Tier achievements
+            'first_ssr': { icon: '⭐', title: 'Vận May Đầu Tiên', desc: 'Nhận được SSR lần đầu' },
+            'ssr_3': { icon: '🌟', title: 'Sao Sáng', desc: 'Nhận được 3 SSR' },
+            'ssr_5': { icon: '✨', title: 'Thiên Mệnh', desc: 'Nhận được 5 SSR' },
+            'ssr_10': { icon: '🏆', title: 'Thần Tài Gõ Cửa', desc: 'Nhận được 10 SSR' },
+            'sr_10': { icon: '💜', title: 'Tím Lịm Tim', desc: 'Nhận được 10 SR' },
+
+            // Gambling achievements
+            'first_gamble_win': { icon: '🎰', title: 'Cờ Bạc Nhập Môn', desc: 'Thắng cược lần đầu' },
+            'gamble_win_3': { icon: '🃏', title: 'Tay Chơi Có Số', desc: 'Thắng cược 3 lần' },
+            'gamble_win_5': { icon: '👑', title: 'Vua Sòng Bài', desc: 'Thắng cược 5 lần' },
+            'gambler_fail_5': { icon: '💸', title: 'Cờ Bạc Bác Thằng Bần', desc: 'Thua cược 5 lần liên tiếp' },
+            'gambler_fail_10': { icon: '🕳️', title: 'Đáy Vực Sâu', desc: 'Thua cược 10 lần liên tiếp' },
+
+            // Unlucky achievements
+            'unlucky_5': { icon: '🌧️', title: 'Mưa Rơi', desc: '5 lần liên tiếp ra N' },
+            'unlucky_10': { icon: '⛈️', title: 'Thánh Nhọ', desc: '10 lần liên tiếp ra N' },
+            'unlucky_15': { icon: '🌪️', title: 'Bão Tố Nhọ Nhằn', desc: '15 lần liên tiếp ra N' },
+
+            // Special achievements
+            'first_withdraw': { icon: '🏧', title: 'Rút Tiền Thành Công', desc: 'Rút tiền lần đầu' },
+            'withdraw_1m': { icon: '💳', title: 'Triệu Phú Thực Thụ', desc: 'Tổng rút 1 triệu' },
+            'comeback': { icon: '🔄', title: 'Phượng Hoàng Tái Sinh', desc: 'Từ 0 đồng lên lại 500k' },
+            'all_tiers': { icon: '🎨', title: 'Sưu Tầm Đủ Bộ', desc: 'Nhận được tất cả tier N, R, SR, SSR' }
         };
+
+        // Track which skins are unlocked via achievements
+        function getUnlockedSkins(achievements) {
+            const skins = [];
+            if (achievements.includes('millionaire')) skins.push('gold');
+            if (achievements.includes('five_million')) skins.push('holo');
+            if (achievements.includes('multimillionaire')) skins.push('diamond');
+            return skins;
+        }
 
         function checkAchievements(data) {
             const newUnlocks = [];
-            if (data.totalMoney >= 500000 && !data.achievements.includes('first_500k')) newUnlocks.push('first_500k');
-            if (data.totalMoney >= 1000000 && !data.achievements.includes('millionaire')) newUnlocks.push('millionaire');
-            if (data.totalMoney >= 10000000 && !data.achievements.includes('multimillionaire')) newUnlocks.push('multimillionaire');
-            if (data.stats.consecutiveN >= 10 && !data.achievements.includes('unlucky_10')) newUnlocks.push('unlucky_10');
-            if (data.stats.consecutiveLosses >= 5 && !data.achievements.includes('gambler_fail_5')) newUnlocks.push('gambler_fail_5');
+            const a = data.achievements;
+            const s = data.stats;
+
+            // First pull
+            if (s.totalPulls >= 1 && !a.includes('first_pull')) newUnlocks.push('first_pull');
+
+            // Pull milestones
+            if (s.totalPulls >= 10 && !a.includes('pull_10')) newUnlocks.push('pull_10');
+            if (s.totalPulls >= 50 && !a.includes('pull_50')) newUnlocks.push('pull_50');
+            if (s.totalPulls >= 100 && !a.includes('pull_100')) newUnlocks.push('pull_100');
+
+            // Money milestones (use maxBalance for skin persistence)
+            const balance = data.maxBalance || data.totalMoney;
+            if (balance >= 500000 && !a.includes('first_500k')) newUnlocks.push('first_500k');
+            if (balance >= 1000000 && !a.includes('millionaire')) newUnlocks.push('millionaire');
+            if (balance >= 5000000 && !a.includes('five_million')) newUnlocks.push('five_million');
+            if (balance >= 10000000 && !a.includes('multimillionaire')) newUnlocks.push('multimillionaire');
+
+            // SSR achievements
+            const ssrCount = s.tierCounts.SSR || 0;
+            if (ssrCount >= 1 && !a.includes('first_ssr')) newUnlocks.push('first_ssr');
+            if (ssrCount >= 3 && !a.includes('ssr_3')) newUnlocks.push('ssr_3');
+            if (ssrCount >= 5 && !a.includes('ssr_5')) newUnlocks.push('ssr_5');
+            if (ssrCount >= 10 && !a.includes('ssr_10')) newUnlocks.push('ssr_10');
+
+            // SR achievements
+            const srCount = s.tierCounts.SR || 0;
+            if (srCount >= 10 && !a.includes('sr_10')) newUnlocks.push('sr_10');
+
+            // Unlucky streaks
+            if (s.consecutiveN >= 5 && !a.includes('unlucky_5')) newUnlocks.push('unlucky_5');
+            if (s.consecutiveN >= 10 && !a.includes('unlucky_10')) newUnlocks.push('unlucky_10');
+            if (s.consecutiveN >= 15 && !a.includes('unlucky_15')) newUnlocks.push('unlucky_15');
+
+            // Gambling achievements
+            const wins = s.gambleWins || 0;
+            if (wins >= 1 && !a.includes('first_gamble_win')) newUnlocks.push('first_gamble_win');
+            if (wins >= 3 && !a.includes('gamble_win_3')) newUnlocks.push('gamble_win_3');
+            if (wins >= 5 && !a.includes('gamble_win_5')) newUnlocks.push('gamble_win_5');
+
+            // Gambling loss streaks
+            if (s.consecutiveLosses >= 5 && !a.includes('gambler_fail_5')) newUnlocks.push('gambler_fail_5');
+            if (s.consecutiveLosses >= 10 && !a.includes('gambler_fail_10')) newUnlocks.push('gambler_fail_10');
+
+            // First withdraw
+            if ((s.totalWithdrawn || 0) > 0 && !a.includes('first_withdraw')) newUnlocks.push('first_withdraw');
+            if ((s.totalWithdrawn || 0) >= 1000000 && !a.includes('withdraw_1m')) newUnlocks.push('withdraw_1m');
+
+            // Comeback achievement (was at 0, now at 500k+)
+            if (s.hitZero && data.totalMoney >= 500000 && !a.includes('comeback')) newUnlocks.push('comeback');
+
+            // All tiers collected
+            const hasAllTiers = (s.tierCounts.N || 0) > 0 &&
+                (s.tierCounts.R || 0) > 0 &&
+                (s.tierCounts.SR || 0) > 0 &&
+                (s.tierCounts.SSR || 0) > 0;
+            if (hasAllTiers && !a.includes('all_tiers')) newUnlocks.push('all_tiers');
 
             if (newUnlocks.length > 0) {
                 data.achievements.push(...newUnlocks);
                 saveData(data);
-                newUnlocks.forEach(id => showAchievementToast(ACHIEVEMENTS[id]));
+                // Queue all achievements - they'll show one by one automatically
+                newUnlocks.forEach(id => {
+                    showAchievementToast(ACHIEVEMENTS[id]);
+                });
             }
         }
 
@@ -2440,35 +3067,73 @@
                 return;
             }
 
-            data.achievements.forEach(id => {
+            // Sort achievements: skin unlocks first, then others
+            const sortedAchievements = [...data.achievements].sort((a, b) => {
+                const aHasSkin = ACHIEVEMENTS[a]?.skin ? 0 : 1;
+                const bHasSkin = ACHIEVEMENTS[b]?.skin ? 0 : 1;
+                return aHasSkin - bHasSkin;
+            });
+
+            sortedAchievements.forEach(id => {
                 const achi = ACHIEVEMENTS[id];
                 if (!achi) return;
+
                 const badge = document.createElement('div');
-                badge.className = 'icon-btn';
-                badge.style.cssText = 'width:50px;height:50px;background:#444;cursor:help;';
+                badge.className = 'achievement-badge';
+
+                // Add skin class if this achievement unlocks a skin
+                if (achi.skin) {
+                    badge.classList.add(`skin-${achi.skin}`);
+                }
+
+                badge.innerHTML = `
+                    <span class="achi-icon">${achi.icon}</span>
+                    ${achi.skin ? `<span class="skin-indicator">${achi.skin === 'gold' ? '🥇' : achi.skin === 'holo' ? '🌈' : '💎'}</span>` : ''}
+                `;
                 badge.title = `${achi.title}: ${achi.desc}`;
-                badge.textContent = achi.icon;
                 list.appendChild(badge);
             });
+
+            // Show progress
+            const totalAchievements = Object.keys(ACHIEVEMENTS).length;
+            const unlocked = data.achievements.length;
+            const progressEl = document.createElement('div');
+            progressEl.className = 'achievement-progress';
+            progressEl.innerHTML = `<small>Đã mở khóa: ${unlocked}/${totalAchievements}</small>`;
+            list.appendChild(progressEl);
         }
 
         function showAchievementToast(achi) {
+            if (!achi) return;
+
             const toast = document.createElement('div');
             toast.className = 'achievement-toast';
+
+            // Check if this achievement unlocks a skin
+            const skinText = achi.skin ? `<div class="skin-unlock">🎨 Mở khóa Skin ${achi.skin === 'gold' ? 'Vàng' : achi.skin === 'holo' ? 'Hologram' : 'Kim Cương'}!</div>` : '';
+
             toast.innerHTML = `
                 <div class="icon">${achi.icon}</div>
                 <div class="info">
-                    <div class="title">Danh Hiệu Mới!</div>
+                    <div class="title">🏆 Thành Tựu Mới!</div>
                     <div class="desc">${achi.title}: ${achi.desc}</div>
+                    ${skinText}
                 </div>
             `;
-            document.body.appendChild(toast);
-            playSound('ssr');
-            setTimeout(() => toast.classList.add('show'), 100);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 500);
-            }, 4000);
+
+            const duration = achi.skin ? 5000 : 3500;
+
+            ToastQueue.add(toast, duration, () => {
+                // onShow callback
+                if (achi.skin) {
+                    playSound('ssr');
+                    vibrate([100, 50, 100, 50, 100]);
+                    checkSkinUnlock();
+                } else {
+                    playSound('coin');
+                    vibrate(50);
+                }
+            });
         }
 
         // ==================== ZODIAC ====================
@@ -2509,8 +3174,12 @@
         let notificationTimeout;
 
         function showFakeNotification(appName, msg, timeAgo, iconChar) {
+            // Remove any existing notification
             const existing = document.querySelector('.fake-notification');
-            if (existing) existing.remove();
+            if (existing) {
+                existing.classList.remove('show');
+                setTimeout(() => existing.remove(), 300);
+            }
 
             const notif = document.createElement('div');
             notif.className = 'fake-notification';
@@ -2542,12 +3211,25 @@
             };
 
             document.body.appendChild(notif);
-            requestAnimationFrame(() => notif.classList.add('show'));
+
+            // Force reflow before adding show class (critical for mobile)
+            void notif.offsetHeight;
+
+            // Double rAF for maximum browser compatibility
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    notif.classList.add('show');
+                });
+            });
 
             if (notificationTimeout) clearTimeout(notificationTimeout);
             notificationTimeout = setTimeout(() => {
-                notif.classList.remove('show');
-                setTimeout(() => notif.remove(), 500);
+                if (notif.parentNode) {
+                    notif.classList.remove('show');
+                    setTimeout(() => {
+                        if (notif.parentNode) notif.remove();
+                    }, 500);
+                }
             }, 7000);
         }
 
@@ -2690,6 +3372,9 @@
         function renderMoneyStack(bills) {
             const container = document.getElementById('moneyStackWrapper');
             container.innerHTML = '';
+
+            // Reset flip state
+            container.classList.remove('flipped');
 
             const count = bills.length;
             const visualCount = Math.min(count, 3);
@@ -2848,7 +3533,9 @@
                 const newAmount = currentAmount * 2;
                 const data = getData();
                 data.stats.consecutiveLosses = 0;
+                data.stats.gambleWins = (data.stats.gambleWins || 0) + 1;
                 saveData(data);
+                checkAchievements(data);
 
                 addToHistory({ timestamp: Date.now(), amount: newAmount, tier: 'GAMBLE_WIN', action: 'gamble' });
                 addToWallet(currentAmount);
@@ -2861,12 +3548,20 @@
             } else {
                 vibrate(300); // Long buzz for loss
                 const data = getData();
-                data.stats.consecutiveLosses++;
+                data.stats.consecutiveLosses = (data.stats.consecutiveLosses || 0) + 1;
                 saveData(data);
-                checkAchievements(data);
 
                 addToHistory({ timestamp: Date.now(), amount: -currentAmount, tier: 'GAMBLE_LOSE', action: 'gamble' });
                 addToWallet(-currentAmount);
+
+                // Track if user hits zero
+                const updatedData = getData();
+                if (updatedData.totalMoney <= 0) {
+                    updatedData.stats.hitZero = true;
+                    saveData(updatedData);
+                }
+                checkAchievements(updatedData);
+
                 currentResult.totalValue = 0;
                 amountEl.style.color = '#555';
                 amountEl.textContent = "0";
@@ -2876,12 +3571,17 @@
 
         function checkSkinUnlock() {
             const data = getData();
-            const balance = data.maxBalance || data.totalMoney || 0;
+            const achievements = data.achievements || [];
             envelope.classList.remove('skin-gold', 'skin-holo', 'skin-diamond');
 
-            if (balance >= 10000000) envelope.classList.add('skin-diamond');
-            else if (balance >= 5000000) envelope.classList.add('skin-holo');
-            else if (balance >= 1000000) envelope.classList.add('skin-gold');
+            // Skins are unlocked via achievements (persist even if money is spent)
+            if (achievements.includes('multimillionaire')) {
+                envelope.classList.add('skin-diamond');
+            } else if (achievements.includes('five_million')) {
+                envelope.classList.add('skin-holo');
+            } else if (achievements.includes('millionaire')) {
+                envelope.classList.add('skin-gold');
+            }
         }
 
         function resetData() {
@@ -2895,7 +3595,11 @@
         // ==================== SOUND ====================
         function updateMuteUI() {
             muteBtn.textContent = isMuted ? '🔇' : '🔊';
-            muteBtn.style.opacity = isMuted ? '0.7' : '1';
+            if (isMuted) {
+                muteBtn.classList.add('muted');
+            } else {
+                muteBtn.classList.remove('muted');
+            }
         }
 
         function toggleMute() {
