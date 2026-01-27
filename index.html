@@ -75,7 +75,6 @@
             flex-direction: column;
             align-items: center;
             margin-top: 3.5rem;
-            /* Push down to avoid overlap with top buttons */
         }
 
         /* Medical Heartbeat Animation */
@@ -90,27 +89,21 @@
             opacity: 0.1;
         }
 
-        /* ... existing code ... */
-
         /* --- THEMES --- */
         body.theme-normal {
             background-color: #900000;
             background-image:
-                /* Horizontal Line - Subtle */
                 linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                /* Vertical Line - Subtle */
                 linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 80px 80px;
             background-position: center center;
         }
 
         body.theme-normal::before {
-            /* The squares at intersections - Subtle */
             background-image:
                 radial-gradient(rgba(255, 220, 0, 0.15) 2px, transparent 3px);
             background-size: 80px 80px;
             background-position: center center;
-
             content: '';
             position: fixed;
             inset: 0;
@@ -125,7 +118,6 @@
         /* --- UI COMPONENTS --- */
         .utility-bar {
             position: fixed;
-            /* Fixed to stay on screen */
             top: 1rem;
             left: 1rem;
             display: flex;
@@ -202,7 +194,6 @@
             display: none;
             align-items: center;
             justify-content: center;
-            /* backdrop-filter: blur(5px); Removed for performance */
         }
 
         .share-modal {
@@ -298,7 +289,6 @@
             margin-top: 0.75rem;
             box-shadow: 0 4px 15px rgba(0, 128, 128, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            /* backdrop-filter: blur(4px); Removed for performance */
         }
 
         /* Envelope */
@@ -533,7 +523,6 @@
             z-index: 1;
         }
 
-        /* New Container for sizing & perspective */
         .money-stack-container {
             position: relative;
             width: 100%;
@@ -564,7 +553,6 @@
             transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
-            /* Default stack transform is none if not set */
             --stack-transform: translate(0, 0) rotate(0deg);
             transform: var(--stack-transform);
         }
@@ -646,7 +634,6 @@
             }
         }
 
-        /* Shine moves diagonally */
         @keyframes holoShineMove {
             0% {
                 background-position: 200% 200%;
@@ -656,9 +643,6 @@
                 background-position: -100% -100%;
             }
         }
-
-
-
 
         /* Wish */
         .result-card .wish {
@@ -1010,7 +994,6 @@
             top: 1rem;
             right: 1rem;
             background: rgba(0, 0, 0, 0.6);
-            /* backdrop-filter: blur(10px); */
             border: 1px solid var(--gold-primary);
             border-radius: 50px;
             padding: 0.5rem 1rem;
@@ -1057,14 +1040,11 @@
         .fake-notification {
             position: fixed;
             top: 20px;
-            /* Increased from 10px to avoid status bar overlap */
             left: 50%;
-            /* Optimized transform transition */
             transform: translate3d(-50%, -150%, 0);
             width: 95%;
             max-width: 380px;
             background: rgba(240, 240, 240, 0.9);
-            /* Slightly more opaque for better contrast */
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             padding: 12px 15px;
@@ -1074,13 +1054,11 @@
             flex-direction: column;
             gap: 8px;
             z-index: 10000;
-            /* Use standard ease-out for cleaner motion */
             transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
             border: 1px solid rgba(255, 255, 255, 0.4);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: #000;
             will-change: transform;
-            /* Hardware acceleration hint */
         }
 
         .fake-notification.show {
@@ -1093,7 +1071,6 @@
             justify-content: space-between;
             font-size: 0.8rem;
             color: #666;
-            /* iOS Secondary Label Color */
         }
 
         .fake-notification-header .app-info {
@@ -1107,7 +1084,6 @@
             height: 20px;
             border-radius: 5px;
             background: #004D40;
-            /* Bank Green */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1157,8 +1133,6 @@
             }
         }
 
-
-
         /* Typewriter Cursor */
         .typing-cursor::after {
             content: '|';
@@ -1202,32 +1176,29 @@
             }
         }
 
+        /* FIX: Improved no-scroll - no padding-right to avoid layout shift */
         body.no-scroll {
             overflow: hidden;
-            /* height: 100vh; Removed to prevent scroll resetting to top */
-            padding-right: 15px;
-            /* Approximate scrollbar width to prevent horizontal shift */
+            position: fixed;
+            width: 100%;
+            /* Removed padding-right: 15px which caused horizontal jump */
         }
 
         /* --- NEW SKINS --- */
         /* Holographic Skin (Pokemon Style) */
         .envelope.skin-holo .envelope-body {
-            /* Base: Rainbow Holo */
             background: linear-gradient(135deg,
                     #c0c0ff 0%, #ffc0cb 20%, #ffffc0 40%,
                     #c0ffc0 60%, #c0ffff 80%, #c0c0ff 100%);
             background-size: 300% 300%;
             animation: holoShift 4s ease infinite;
-
             border: 2px solid rgba(255, 255, 255, 0.5);
             box-shadow:
                 0 4px 20px rgba(192, 192, 255, 0.4),
                 inset 0 0 30px rgba(255, 255, 255, 0.3);
             overflow: hidden;
-            /* Ensure shine doesn't spill */
         }
 
-        /* Shine Layer */
         .envelope.skin-holo .envelope-body::after {
             content: '';
             position: absolute;
@@ -1239,11 +1210,9 @@
                     rgba(255, 255, 255, 0) 100%);
             background-size: 200% 200%;
             background-repeat: no-repeat;
-            /* Prevent square edges */
             animation: holoShineMove 3s ease infinite;
             pointer-events: none;
             mix-blend-mode: overlay;
-            /* Better blending */
         }
 
         .envelope.skin-holo .envelope-flap {
@@ -1259,14 +1228,11 @@
             background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
             border: 3px solid #fff;
             box-shadow: 0 0 30px #00e5ff;
-            /* backdrop-filter: blur(5px); Removed for performance */
         }
 
         .envelope.skin-diamond .envelope-flap {
             background: linear-gradient(135deg, #b2ebf2 0%, #4dd0e1 100%);
         }
-
-
 
         .icon-btn {
             background: rgba(0, 0, 0, 0.4);
@@ -1280,10 +1246,9 @@
             justify-content: center;
             font-size: 1.2rem;
             cursor: pointer;
-            /* backdrop-filter: blur(5px); */
         }
 
-        /* Modal */
+        /* Modal - FIXED */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -1293,7 +1258,6 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
-            /* backdrop-filter: blur(5px); */
         }
 
         .modal-overlay.open {
@@ -1303,7 +1267,6 @@
         .modal-content {
             background: var(--white);
             width: 95%;
-            /* Responsive width */
             max-width: 500px;
             border-radius: 1rem;
             max-height: 80vh;
@@ -1323,12 +1286,17 @@
             align-items: center;
             font-weight: bold;
             font-size: 1.2rem;
+            /* Prevent clicks from bubbling through */
+            position: relative;
+            z-index: 10;
         }
 
         .modal-body {
             padding: 1rem;
             overflow-y: auto;
             color: #333;
+            /* Ensure body doesn't close modal on click */
+            position: relative;
         }
 
         .close-btn {
@@ -1337,6 +1305,12 @@
             color: white;
             font-size: 1.5rem;
             cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            opacity: 0.8;
         }
 
         /* History List */
@@ -1541,7 +1515,7 @@
             color: var(--red-primary);
         }
 
-        /* Withdraw Modal Styles */
+        /* Withdraw Modal Styles - FIXED */
         .withdraw-form {
             display: flex;
             flex-direction: column;
@@ -1574,66 +1548,132 @@
             box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
         }
 
+        /* FIXED: Bank Grid with better scrolling */
         .bank-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-            gap: 8px;
-            max-height: 250px;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            max-height: 280px;
             overflow-y: auto;
             overflow-x: hidden;
-            /* Prevent horizontal scroll */
-            padding: 5px;
-            border: 1px solid #f0f0f0;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
             border-radius: 8px;
+            background: #fafafa;
+            /* Smooth scrolling */
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
 
+        /* Custom scrollbar for bank grid */
+        .bank-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .bank-grid::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .bank-grid::-webkit-scrollbar-thumb {
+            background: var(--gold-primary);
+            border-radius: 3px;
+        }
+
+        .bank-grid::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-dark);
+        }
+
+        /* FIXED: Bank item with proper sizing and fallback */
         .bank-item {
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 8px 4px;
-            /* More vertical padding */
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 10px 6px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
-            /* Move from JS */
             align-items: center;
             justify-content: center;
-            gap: 4px;
-            /* Move from JS */
+            gap: 6px;
             width: 100%;
-            /* Fill the grid cell */
+            min-height: 70px;
             text-align: center;
+            background: white;
+            /* Prevent text selection on rapid clicks */
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .bank-item:hover {
             border-color: var(--gold-primary);
-            background: rgba(255, 215, 0, 0.05);
+            background: rgba(255, 215, 0, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .bank-item:active {
+            transform: translateY(0);
         }
 
         .bank-item.selected {
             border: 2px solid var(--red-primary);
-            background: rgba(196, 30, 58, 0.05);
-            position: relative;
+            background: rgba(196, 30, 58, 0.08);
+            box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.2);
         }
 
         .bank-item img {
             height: 28px;
+            width: auto;
+            max-width: 60px;
             object-fit: contain;
         }
 
         .bank-item span {
-            font-size: 0.65rem;
-            font-weight: bold;
-            line-height: 1.1;
+            font-size: 0.7rem;
+            font-weight: 600;
+            line-height: 1.2;
+            color: #444;
             word-break: break-word;
-            /* allow wrapping for long names */
+            max-width: 100%;
+        }
+
+        /* Fallback for failed images */
+        .bank-item.img-error {
+            background: #f5f5f5;
+        }
+
+        .bank-item.img-error .bank-fallback {
+            width: 28px;
+            height: 28px;
+            background: var(--red-primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.7rem;
         }
 
         .withdraw-note {
             font-size: 0.8rem;
             color: #666;
             margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Loading state for banks */
+        .bank-grid.loading {
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bank-grid.loading::after {
+            content: 'Đang tải...';
+            color: #999;
             font-style: italic;
         }
     </style>
@@ -1681,11 +1721,11 @@
     </div>
 
     <!-- Stats Modal -->
-    <div class="modal-overlay" id="statsModal" onclick="closeModal(event, 'statsModal')">
-        <div class="modal-content">
+    <div class="modal-overlay" id="statsModal">
+        <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <div>Thống Kê & Lịch Sử</div>
-                <button class="close-btn" onclick="closeModal(null, 'statsModal')">×</button>
+                <button class="close-btn" onclick="closeModal('statsModal')">×</button>
             </div>
             <div class="modal-body">
                 <!-- Stats Grid -->
@@ -1700,12 +1740,10 @@
                     </div>
                 </div>
 
-                <!-- Tabs / Sections -->
                 <h3
                     style="margin: 1rem 0; color: var(--red-dark); border-bottom: 2px solid var(--gold-primary); display: inline-block;">
                     Thành Tựu 🏆</h3>
                 <div id="achievementsList" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                    <!-- Achievements injected here -->
                 </div>
 
                 <h3 id="yearTitle"
@@ -1713,7 +1751,6 @@
                     Năm Mới Bính Ngọ 🔮</h3>
                 <div id="zodiacSection">
                     <div class="zodiac-grid" id="zodiacGrid">
-                        <!-- Zodiac buttons injected here -->
                     </div>
                     <div id="fortuneResult" class="fortune-text" style="display: none;"></div>
                 </div>
@@ -1722,18 +1759,17 @@
                     style="margin: 1rem 0; color: var(--red-dark); border-bottom: 2px solid var(--gold-primary); display: inline-block;">
                     Lịch Sử Gần Đây 📜</h3>
                 <ul class="history-list" id="historyList">
-                    <!-- History items injected here -->
                 </ul>
             </div>
         </div>
     </div>
 
     <!-- Info Modal -->
-    <div class="modal-overlay" id="infoModal" onclick="closeModal(event, 'infoModal')">
-        <div class="modal-content">
+    <div class="modal-overlay" id="infoModal">
+        <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <div>Tỷ Lệ Rơi & Thông Tin</div>
-                <button class="close-btn" onclick="closeModal(null, 'infoModal')">×</button>
+                <button class="close-btn" onclick="closeModal('infoModal')">×</button>
             </div>
             <div class="modal-body">
                 <table class="info-table">
@@ -1772,12 +1808,12 @@
         </div>
     </div>
 
-    <!-- Withdraw Modal -->
-    <div class="modal-overlay" id="withdrawModal" onclick="closeModal(event, 'withdrawModal')">
-        <div class="modal-content">
+    <!-- Withdraw Modal - FIXED -->
+    <div class="modal-overlay" id="withdrawModal">
+        <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <div>Rút Tiền Về Tài Khoản</div>
-                <button class="close-btn" onclick="closeModal(null, 'withdrawModal')">×</button>
+                <button class="close-btn" onclick="closeModal('withdrawModal')">×</button>
             </div>
             <div class="modal-body">
                 <div class="withdraw-form">
@@ -1797,12 +1833,12 @@
                     <div class="form-group">
                         <label>Chọn Ngân Hàng</label>
                         <div class="bank-grid" id="bankGrid">
-                            <!-- Banks injected here -->
+                            <!-- Banks will be rendered here -->
                         </div>
                     </div>
 
-                    <button class="btn btn-primary" style="width: 100%; max-width: 100%; margin-top: 0.5rem;"
-                        onclick="confirmWithdraw()">
+                    <button class="btn btn-primary" id="confirmWithdrawBtn"
+                        style="width: 100%; max-width: 100%; margin-top: 0.5rem;" onclick="confirmWithdraw()">
                         💸 Rút Ngay
                     </button>
 
@@ -1862,8 +1898,8 @@
                                 <img id="moneyBack" src="" alt="Mặt sau">
                             </div>
                         </div>
-                    </div> <!-- Closing wrapper -->
-                </div> <!-- Closing container -->
+                    </div>
+                </div>
                 <div class="flip-hint">
                     <span class="flip-icon">🔄</span> Nhấn để lật xem mặt sau
                 </div>
@@ -1891,12 +1927,17 @@
     </div>
 
     <script>
-        // Global Variables
-        let withdrawMode = 'current'; // 'current' or 'wallet'
+        // ==================== GLOBAL STATE ====================
+        let withdrawMode = 'current';
         let pendingAmount = 0;
-        let selectedBank = 'VCB'; // Default
-        // Money data with real banknote images (Front is -1, Back is -2)
-        // Removed 1k and 5k as requested
+        let selectedBank = 'VCB';
+        let isOpened = false;
+        let currentResult = null;
+        let isMuted = false; // Will be initialized in init()
+        let banksRendered = false; // Track if banks are rendered
+        let scrollPosition = 0; // Store scroll position for no-scroll fix
+
+        // ==================== DATA ====================
         const moneyAmounts = [
             { value: 10000, display: '10.000', front: 'images/10k-1.jpg', back: 'images/10k-2.jpg' },
             { value: 20000, display: '20.000', front: 'images/20k-1.jpg', back: 'images/20k-2.jpg' },
@@ -1906,18 +1947,50 @@
             { value: 500000, display: '500.000', front: 'images/500k-1.jpg', back: 'images/500k-2.jpg' }
         ];
 
-        // Weighted random - higher denominations are rarer
-        // Note: This array is not directly used in the new gacha logic but kept for reference or fallback
-        const weightedMoney = [
-            ...Array(6).fill(moneyAmounts[0]),  // 10k
-            ...Array(5).fill(moneyAmounts[1]),  // 20k
-            ...Array(4).fill(moneyAmounts[2]),  // 50k
-            ...Array(3).fill(moneyAmounts[3]),  // 100k
-            ...Array(2).fill(moneyAmounts[4]),  // 200k
-            ...Array(1).fill(moneyAmounts[5])   // 500k
+        const BANKS_DATA = [
+            { "code": "ABB", "name": "ABBANK" },
+            { "code": "ACB", "name": "ACB" },
+            { "code": "VBA", "name": "Agribank" },
+            { "code": "BAB", "name": "BacABank" },
+            { "code": "BVB", "name": "BaoVietBank" },
+            { "code": "BIDV", "name": "BIDV" },
+            { "code": "CAKE", "name": "CAKE" },
+            { "code": "CBB", "name": "CBBank" },
+            { "code": "CIMB", "name": "CIMB" },
+            { "code": "COOPBANK", "name": "COOPBANK" },
+            { "code": "EIB", "name": "Eximbank" },
+            { "code": "HDB", "name": "HDBank" },
+            { "code": "HSBC", "name": "HSBC" },
+            { "code": "KLB", "name": "KienLongBank" },
+            { "code": "LPB", "name": "LPBank" },
+            { "code": "MB", "name": "MBBank" },
+            { "code": "MSB", "name": "MSB" },
+            { "code": "NAB", "name": "NamABank" },
+            { "code": "NCB", "name": "NCB" },
+            { "code": "OCB", "name": "OCB" },
+            { "code": "PGB", "name": "PGBank" },
+            { "code": "PVCB", "name": "PVcomBank" },
+            { "code": "STB", "name": "Sacombank" },
+            { "code": "SGICB", "name": "SaigonBank" },
+            { "code": "SCB", "name": "SCB" },
+            { "code": "SEAB", "name": "SeABank" },
+            { "code": "SHB", "name": "SHB" },
+            { "code": "SHBVN", "name": "ShinhanBank" },
+            { "code": "TCB", "name": "Techcombank" },
+            { "code": "TIMO", "name": "Timo" },
+            { "code": "TPB", "name": "TPBank" },
+            { "code": "Ubank", "name": "Ubank" },
+            { "code": "VAB", "name": "VietABank" },
+            { "code": "VCCB", "name": "VietCapitalBank" },
+            { "code": "VIETBANK", "name": "VietBank" },
+            { "code": "VCB", "name": "Vietcombank" },
+            { "code": "ICB", "name": "VietinBank" },
+            { "code": "VIB", "name": "VIB" },
+            { "code": "VPB", "name": "VPBank" },
+            { "code": "VRB", "name": "VRB" }
         ];
 
-        // Vietnamese wishes for Hospital IT (Default)
+        // Wishes
         const wishesIT = [
             "Hệ thống HIS vận hành trơn tru, không ticket nào treo! 🏥",
             "PACS load hình siêu tốc, bác sĩ khen nức nở! ⚡",
@@ -1928,152 +2001,52 @@
             "Code bệnh án điện tử không bug, data chuẩn chỉ! 📊",
             "Lương thưởng ngập tràn, sức khỏe dồi dào như thanh RAM 64GB! 💪",
             "Năm mới fix bug nhanh hơn bác sĩ chẩn đoán! 🩺",
-            "An toàn thông tin vững chãi, virus/ransomware tránh xa! 🛡️",
-            "Triển khai phần mềm mới suôn sẻ, user training 1 lần hiểu ngay! 📚",
-            "Hệ thống Lab kết nối mượt mà, kết quả trả về trong một nốt nhạc! 🎵",
-            "Wi-Fi phủ sóng mọi ngóc ngách, không điểm chết nào dám tồn tại! 📶",
-            "Backup dữ liệu thành công 100%, restore trong chớp mắt! 💾",
-            "Không bao giờ bị gọi hotline lúc nửa đêm! 😴",
-            "Họp giao ban toàn lời khen, không ai phàn nàn về IT! 👏",
-            "API kết nối bên thứ 3 luôn stable, không timeout! 🔗",
-            "Năm mới code sung, deploy một phát ăn ngay! 🚀",
-            "Server mát hơn tủ lạnh trữ thuốc của Khoa Dược! ❄️",
-            "Máy in tự sửa lỗi khi thấy bóng dáng IT đi tới! 🖨️✨",
-            "User tự reset password, không bao giờ quên mật khẩu! 🧠",
-            "Code không có Bug, chỉ có Tính Năng Ẩn thôi! 🐛🚫",
-            "Trực Tết êm ru, chỉ có tiếng nhai hạt dưa, không có tiếng điện thoại! 🍉",
-            "Bác sĩ khen phần mềm nhanh hơn người yêu cũ trở mặt! ⚡",
+            "An toàn thông tin vững chãi, virus/ransomware tránh xa! 🛡️"
         ];
 
-        // Generic Wishes (Base)
         const wishesGeneral = [
             "An khang thịnh vượng - Vạn sự như ý! 🌸",
             "Tấn tài tấn lộc - Mã đáo thành công! 🧧",
             "Sức khỏe dồi dào, tiền vào như nước! 💰",
             "Năm mới bình an, hạnh phúc tràn đầy! ❤️",
-            "Công việc thuận lợi, thăng tiến vù vù! 🚀",
-            "Gia đình hòa thuận, tiếng cười rộn rã! 😂",
-            "Lộc biếc mai vàng, xuân sang như ý! 🌼",
-            "Tình duyên phơi phới, hạnh phúc thăng hoa! 💑",
-            "Tiền đầy túi, tim đầy tình, xăng đầy bình! ⛽",
-            "Ăn ngon ngủ kỹ, không lo deadline! 😴",
-            "May mắn gõ cửa, rước lộc vào nhà! 🚪",
-            "Cung hỷ phát tài, cả năm sung túc! 🧧",
-            "Sự nghiệp vững chắc, tương lai rạng ngời! ✨",
-            "Mua may bán đắt, làm ăn phát đạt! 📈",
-            "Đi đâu cũng gặp quý nhân phù trợ! 👼",
-            "Vạn sự khởi đầu nan, gian nan đừng có nản! 💪",
-            "Tiền ra nhỏ giọt, tiền vào như thác lũ! 🌊",
-            "Sống vui sống khỏe, tươi trẻ mỗi ngày! 🌱",
-            "Hạnh phúc đong đầy, vàng bạc đầy kho! 💎",
-            "Cả năm may mắn, cười tươi như hoa! 🌺",
-            "Sức khỏe vô biên, kiếm được nhiều tiền! 💵",
-            "Đời đẹp như mơ, thơ thẩn cả ngày! 🎵",
-            "Muộn phiền bay biến, niềm vui ùa về! 🌈"
+            "Công việc thuận lợi, thăng tiến vù vù! 🚀"
         ];
 
-        // Specific Zodiac Wishes
-        const zodiacWishes = {
-            'Tý': [
-                "Năm Tý thông minh, tài lộc rủng rỉnh! 🐭",
-                "Chuột sa chĩnh gạo, tiền vào như nước! 🍚",
-                "Năm Tý nhanh nhẹn, vượt mọi khó khăn! ⚡"
-            ],
-            'Sửu': [
-                "Năm Sửu chăm chỉ, tiền tỷ về tay! 🐮",
-                "Khỏe như trâu, cày đâu thắng đó! 💪",
-                "Sự nghiệp vững chắc như kiềng ba chân! 🏔️"
-            ],
-            'Dần': [
-                "Năm Dần mạnh mẽ, uy lực như Hổ! 🐯",
-                "Tiền vào như nước, khí thế ngút trời! 🔥",
-                "Vạn sự hanh thông, hổ mọc thêm cánh! 🦅"
-            ],
-            'Mão': [
-                "Năm Mèo nhanh nhẹn, khéo léo làm giàu! 🐱",
-                "Tài lộc vờn quanh, may mắn gõ cửa! 🧶",
-                "Sống thảnh thơi vàng bạc đầy kho! 🐟"
-            ],
-            'Thìn': [
-                "Năm Rồng thăng hoa, sự nghiệp bay cao! 🐉",
-                "Long phụng sum vầy, gia đạo bình an! ☁️",
-                "Như cá chép hóa rồng, đổi đời ngoạn mục! 🌊"
-            ],
-            'Tỵ': [
-                "Năm Tỵ khôn khéo, tiền vào như nước! 🐍",
-                "Năm Rắn linh hoạt, vận may bất ngờ! 🎁",
-                "Lột xác thành công, vươn tầm cao mới! ✨"
-            ],
-            'Ngọ': [
-                "Mã đáo thành công, tấn tài tấn lộc! 🐎",
-                "Năm Ngọ phi nước đại, tiền về như bay! 💨",
-                "Sức khỏe dẻo dai, đường dài không nản! 🛣️"
-            ],
-            'Mùi': [
-                "Năm Mùi an khang, cả làng yêu mến! 🐐",
-                "Tam dương khai thái, vạn sự cát tường! ☀️",
-                "Cuộc sống êm đềm, ngọt ngào như kẹo! 🍬"
-            ],
-            'Thân': [
-                "Năm Thân lanh lợi, tiền bạc rủng rỉnh! 🐵",
-                "Thông minh sáng tạo, vạn người nể phục! 💡",
-                "Vui vẻ như khỉ, lộc lá đầy nhà! 🍌"
-            ],
-            'Dậu': [
-                "Năm Dậu rực rỡ, gáy vang trời đất! 🐓",
-                "Kim kê đắc lộc, tiền vàng đầy sân! 🌕",
-                "Chăm chỉ nhặt nhạnh, núi vàng sẽ thành! ⛰️"
-            ],
-            'Tuất': [
-                "Năm Tuất trung thành, bạn bè tin cậy! 🐶",
-                "Chó canh giữ nhà, tiền không thất thoát! 🏠",
-                "Vượng khí dồi dào, phát tài phát lộc! 🍀"
-            ],
-            'Hợi': [
-                "Năm Hợi an nhàn, ăn no ngủ kỹ! 🐷",
-                "Heo vàng gõ cửa, tài lộc đầy kho! 💰",
-                "Cuộc sống sung túc, vạn sự bình an! 🏘️"
-            ]
-        };
-
-        // Lunar Year Logic
-        function calculateLunarYear(year) {
-            const can = ['Canh', 'Tân', 'Nhâm', 'Quý', 'Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ'];
-            const chi = ['Thân', 'Dậu', 'Tuất', 'Hợi', 'Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi'];
-            // year % 10 -> Can
-            // year % 12 -> Chi
-            return {
-                can: can[year % 10],
-                chi: chi[year % 12],
-                name: `${can[year % 10]} ${chi[year % 12]}`
-            };
-        }
-
-        function getZodiacEmoji(chiName) {
-            const emojis = {
-                'Tý': '🐭', 'Sửu': '🐮', 'Dần': '🐯', 'Mão': '🐱',
-                'Thìn': '🐉', 'Tỵ': '🐍', 'Ngọ': '🐎', 'Mùi': '🐐',
-                'Thân': '🐵', 'Dậu': '🐓', 'Tuất': '🐶', 'Hợi': '🐷'
-            };
-            return emojis[chiName] || '🎆';
-        }
-
-        function getWishesForYear(year, baseWishes) {
-            const lunar = calculateLunarYear(year);
-            const specificWishes = zodiacWishes[lunar.chi] || [];
-
-            // Add specific year wishes to the general or IT wishes
-            return [...baseWishes, ...specificWishes];
-        }
-
-        let wishes = wishesIT; // Default to IT
-
-        // Shuffle deck for better randomization (no repeats until all shown)
+        let wishes = wishesIT;
         let wishDeck = [];
+
+        // Audio
+        const sounds = {
+            open: new Audio('sounds/open.mp3'),
+            coin: new Audio('sounds/coin.mp3'),
+            ssr: new Audio('sounds/ssr.mp3'),
+            sr: new Audio('sounds/sr.mp3')
+        };
+        Object.values(sounds).forEach(s => s.volume = 0.4);
+
+        // ==================== DOM ELEMENTS ====================
+        const envelope = document.getElementById('envelope');
+        const envelopeContainer = document.getElementById('envelopeContainer');
+        const clickHint = document.getElementById('clickHint');
+        const resultCard = document.getElementById('resultCard');
+        const amountEl = document.getElementById('amount');
+        const wishEl = document.getElementById('wish');
+        const walletEl = document.getElementById('walletBalance');
+        const walletContainer = document.querySelector('.wallet-container');
+        const muteBtn = document.getElementById('muteBtn');
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function formatNumber(num) {
+            if (num === null || num === undefined || isNaN(num)) return '0';
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
 
         function getNextWish() {
             if (wishDeck.length === 0) {
-                // Refill and shuffle
                 wishDeck = [...wishes];
                 for (let i = wishDeck.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
@@ -2083,29 +2056,905 @@
             return wishDeck.pop();
         }
 
-        let isOpened = false;
-        let currentResult = null;
+        function playSound(name) {
+            if (isMuted) return;
+            try {
+                sounds[name].currentTime = 0;
+                sounds[name].play().catch(e => { });
+            } catch (err) { }
+        }
 
-        // Elements
-        const envelope = document.getElementById('envelope');
-        const envelopeContainer = document.getElementById('envelopeContainer');
-        const clickHint = document.getElementById('clickHint');
-        const resultCard = document.getElementById('resultCard');
-        const amountEl = document.getElementById('amount');
-        const wishEl = document.getElementById('wish');
-        const moneyCard = document.getElementById('moneyCard');
-        const moneyFront = document.getElementById('moneyFront');
-        const moneyBack = document.getElementById('moneyBack');
+        // ==================== SAFE STORAGE ====================
+        const Storage = {
+            get(key) {
+                try {
+                    return localStorage.getItem(key);
+                } catch (e) {
+                    console.warn('localStorage not available:', e);
+                    return null;
+                }
+            },
+            set(key, value) {
+                try {
+                    localStorage.setItem(key, value);
+                    return true;
+                } catch (e) {
+                    console.warn('localStorage not available:', e);
+                    return false;
+                }
+            },
+            remove(key) {
+                try {
+                    localStorage.removeItem(key);
+                } catch (e) {
+                    console.warn('localStorage not available:', e);
+                }
+            }
+        };
 
-        // Event listeners
-        // Event listeners
-        envelopeContainer.addEventListener('click', openEnvelope);
-        // Delegate click for dynamically created cards
-        document.getElementById('moneyStackWrapper').addEventListener('click', function () {
-            this.classList.toggle('flipped');
+        // ==================== DATA MANAGER ====================
+        const DEFAULT_DATA = {
+            totalMoney: 0,
+            history: [],
+            stats: {
+                totalPulls: 0,
+                tierCounts: { SSR: 0, SR: 0, R: 0, N: 0 },
+                consecutiveN: 0,
+                consecutiveLosses: 0
+            },
+            achievements: [],
+            maxBalance: 0
+        };
+
+        function getData() {
+            const stored = Storage.get('luckyMoneyData_v2') || Storage.get('luckyMoney_data');
+            if (!stored) return { ...DEFAULT_DATA };
+            try {
+                const data = { ...DEFAULT_DATA, ...JSON.parse(stored) };
+                if (!data.history) data.history = [];
+                if (typeof data.maxBalance === 'undefined') data.maxBalance = data.totalMoney || 0;
+                return data;
+            } catch (e) {
+                console.warn('Failed to parse saved data:', e);
+                return { ...DEFAULT_DATA };
+            }
+        }
+
+        function saveData(data) {
+            if (data.totalMoney > (data.maxBalance || 0)) {
+                data.maxBalance = data.totalMoney;
+            }
+            Storage.set('luckyMoneyData_v2', JSON.stringify(data));
+            updateWalletDisplay();
+        }
+
+        function updateWalletDisplay() {
+            const data = getData();
+            walletEl.textContent = formatNumber(data.totalMoney);
+        }
+
+        function addToWallet(amount) {
+            const data = getData();
+            data.totalMoney += amount;
+            saveData(data);
+            walletContainer.classList.add('update');
+            setTimeout(() => walletContainer.classList.remove('update'), 300);
+            checkAchievements(data);
+        }
+
+        function addToHistory(entry) {
+            const data = getData();
+            data.history.unshift(entry);
+            if (data.history.length > 50) data.history = data.history.slice(0, 50);
+            saveData(data);
+        }
+
+        function updateStats(tier, amount) {
+            const data = getData();
+            data.stats.totalPulls++;
+            data.stats.tierCounts[tier] = (data.stats.tierCounts[tier] || 0) + 1;
+            if (tier === 'N') {
+                data.stats.consecutiveN++;
+            } else {
+                data.stats.consecutiveN = 0;
+            }
+            saveData(data);
+            checkAchievements(data);
+        }
+
+        // ==================== MODAL FUNCTIONS - FIXED ====================
+        function openModal(id) {
+            // Store scroll position before locking
+            scrollPosition = window.pageYOffset;
+            document.body.style.top = `-${scrollPosition}px`;
+            document.body.classList.add('no-scroll');
+            document.getElementById(id).classList.add('open');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+            document.body.classList.remove('no-scroll');
+            document.body.style.top = '';
+            // Restore scroll position
+            window.scrollTo(0, scrollPosition);
+        }
+
+        // Click on overlay to close (not on content)
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function (e) {
+                // Only close if clicking directly on the overlay, not its children
+                if (e.target === this) {
+                    closeModal(this.id);
+                }
+            });
         });
 
-        // Create floating particles
+        // ESC key to close any open modal
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                const openModal = document.querySelector('.modal-overlay.open');
+                if (openModal) {
+                    closeModal(openModal.id);
+                }
+                // Also close share modal
+                const shareModal = document.getElementById('shareModal');
+                if (shareModal && shareModal.style.display === 'flex') {
+                    hideShareModal();
+                }
+            }
+        });
+
+        // ==================== BANK MODAL - FIXED ====================
+        function renderBanks() {
+            const grid = document.getElementById('bankGrid');
+
+            // Don't re-render if already done
+            if (banksRendered && grid.children.length > 0) {
+                // Just update selection state
+                updateBankSelection();
+                return;
+            }
+
+            grid.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+
+            BANKS_DATA.forEach(bank => {
+                const div = document.createElement('div');
+                div.className = `bank-item ${bank.code === selectedBank ? 'selected' : ''}`;
+                div.dataset.code = bank.code;
+
+                // Create image with error handling
+                const img = document.createElement('img');
+                img.src = `images/banks/${bank.code}.png`;
+                img.alt = bank.name;
+                img.loading = 'lazy'; // Lazy load for performance
+
+                // Handle image load error - show fallback instead of hiding
+                img.onerror = function () {
+                    this.style.display = 'none';
+                    const fallback = document.createElement('div');
+                    fallback.className = 'bank-fallback';
+                    fallback.textContent = bank.code.substring(0, 3);
+                    div.insertBefore(fallback, div.firstChild);
+                    div.classList.add('img-error');
+                };
+
+                const name = document.createElement('span');
+                name.textContent = bank.name;
+
+                div.appendChild(img);
+                div.appendChild(name);
+
+                // Click handler
+                div.addEventListener('click', function (e) {
+                    e.stopPropagation(); // Prevent event bubbling
+                    selectBank(bank.code);
+                });
+
+                fragment.appendChild(div);
+            });
+
+            grid.appendChild(fragment);
+            banksRendered = true;
+        }
+
+        function updateBankSelection() {
+            document.querySelectorAll('.bank-item').forEach(item => {
+                if (item.dataset.code === selectedBank) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+
+        function selectBank(code) {
+            selectedBank = code;
+            updateBankSelection();
+        }
+
+        function openWithdrawModal(mode) {
+            withdrawMode = mode;
+            const data = getData();
+
+            if (mode === 'current') {
+                if (!currentResult || currentResult.totalValue <= 0) {
+                    alert('Không có tiền để rút!');
+                    return;
+                }
+                pendingAmount = currentResult.totalValue;
+            } else {
+                if (data.totalMoney <= 0) {
+                    alert('Ví của bạn đang trống!');
+                    return;
+                }
+                pendingAmount = data.totalMoney;
+            }
+
+            if (data.totalMoney < pendingAmount) {
+                alert('Số dư thực tế không đủ!');
+                return;
+            }
+
+            document.getElementById('withdrawAmountDisplay').textContent = formatNumber(pendingAmount) + ' VNĐ';
+
+            openModal('withdrawModal');
+
+            // Render banks after modal is visible for better UX
+            requestAnimationFrame(() => {
+                renderBanks();
+            });
+        }
+
+        let isProcessingWithdraw = false;
+
+        function confirmWithdraw() {
+            if (isProcessingWithdraw) return;
+
+            const stk = document.getElementById('stkInput').value;
+            if (!stk) {
+                alert('Vui lòng nhập số tài khoản!');
+                return;
+            }
+
+            const data = getData();
+            if (data.totalMoney < pendingAmount) {
+                alert('Số dư không đủ!');
+                return;
+            }
+
+            isProcessingWithdraw = true;
+            const withdrawButton = document.getElementById('confirmWithdrawBtn');
+            if (withdrawButton) withdrawButton.disabled = true;
+
+            closeModal('withdrawModal');
+            addToWallet(-pendingAmount);
+
+            if (withdrawMode === 'current') {
+                const wBtn = document.getElementById('actionWithdrawBtn');
+                if (wBtn) {
+                    wBtn.disabled = true;
+                    wBtn.textContent = '✅ Đã Rút';
+                }
+                const gBtn = document.getElementById('gambleBtn');
+                if (gBtn) gBtn.disabled = true;
+            }
+
+            // Fake notification
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            const fakeBalance = 124500000 + pendingAmount;
+            const maskedStk = stk.length > 4 ? stk.slice(0, 4) + 'xxxxx' : stk + 'xxxxx';
+            const msg = `TK ${maskedStk} +${formatNumber(pendingAmount)}VND ${hours}:${minutes} ${day}/${month}. SD: ${formatNumber(fakeBalance)}VND. ND: Rut tien li xi`;
+
+            setTimeout(() => {
+                showFakeNotification(selectedBank, msg, 'bây giờ', selectedBank);
+                playSound('coin');
+                isProcessingWithdraw = false;
+                if (withdrawButton) withdrawButton.disabled = false;
+            }, 1000);
+        }
+
+        // ==================== STATS MODAL ====================
+        function openStats() {
+            openModal('statsModal');
+            renderStats();
+            renderHistory();
+            renderAchievements();
+            renderZodiac();
+        }
+
+        function openInfo() {
+            openModal('infoModal');
+        }
+
+        function renderStats() {
+            const data = getData();
+            document.getElementById('statTotalPulls').textContent = data.stats.totalPulls;
+            document.getElementById('statSSRCount').textContent = data.stats.tierCounts.SSR || 0;
+        }
+
+        function renderHistory() {
+            const data = getData();
+            const list = document.getElementById('historyList');
+            list.innerHTML = '';
+
+            if (data.history.length === 0) {
+                list.innerHTML = '<li style="color:#888;font-style:italic;padding:1rem 0;">Chưa có lịch sử...</li>';
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            data.history.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'history-item';
+                if (item.action === 'gamble') {
+                    li.classList.add(item.amount > 0 ? 'gain' : 'loss');
+                }
+                const timeStr = new Date(item.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+                const tierClass = item.tier.includes('GAMBLE') ? 'tier-SSR' : `tier-${item.tier}`;
+                li.innerHTML = `
+                    <span><span class="tier-badge ${tierClass}">${item.tier}</span> ${timeStr}</span>
+                    <span>${item.amount > 0 ? '+' : ''}${formatNumber(item.amount)}</span>
+                `;
+                fragment.appendChild(li);
+            });
+            list.appendChild(fragment);
+        }
+
+        // ==================== ACHIEVEMENTS ====================
+        const ACHIEVEMENTS = {
+            'first_500k': { icon: '🥉', title: 'Khởi Nghiệp', desc: 'Có 500k trong ví' },
+            'millionaire': { icon: '💎', title: 'Triệu Phú', desc: 'Có 1 Triệu trong ví' },
+            'multimillionaire': { icon: '👑', title: 'Đại Gia', desc: 'Có 10 Triệu trong ví' },
+            'unlucky_10': { icon: '🌧️', title: 'Thánh Nhọ', desc: '10 lần liên tiếp ra N' },
+            'gambler_fail_5': { icon: '💸', title: 'Cờ Bạc Bác Thằng Bần', desc: 'Thua cược 5 lần liên tiếp' }
+        };
+
+        function checkAchievements(data) {
+            const newUnlocks = [];
+            if (data.totalMoney >= 500000 && !data.achievements.includes('first_500k')) newUnlocks.push('first_500k');
+            if (data.totalMoney >= 1000000 && !data.achievements.includes('millionaire')) newUnlocks.push('millionaire');
+            if (data.totalMoney >= 10000000 && !data.achievements.includes('multimillionaire')) newUnlocks.push('multimillionaire');
+            if (data.stats.consecutiveN >= 10 && !data.achievements.includes('unlucky_10')) newUnlocks.push('unlucky_10');
+            if (data.stats.consecutiveLosses >= 5 && !data.achievements.includes('gambler_fail_5')) newUnlocks.push('gambler_fail_5');
+
+            if (newUnlocks.length > 0) {
+                data.achievements.push(...newUnlocks);
+                saveData(data);
+                newUnlocks.forEach(id => showAchievementToast(ACHIEVEMENTS[id]));
+            }
+        }
+
+        function renderAchievements() {
+            const data = getData();
+            const list = document.getElementById('achievementsList');
+            list.innerHTML = '';
+
+            if (data.achievements.length === 0) {
+                list.innerHTML = '<span style="color:#888;font-style:italic;">Chưa có thành tựu nào...</span>';
+                return;
+            }
+
+            data.achievements.forEach(id => {
+                const achi = ACHIEVEMENTS[id];
+                if (!achi) return;
+                const badge = document.createElement('div');
+                badge.className = 'icon-btn';
+                badge.style.cssText = 'width:50px;height:50px;background:#444;cursor:help;';
+                badge.title = `${achi.title}: ${achi.desc}`;
+                badge.textContent = achi.icon;
+                list.appendChild(badge);
+            });
+        }
+
+        function showAchievementToast(achi) {
+            const toast = document.createElement('div');
+            toast.className = 'achievement-toast';
+            toast.innerHTML = `
+                <div class="icon">${achi.icon}</div>
+                <div class="info">
+                    <div class="title">Danh Hiệu Mới!</div>
+                    <div class="desc">${achi.title}: ${achi.desc}</div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            playSound('ssr');
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+
+        // ==================== ZODIAC ====================
+        const ZODIACS = [
+            { icon: '🐁', name: 'Tý' }, { icon: '🐂', name: 'Sửu' }, { icon: '🐅', name: 'Dần' }, { icon: '🐈', name: 'Mão' },
+            { icon: '🐉', name: 'Thìn' }, { icon: '🐍', name: 'Tỵ' }, { icon: '🐎', name: 'Ngọ' }, { icon: '🐐', name: 'Mùi' },
+            { icon: '🐒', name: 'Thân' }, { icon: '🐓', name: 'Dậu' }, { icon: '🐕', name: 'Tuất' }, { icon: '🐖', name: 'Hợi' }
+        ];
+
+        function renderZodiac() {
+            const grid = document.getElementById('zodiacGrid');
+            if (grid.children.length > 0) return;
+
+            ZODIACS.forEach((z, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'zodiac-btn';
+                btn.textContent = z.icon;
+                btn.title = z.name;
+                btn.onclick = () => showFortune(idx);
+                grid.appendChild(btn);
+            });
+        }
+
+        function showFortune(zodiacIndex) {
+            const fortunes = [
+                "Đầu tư sinh lời, code không bug! 🚀",
+                "Tình duyên thăng hoa, server cũng 'kết nối' tốt! ❤️",
+                "Cẩn thận deadline, nhưng tiền về như nước! 💧",
+                "Quý nhân phù trợ, deploy một phát ăn ngay! ✨",
+                "Sức khỏe dồi dào, code xuyên đêm không mệt! 💪"
+            ];
+            const resultEl = document.getElementById('fortuneResult');
+            resultEl.style.display = 'block';
+            resultEl.textContent = `Vận mệnh tuổi ${ZODIACS[zodiacIndex].name}: ${fortunes[Math.floor(Math.random() * fortunes.length)]}`;
+        }
+
+        // ==================== FAKE NOTIFICATION ====================
+        let notificationTimeout;
+
+        function showFakeNotification(appName, msg, timeAgo, iconChar) {
+            const existing = document.querySelector('.fake-notification');
+            if (existing) existing.remove();
+
+            const notif = document.createElement('div');
+            notif.className = 'fake-notification';
+
+            let iconHtml = iconChar;
+            let iconStyle = '';
+            const bankInfo = BANKS_DATA.find(b => b.code === iconChar);
+
+            if (bankInfo) {
+                iconHtml = `<img src="images/banks/${iconChar}.png" style="width:100%;height:100%;object-fit:contain;" onerror="this.parentElement.textContent='${iconChar.substring(0, 2)}'">`;
+                iconStyle = 'background:white;padding:2px;';
+                appName = bankInfo.name;
+            }
+
+            notif.innerHTML = `
+                <div class="fake-notification-header">
+                    <div class="app-info">
+                        <div class="app-icon" style="${iconStyle}">${iconHtml}</div>
+                        <span class="app-name">${appName}</span>
+                    </div>
+                    <span class="time">${timeAgo}</span>
+                </div>
+                <div class="fake-notification-content">${msg}</div>
+            `;
+
+            notif.onclick = () => {
+                notif.classList.remove('show');
+                setTimeout(() => notif.remove(), 500);
+            };
+
+            document.body.appendChild(notif);
+            requestAnimationFrame(() => notif.classList.add('show'));
+
+            if (notificationTimeout) clearTimeout(notificationTimeout);
+            notificationTimeout = setTimeout(() => {
+                notif.classList.remove('show');
+                setTimeout(() => notif.remove(), 500);
+            }, 7000);
+        }
+
+        // ==================== ENVELOPE & GAME LOGIC ====================
+        // (Keep your existing envelope, gacha, gambling, confetti logic here)
+        // ... I'll include a simplified version
+
+        function animateValue(element, start, end, duration) {
+            const range = end - start;
+            const startTime = performance.now();
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(start + range * easeOut);
+                element.textContent = formatNumber(current);
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
+
+        function typeWriter(element, text, speed = 30) {
+            if (element._typingTimeout) clearTimeout(element._typingTimeout);
+            element.textContent = '';
+            element.classList.add('typing-cursor');
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    element._typingTimeout = setTimeout(type, speed);
+                } else {
+                    element.classList.remove('typing-cursor');
+                }
+            }
+            type();
+        }
+
+        function openEnvelope() {
+            if (isOpened) return;
+            isOpened = true;
+
+            vibrate(50); // Haptic feedback
+            playSound('open');
+
+            document.querySelector('.envelope-flap').style.transform = '';
+            envelope.classList.add('opened');
+            clickHint.classList.add('hidden');
+
+            // Gacha Logic
+            const gachaTiers = {
+                SSR: { chance: 5, items: [moneyAmounts[5]] },
+                SR: { chance: 20, items: [moneyAmounts[4]] },
+                R: { chance: 35, items: [moneyAmounts[2], moneyAmounts[3]] },
+                N: { chance: 40, items: [moneyAmounts[0], moneyAmounts[1]] }
+            };
+
+            function getGachaResult() {
+                const rand = Math.random() * 100;
+                let tier = 'N';
+                let mainItem = gachaTiers.N.items[0];
+
+                // Cumulative chances: SSR=5, SR=5+20=25, R=25+35=60, N=rest
+                const ssrThreshold = gachaTiers.SSR.chance;
+                const srThreshold = ssrThreshold + gachaTiers.SR.chance;
+                const rThreshold = srThreshold + gachaTiers.R.chance;
+
+                if (rand < ssrThreshold) {
+                    tier = 'SSR';
+                    mainItem = getRandomItem(gachaTiers.SSR.items);
+                } else if (rand < srThreshold) {
+                    tier = 'SR';
+                    mainItem = getRandomItem(gachaTiers.SR.items);
+                } else if (rand < rThreshold) {
+                    tier = 'R';
+                    mainItem = getRandomItem(gachaTiers.R.items);
+                } else {
+                    tier = 'N';
+                    mainItem = getRandomItem(gachaTiers.N.items);
+                }
+
+                let bills = [mainItem];
+                let bonusChance = tier === 'N' ? 40 : tier === 'R' ? 30 : 20;
+                let maxBonus = tier === 'N' ? 5 : tier === 'R' ? 3 : 2;
+
+                for (let i = 0; i < maxBonus; i++) {
+                    if (Math.random() * 100 < bonusChance) {
+                        bills.push(mainItem);
+                    }
+                }
+
+                return { tier, bills };
+            }
+
+            const happyResult = getGachaResult();
+            const totalValue = happyResult.bills.reduce((sum, bill) => sum + bill.value, 0);
+
+            currentResult = {
+                money: happyResult,
+                totalValue: totalValue,
+                wish: getNextWish()
+            };
+
+            if (currentResult.money.tier === 'SSR') {
+                vibrate([50, 30, 50, 30, 100]); // Exciting pattern for SSR
+                playSound('ssr');
+            } else if (currentResult.money.tier === 'SR') playSound('sr');
+            else playSound('coin');
+
+            setTimeout(() => {
+                resultCard.classList.add('show');
+                resultCard.setAttribute('data-rarity', currentResult.money.tier);
+
+                updateStats(currentResult.money.tier, currentResult.totalValue);
+                addToHistory({
+                    timestamp: Date.now(),
+                    amount: currentResult.totalValue,
+                    tier: 'PULL',
+                    action: 'pull'
+                });
+
+                renderMoneyStack(currentResult.money.bills);
+                animateValue(amountEl, 0, totalValue, 1500);
+                addToWallet(totalValue);
+                typeWriter(wishEl, currentResult.wish);
+
+                requestAnimationFrame(() => {
+                    resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+
+                setTimeout(() => {
+                    createConfetti();
+                    if (currentResult.money.tier === 'SSR') {
+                        triggerJackpot();
+                    }
+                }, 800);
+            }, 600);
+        }
+
+        function renderMoneyStack(bills) {
+            const container = document.getElementById('moneyStackWrapper');
+            container.innerHTML = '';
+
+            const count = bills.length;
+            const visualCount = Math.min(count, 3);
+
+            // ALWAYS remove existing badge first (fixes ghost badge bug)
+            const staticContainer = document.getElementById('moneyStackContainer');
+            const existingBadge = staticContainer.querySelector('.stack-badge');
+            if (existingBadge) existingBadge.remove();
+
+            for (let i = 0; i < visualCount; i++) {
+                const card = document.createElement('div');
+                card.className = 'money-card';
+
+                let randomRot = 0, offsetX = 0, offsetY = 0;
+                if (count > 1) {
+                    randomRot = (Math.random() - 0.5) * 12;
+                    offsetX = i * 6;
+                    offsetY = i * -6;
+                }
+
+                card.style.setProperty('--stack-transform', `translate3d(${offsetX}px, ${offsetY}px, ${i * 2}px) rotate(${randomRot}deg)`);
+                card.style.zIndex = i;
+                card.style.transitionDelay = `${(visualCount - 1 - i) * 0.05}s`;
+
+                const billIndex = visualCount - 1 - i;
+                const currentBill = bills[billIndex] || bills[0];
+
+                card.innerHTML = `
+                    <div class="money-face money-front">
+                        <img src="${currentBill.front}" alt="Mặt trước" loading="lazy">
+                    </div>
+                    <div class="money-face money-back">
+                        <img src="${currentBill.back}" alt="Mặt sau" loading="lazy">
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+
+            // Only ADD badge if multiple bills
+            if (count > 1) {
+                const badge = document.createElement('div');
+                badge.className = 'stack-badge';
+                badge.textContent = `x${count}`;
+                badge.style.cssText = `
+                    position:absolute;top:-10px;right:-10px;
+                    background:var(--red-primary);color:#fff;font-weight:bold;
+                    padding:0.25rem 0.5rem;border-radius:12px;z-index:100;
+                    box-shadow:0 2px 5px rgba(0,0,0,0.3);border:2px solid #fff;
+                    animation:bounce 0.5s cubic-bezier(0.175,0.885,0.32,1.275) 0.5s both;
+                `;
+                staticContainer.appendChild(badge);
+            }
+        }
+
+        function triggerJackpot() {
+            document.body.classList.add('jackpot-active');
+            const container = document.querySelector('.container');
+            container.style.animation = 'none';
+            container.offsetHeight;
+            container.style.animation = 'shake-hard 0.8s ease-in-out';
+
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => createConfetti(true), i * 300);
+            }
+
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    if (!isMuted) {
+                        const clone = sounds.coin.cloneNode();
+                        clone.volume = 0.4;
+                        clone.play().catch(e => { });
+                    }
+                }, i * 150);
+            }
+        }
+
+        function createConfetti(isJackpot = false) {
+            const container = document.getElementById('confetti');
+            let emojis = isJackpot ? ['💰', '✨', '👑', '💎', '🌕'] : ['🐎', '🧧', '💰', '🌸', '🏮', '✨', '🍀'];
+            const particleCount = isJackpot ? 60 : 30;
+
+            const fragment = document.createDocumentFragment();
+            const particles = []; // Track for cleanup
+
+            for (let i = 0; i < particleCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = (15 + Math.random() * 30) * (isJackpot ? 1.5 : 1);
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity - 20;
+                const duration = 1 + Math.random();
+
+                confetti.style.cssText = `left:50%;top:50%;position:absolute;font-size:${Math.random() * 1.5 + 1}rem;transition:all ${duration}s cubic-bezier(0.25,1,0.5,1);opacity:1;background:transparent;width:auto;height:auto;${isJackpot ? 'z-index:2000;' : ''}`;
+                confetti.dataset.tx = tx;
+                confetti.dataset.ty = ty;
+                confetti.dataset.rot = Math.random() * 360;
+
+                particles.push(confetti);
+                fragment.appendChild(confetti);
+            }
+            container.appendChild(fragment);
+
+            // Animate in next frame
+            requestAnimationFrame(() => {
+                particles.forEach(child => {
+                    child.style.transform = `translate(${child.dataset.tx}vw, ${child.dataset.ty}vh) rotate(${child.dataset.rot}deg)`;
+                    child.style.opacity = '0';
+                });
+            });
+
+            // Cleanup all particles after max possible duration + buffer
+            setTimeout(() => {
+                particles.forEach(p => {
+                    if (p.parentNode) p.remove();
+                });
+            }, 3000);
+        }
+
+        function resetEnvelope() {
+            isOpened = false;
+            resultCard.classList.remove('show');
+            document.body.classList.remove('jackpot-active');
+            document.getElementById('gambleBtn').disabled = false;
+            amountEl.style.color = '';
+
+            setTimeout(() => {
+                envelope.classList.remove('opened');
+                clickHint.classList.remove('hidden');
+                checkSkinUnlock();
+
+                const wBtn = document.getElementById('actionWithdrawBtn');
+                if (wBtn) {
+                    wBtn.disabled = false;
+                    wBtn.textContent = '💸 Rút Tiền';
+                }
+            }, 300);
+        }
+
+        function gambleAll() {
+            // Confirmation dialog
+            if (!confirm('⚠️ Cược Tất Tay!\n\nTỷ lệ thắng: 10% (gấp đôi)\nTỷ lệ thua: 90% (mất hết)\n\nBạn có chắc không?')) {
+                return;
+            }
+
+            const btn = document.getElementById('gambleBtn');
+            btn.disabled = true;
+
+            const currentAmount = currentResult.totalValue;
+            const isWin = Math.random() < 0.1;
+
+            if (isWin) {
+                vibrate([100, 50, 100, 50, 200]); // Victory pattern
+                const newAmount = currentAmount * 2;
+                const data = getData();
+                data.stats.consecutiveLosses = 0;
+                saveData(data);
+
+                addToHistory({ timestamp: Date.now(), amount: newAmount, tier: 'GAMBLE_WIN', action: 'gamble' });
+                addToWallet(currentAmount);
+                currentResult.totalValue = newAmount;
+                amountEl.style.color = '#00FF00';
+                amountEl.textContent = formatNumber(newAmount);
+                playSound('ssr');
+                wishEl.textContent = "🎉 KHÔNG TIN ĐƯỢC! Bạn đã thắng cược và gấp đôi tài sản! 🎲";
+                createConfetti(true);
+            } else {
+                vibrate(300); // Long buzz for loss
+                const data = getData();
+                data.stats.consecutiveLosses++;
+                saveData(data);
+                checkAchievements(data);
+
+                addToHistory({ timestamp: Date.now(), amount: -currentAmount, tier: 'GAMBLE_LOSE', action: 'gamble' });
+                addToWallet(-currentAmount);
+                currentResult.totalValue = 0;
+                amountEl.style.color = '#555';
+                amountEl.textContent = "0";
+                wishEl.textContent = "💸 Tiếc quá! Chúc bạn may mắn lần sau. (Mất trắng!)";
+            }
+        }
+
+        function checkSkinUnlock() {
+            const data = getData();
+            const balance = data.maxBalance || data.totalMoney || 0;
+            envelope.classList.remove('skin-gold', 'skin-holo', 'skin-diamond');
+
+            if (balance >= 10000000) envelope.classList.add('skin-diamond');
+            else if (balance >= 5000000) envelope.classList.add('skin-holo');
+            else if (balance >= 1000000) envelope.classList.add('skin-gold');
+        }
+
+        function resetData() {
+            if (confirm('Bạn có chắc chắn muốn xóa toàn bộ dữ liệu?')) {
+                Storage.remove('luckyMoneyData_v2');
+                Storage.remove('luckyMoney_data');
+                location.reload();
+            }
+        }
+
+        // ==================== SOUND ====================
+        function updateMuteUI() {
+            muteBtn.textContent = isMuted ? '🔇' : '🔊';
+            muteBtn.style.opacity = isMuted ? '0.7' : '1';
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            Storage.set('luckyMoney_muted', isMuted);
+            updateMuteUI();
+        }
+
+        // ==================== SHARE ====================
+        let qrcodeObj = null;
+
+        function getSmartShareUrl() {
+            const url = new URL(window.location.href);
+            return url.toString();
+        }
+
+        function showShareModal() {
+            const modal = document.getElementById('shareModal');
+            const qrContainer = document.getElementById('qrcode');
+            const shareUrl = getSmartShareUrl();
+
+            modal.style.display = 'flex';
+            document.getElementById('shareUrl').textContent = shareUrl;
+            qrContainer.innerHTML = '';
+
+            qrcodeObj = new QRCode(qrContainer, {
+                text: shareUrl,
+                width: 180,
+                height: 180,
+                colorDark: "#d90429",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function hideShareModal() {
+            document.getElementById('shareModal').style.display = 'none';
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(getSmartShareUrl()).then(() => {
+                const btn = document.querySelector('.btn-copy');
+                const original = btn.innerHTML;
+                btn.innerHTML = '✅ Đã chép';
+                setTimeout(() => btn.innerHTML = original, 2000);
+            });
+        }
+
+        function downloadQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                const link = document.createElement('a');
+                link.download = 'lucky-money-qr.png';
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            }
+        }
+
+        // ==================== PARTICLES ====================
         function createParticles() {
             const container = document.getElementById('particles');
             for (let i = 0; i < 15; i++) {
@@ -2118,744 +2967,64 @@
             }
         }
 
-        // Audio
-        const sounds = {
-            open: new Audio('sounds/open.mp3'),
-            coin: new Audio('sounds/coin.mp3'),
-            ssr: new Audio('sounds/ssr.mp3'),
-            sr: new Audio('sounds/sr.mp3')
-        };
+        // ==================== HAPTIC FEEDBACK ====================
+        function vibrate(pattern = 50) {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(pattern);
+            }
+        }
 
-        // Reduce volume (too loud default)
-        Object.values(sounds).forEach(s => s.volume = 0.4);
-
-        // Preload sounds
-        sounds.open.load();
-        sounds.coin.load();
-        sounds.ssr.load();
-        // sounds.sr.load(); // SR sound missing, skipping
-
-        // Theme Initialization
+        // ==================== THEME & YEAR INIT ====================
         function initTheme() {
             const urlParams = new URLSearchParams(window.location.search);
             const theme = urlParams.get('theme');
 
-            // Dynamic Year Logic
+            // Dynamic Year
             const paramYear = parseInt(urlParams.get('year'));
             const currentYear = !isNaN(paramYear) ? paramYear : new Date().getFullYear();
-            const lunar = calculateLunarYear(currentYear);
-            const emoji = getZodiacEmoji(lunar.chi);
 
-            // Update UI with dynamic year
-            const yearTitle = `Chúc Mừng Năm Mới ${currentYear} - Xuân ${lunar.name} ${emoji}`;
+            // Lunar year calculation
+            const can = ['Canh', 'Tân', 'Nhâm', 'Quý', 'Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ'];
+            const chi = ['Thân', 'Dậu', 'Tuất', 'Hợi', 'Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi'];
+            const emojis = { 'Tý': '🐭', 'Sửu': '🐮', 'Dần': '🐯', 'Mão': '🐱', 'Thìn': '🐉', 'Tỵ': '🐍', 'Ngọ': '🐎', 'Mùi': '🐐', 'Thân': '🐵', 'Dậu': '🐓', 'Tuất': '🐶', 'Hợi': '🐷' };
 
-            // Update Page Title based on Theme
-            if (theme === 'normal') {
-                document.title = '🧧 Lì Xì May Mắn';
-            } else {
-                document.title = '🧧 Lì Xì May Mắn - Phòng CNTT';
-            }
+            const lunarCan = can[currentYear % 10];
+            const lunarChi = chi[currentYear % 12];
+            const lunarEmoji = emojis[lunarChi] || '🎆';
+            const lunarName = `${lunarCan} ${lunarChi}`;
 
-            // Update Header Description
+            // Update header
             const headerDesc = document.querySelector('.header p');
-            if (headerDesc) headerDesc.textContent = yearTitle;
+            if (headerDesc) headerDesc.textContent = `Chúc Mừng Năm Mới ${currentYear} - Xuân ${lunarName} ${lunarEmoji}`;
 
-            // In case there is an h3 title
-            const h3Title = document.getElementById('yearTitle');
-            if (h3Title) h3Title.textContent = `Năm Mới ${lunar.name} ${emoji}`;
+            const yearTitle = document.getElementById('yearTitle');
+            if (yearTitle) yearTitle.textContent = `Năm Mới ${lunarName} ${lunarEmoji}`;
 
-            // Update Wishes
+            // Apply theme
             if (theme === 'normal') {
                 document.body.classList.add('theme-normal');
-                wishes = getWishesForYear(currentYear, wishesGeneral);
-            } else {
-                // Default is IT theme
-                wishes = getWishesForYear(currentYear, wishesIT);
+                document.title = '🧧 Lì Xì May Mắn';
+                const badge = document.querySelector('.department-badge');
+                if (badge) badge.style.display = 'none';
+                const ecg = document.querySelector('.ecg-line');
+                if (ecg) ecg.style.display = 'none';
+                wishes = wishesGeneral;
             }
 
-            // Re-shuffle with new wishes
-            wishDeck = [];
-
-            if (theme === 'normal') {
-                // Apply Normal Theme
-
-                // 2. Hide Hospital Badge
-                const departmentBadge = document.querySelector('.department-badge');
-                if (departmentBadge) departmentBadge.style.display = 'none';
-
-                // 3. Hide ECG Line
-                const ecgLine = document.querySelector('.ecg-line');
-                if (ecgLine) ecgLine.style.display = 'none';
-
-                // 4. Update Header
-                const headerTitle = document.querySelector('.header h1');
-                const headerDescOld = document.querySelector('.header p'); // Renamed to avoid conflict
-                if (headerTitle) headerTitle.textContent = '🧧 Lì Xì May Mắn'; // Keep same or specific generic title
-                // The dynamic year logic above already handles the headerDesc, so this line is redundant if headerDesc is the same element.
-                // If it's a different element, it should be updated here. Assuming it's the same, we'll keep the dynamic one.
-                // if (headerDescOld) headerDescOld.textContent = 'Chúc Mừng Năm Mới 2026 - Xuân Bính Ngọ 🐎';
-
-                // 5. Update Background (Remove medical blue influence)
-                document.body.classList.add('theme-normal');
-            }
+            wishDeck = []; // Reset wish deck
         }
 
-        // Initialize Theme
-        initTheme();
-
-        // Preload Money Images
-        function preloadImages() {
-            moneyAmounts.forEach(item => {
-                const img1 = new Image();
-                img1.src = item.front;
-                const img2 = new Image();
-                img2.src = item.back;
-            });
-            // Preload bank images
-            BANKS_DATA.forEach(bank => {
-                const img = new Image();
-                img.src = `images/banks/${bank.code}.png`;
-            });
-
-            // Pre-render bank list so modal opens instantly
-            setTimeout(() => {
-                renderBanks();
-            }, 100);
-        }
-        window.addEventListener('load', preloadImages);
-
-        // --- Sound Control Logic ---
-        let isMuted = localStorage.getItem('luckyMoney_muted') === 'true';
-        const muteBtn = document.getElementById('muteBtn');
-
-        function updateMuteUI() {
-            muteBtn.textContent = isMuted ? '🔇' : '🔊';
-            muteBtn.style.opacity = isMuted ? '0.7' : '1';
-        }
-
-        function toggleMute() {
-            isMuted = !isMuted;
-            localStorage.setItem('luckyMoney_muted', isMuted);
-            updateMuteUI();
-        }
-
-        // Apply initial state
-        updateMuteUI();
-
-        // Override playSound to respect mute
-        const originalPlaySound = playSound;
-        playSound = function (name) {
-            if (isMuted) return;
-            if (sounds[name]) {
-                sounds[name].currentTime = 0;
-                sounds[name].play().catch(e => { });
-            }
-        };
-
-        // Also need to patch the manual plays in triggerJackpot/renderMoneyStack if any
-        // ... (See below patch)
-
-        // Share & QR Logic
-        let qrcodeObj = null;
-
-        function getSmartShareUrl() {
-            const url = new URL(window.location.href);
-            const params = new URLSearchParams(url.search);
-            const theme = params.get('theme');
-
-            if (theme === 'normal') {
-                params.set('theme', 'normal');
-            } else {
-                params.delete('theme');
-            }
-            url.search = params.toString();
-            return url.toString();
-        }
-
-        function showShareModal() {
-            const modal = document.getElementById('shareModal');
-            const qrContainer = document.getElementById('qrcode');
-            const urlDisplay = document.getElementById('shareUrl');
-            const shareUrl = getSmartShareUrl();
-
-            // Show modal
-            modal.style.display = 'flex';
-            urlDisplay.textContent = shareUrl;
-
-            // Clear previous QR
-            qrContainer.innerHTML = '';
-
-            // Generate QR
-            qrcodeObj = new QRCode(qrContainer, {
-                text: shareUrl,
-                width: 180,
-                height: 180,
-                colorDark: "#d90429", // Red-primary
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        }
-
-        function hideShareModal() {
-            document.getElementById('shareModal').style.display = 'none';
-        }
-
-        function copyLink() {
-            const shareUrl = getSmartShareUrl();
-            navigator.clipboard.writeText(shareUrl).then(() => {
-                const btn = document.querySelector('.btn-copy');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '✅ Đã chép';
-                setTimeout(() => btn.innerHTML = originalText, 2000);
-            });
-        }
-
-        function downloadQR() {
-            const qrCanvas = document.querySelector('#qrcode canvas');
-            if (!qrCanvas) {
-                // Fallback for img tag (qrcode.js sometimes renders img)
-                const qrImg = document.querySelector('#qrcode img');
-                if (qrImg) {
-                    const link = document.createElement('a');
-                    link.download = 'lucky-money-qr.png';
-                    link.href = qrImg.src;
-                    link.click();
-                }
-                return;
-            }
-
-            const link = document.createElement('a');
-            link.download = 'lucky-money-qr.png';
-            link.href = qrCanvas.toDataURL("image/png");
-            link.click();
-        }
-
-        function playSound(name) {
-            try {
-                sounds[name].currentTime = 0;
-                sounds[name].play().catch(e => console.log('Audio play failed:', e));
-            } catch (err) {
-                console.log('Audio error', err);
-            }
-        }
-
-
-
-        function typeWriter(element, text, speed = 30) {
-            // Safety: Clear previous timeout if active
-            if (element._typingTimeout) {
-                clearTimeout(element._typingTimeout);
-            }
-
-            element.textContent = '';
-            element.classList.add('typing-cursor');
-            let i = 0;
-            function type() {
-                if (i < text.length) {
-                    element.textContent += text.charAt(i);
-                    i++;
-                    element._typingTimeout = setTimeout(type, speed);
-                } else {
-                    element.classList.remove('typing-cursor');
-                    element._typingTimeout = null;
-                }
-            }
-            type();
-        }
-
-        // Get random item
-        function getRandomItem(arr) {
-            return arr[Math.floor(Math.random() * arr.length)];
-        }
-
-        // Format number
-        function formatNumber(num) {
-            if (num === null || num === undefined || isNaN(num)) return '0';
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        }
-
-        // Animate count up
-        function animateValue(element, start, end, duration) {
-            const range = end - start;
-            const startTime = performance.now();
-
-            function update(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const easeOut = 1 - Math.pow(1 - progress, 3);
-                const current = Math.floor(start + range * easeOut);
-                element.textContent = formatNumber(current);
-                if (progress < 1) requestAnimationFrame(update);
-            }
-
-            requestAnimationFrame(update);
-        }
-
-        // Open envelope
-        function openEnvelope() {
-            if (isOpened) return;
-            isOpened = true;
-
-            // Play sound
-            playSound('open');
-
-            // Force clear inline drag transform so CSS class takes over
-            document.querySelector('.envelope-flap').style.transform = '';
-
-            envelope.classList.add('opened');
-            clickHint.classList.add('hidden');
-
-            // Gacha Logic - Tier System
-            // SSR (2%): 500k - Boosted!
-            // SR (13%): 200k - Boosted!
-            // R (25%): 50k, 100k
-            // N (60%): 20k and below
-
-            // Define tiers and their prize pools (Updated for better drop rates)
-            // SSR (5%): 500k
-            // SR (20%): 200k
-            // R (35%): 50k, 100k
-            // N (40%): 10k, 20k
-            const gachaTiers = {
-                SSR: { chance: 5, items: [moneyAmounts[5]] }, // 500k (index 5 now)
-                SR: { chance: 20, items: [moneyAmounts[4]] }, // 200k (index 4)
-                R: { chance: 35, items: [moneyAmounts[2], moneyAmounts[3]] }, // 50k, 100k (index 2, 3)
-                N: { chance: 40, items: [moneyAmounts[0], moneyAmounts[1]] } // 10k, 20k (index 0, 1)
-            };
-
-            function getGachaResult() {
-                const rand = Math.random() * 100;
-                let tier = 'N';
-                let mainItem = gachaTiers.N.items[0];
-
-                // Determine Main Tier & Item
-                if (rand < gachaTiers.SSR.chance) {
-                    tier = 'SSR';
-                    mainItem = getRandomItem(gachaTiers.SSR.items);
-                } else if (rand < gachaTiers.SSR.chance + gachaTiers.SR.chance) {
-                    tier = 'SR';
-                    mainItem = getRandomItem(gachaTiers.SR.items);
-                } else if (rand < gachaTiers.SSR.chance + gachaTiers.SR.chance + gachaTiers.R.chance) {
-                    tier = 'R';
-                    mainItem = getRandomItem(gachaTiers.R.items);
-                } else {
-                    tier = 'N';
-                    mainItem = getRandomItem(gachaTiers.N.items);
-                }
-
-                // Initialize bills array with the main item
-                let bills = [mainItem];
-
-                // Bonus Bills Logic (Reduced Variance for Cleaner Look)
-                let bonusChance = 0;
-                let maxBonus = 0;
-
-                if (tier === 'N') {
-                    bonusChance = 40;
-                    maxBonus = 5;
-                } else if (tier === 'R') {
-                    bonusChance = 30;
-                    maxBonus = 3;
-                } else if (tier === 'SR') {
-                    bonusChance = 20;
-                    maxBonus = 2;
-                } else if (tier === 'SSR') {
-                    bonusChance = 10;
-                    maxBonus = 1;
-                }
-
-                // Determine "Filler" Item (Bonus Type)
-                // 70% chance to stack the SAME bill (clean look)
-                // 30% chance to stack a smaller bill (mixed look)
-                let bonusItem = mainItem;
-                if (Math.random() < 0.3) {
-                    // Pick a filler from N or R tier
-                    const fillerRand = Math.random() * 100;
-                    if (fillerRand < 20) bonusItem = getRandomItem(gachaTiers.R.items);
-                    else bonusItem = getRandomItem(gachaTiers.N.items);
-                }
-
-                // Roll for extra bills
-                for (let i = 0; i < maxBonus; i++) {
-                    if (Math.random() * 100 < bonusChance) {
-                        bills.push(bonusItem);
-                    }
-                }
-
-                // Return structure with bills array
-                return { tier, bills };
-            }
-
-            // Get gacha result with rarity
-            const happyResult = getGachaResult();
-
-            // Apply rarity effects logic here (can be expanded later for visual flare)
-            // Apply rarity effects logic here
-            console.log(`Gacha Pull: ${happyResult.tier} - ${happyResult.bills.length} bills`);
-
-            // Calculate Total Value
-            const totalValue = happyResult.bills.reduce((sum, bill) => sum + bill.value, 0);
-
-            currentResult = {
-                money: happyResult, // Contains .bills array
-                totalValue: totalValue, // Store explicitly
-                wish: getNextWish()
-            };
-
-
-
-            // Play sound based on tier
-            if (currentResult.money.tier === 'SSR') playSound('ssr');
-            else if (currentResult.money.tier === 'SR') playSound('sr');
-            else playSound('coin');
-
-            // Show result after animation
-            setTimeout(() => {
-                resultCard.classList.add('show');
-                resultCard.setAttribute('data-rarity', currentResult.money.tier); // Add tier for styling
-
-                // Update Stats
-                updateStats(currentResult.money.tier, currentResult.totalValue);
-
-                // Add to History
-                addToHistory({
-                    timestamp: Date.now(),
-                    amount: currentResult.totalValue,
-                    tier: 'PULL', // Changed from 'pull' to 'PULL' for consistency with GAMBLE_WIN/LOSE
-                    action: 'pull'
-                });
-
-                // Set money images & Render Stack
-                renderMoneyStack(currentResult.money.bills);
-
-                // Animate amount (Total Value)
-                const totalValue = currentResult.totalValue;
-                animateValue(amountEl, 0, totalValue, 1500);
-
-                // Add to wallet
-                addToWallet(totalValue);
-
-                // Show wish (Typewriter)
-                typeWriter(wishEl, currentResult.wish);
-
-                // Smooth scroll to result FIRST
-                requestAnimationFrame(() => {
-                    resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                });
-
-                // Delay visuals so they happen AFTER scroll enters view
-                setTimeout(() => {
-                    // Create confetti
-                    createConfetti();
-
-                    // Trigger Jackpot effects if SSR
-                    if (currentResult.money.tier === 'SSR') {
-                        triggerJackpot();
-                    }
-                }, 800); // 800ms delay for scroll to finish
-            }, 600);
-        }
-
-        // Render Money Stack
-        function renderMoneyStack(bills) {
-            const container = document.getElementById('moneyStackWrapper');
-            container.innerHTML = ''; // Clear existing
-
-            const count = bills.length;
-            // Limit max visual cards to avoid clutter (e.g. max 3)
-            const visualCount = Math.min(count, 3);
-
-            for (let i = 0; i < visualCount; i++) {
-                const card = document.createElement('div');
-                card.className = 'money-card';
-
-                // Offset calculation (reverse order so first one is on top logically, but last one in DOM is on top z-index wise? 
-                // Actually DOM order: last is top.
-                // We want the CLICKABLE one to be top.
-                // Let's loop 0 to visualCount. i=0 is bottom, i=count-1 is top.
-
-                let randomRot = 0;
-                let offsetX = 0;
-                let offsetY = 0;
-                let jitterX = 0;
-                let jitterY = 0;
-
-                // Only apply messy look if it's actually a stack
-                if (count > 1) {
-                    // Randomish offset for "messy stack" look
-                    randomRot = (Math.random() - 0.5) * 12; // +/- 6deg
-
-                    // Fan them out
-                    offsetX = i * 6;
-                    offsetY = i * -6;
-
-                    // Random jitter
-                    jitterX = (Math.random() - 0.5) * 4;
-                    jitterY = (Math.random() - 0.5) * 4;
-                }
-
-                // Use CSS Variable so we don't overwrite the rotation on flip
-                // Add Z-index translation for 3D effect
-                // i=0 is bottom (Z=0), i=max is top (Z=higher).
-                const zOffset = i * 2;
-
-                card.style.setProperty('--stack-transform', `translate3d(${offsetX + jitterX}px, ${offsetY + jitterY}px, ${zOffset}px) rotate(${randomRot}deg)`);
-                card.style.zIndex = i;
-
-                // Staggered flip animation
-                // Top card (last one) flips first if we iterate normally? 
-                // Let's make them flip in sequence from top to bottom or bottom to top.
-                // i=0 is bottom. i=max is top.
-                // If we want top to flip first: delay = (max - i) * 0.1s
-                const delay = (visualCount - 1 - i) * 0.05;
-                card.style.transitionDelay = `${delay}s`;
-
-                // Inner HTML
-                const bill = bills[i]; // Get specific bill for this card
-                // If visualCount < count, the top card (last one rendered) should probably be the Main Item (index 0)?
-                // Actually the render order: i=0 is bottom
-                // If we want the BEST bill on top, we should sort or handle bills array carefully.
-                // Currently bills[0] is main item.
-                // Let's ensure bills[0] (Main) is on TOP.
-                // Loop i=0 to visualCount.
-                // visualCount-1 (Top Card) -> bills[0]
-                // visualCount-2 -> bills[1]
-                // ...
-
-                // Mapping visual index 'i' to bill index
-                // i=visualCount-1 (Top Visual) should display bills[0]
-                // i=visualCount-2 should display bills[1]
-
-                const billIndex = visualCount - 1 - i;
-                const currentBill = bills[billIndex] || bills[0]; // Fallback
-
-                card.innerHTML = `
-                    <div class="money-face money-front">
-                        <img src="${currentBill.front}" alt="Mặt trước">
-                    </div>
-                    <div class="money-face money-back">
-                        <img src="${currentBill.back}" alt="Mặt sau">
-                    </div>
-                `;
-
-                container.appendChild(card);
-            }
-
-            // Add a badge to the CONTAINER (static), not the wrapper (rotating)
-            if (count > 1) {
-                const staticContainer = document.getElementById('moneyStackContainer');
-                // Remove existing if any
-                const existingBadge = staticContainer.querySelector('.stack-badge');
-                if (existingBadge) existingBadge.remove();
-
-                const badge = document.createElement('div');
-                badge.className = 'stack-badge';
-                badge.textContent = `x${count}`;
-                badge.style.cssText = `
-                    position: absolute;
-                    top: -10px;
-                    right: -10px;
-                    background: var(--red-primary);
-                    color: #fff;
-                    font-weight: bold;
-                    padding: 0.25rem 0.5rem;
-                    border-radius: 12px;
-                    z-index: 100;
-                    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-                    border: 2px solid #fff;
-                    animation: bounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s both;
-                `;
-                staticContainer.appendChild(badge);
-            }
-        }
-
-        function triggerJackpot() {
-            // Visuals
-            document.body.classList.add('jackpot-active');
-
-            // Shake effect on CONTAINER, not body (prevents scroll jump)
-            const container = document.querySelector('.container');
-            container.style.animation = 'none';
-            container.offsetHeight; /* trigger reflow */
-            container.style.animation = 'shake-hard 0.8s ease-in-out';
-
-            // Huge Gold Confetti Explosion
-            for (let i = 0; i < 3; i++) { // Reduced from 5 to 3
-                setTimeout(() => createConfetti(true), i * 300);
-            }
-
-            // Sound Frenzy (Cha-ching effect using coin sound)
-            const burstCount = 5;
-            for (let i = 0; i < burstCount; i++) {
-                setTimeout(() => {
-                    if (!isMuted) { // Check mute
-                        const clone = sounds.coin.cloneNode();
-                        clone.volume = 0.4; // Maintain lower volume
-                        clone.play().catch(e => { });
-                    }
-                }, i * 150);
-            }
-        }
-
-        // Create confetti (Emoji Rain)
-        function createConfetti(isJackpot = false) {
-            const container = document.getElementById('confetti');
-            let emojis = ['🐎', '🧧', '💰', '🌸', '🏮', '✨', '🍀'];
-
-            if (isJackpot) {
-                emojis = ['💰', '✨', '👑', '💎', '🌕']; // Gold theme
-            }
-
-            // Explosion center
-            // const centerX = 50; // Unused
-            // const centerY = 50; // Unused
-
-            // Reduced particle count for performance
-            const particleCount = isJackpot ? 60 : 30;
-
-            const fragment = document.createDocumentFragment();
-
-            for (let i = 0; i < particleCount; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-
-                // Random angle and distance for explosion
-                const angle = Math.random() * Math.PI * 2;
-                const velocity = (15 + Math.random() * 30) * (isJackpot ? 1.5 : 1);
-                const tx = Math.cos(angle) * velocity;
-                const ty = Math.sin(angle) * velocity - 20;
-
-                confetti.style.left = '50%';
-                confetti.style.top = '50%';
-                confetti.style.position = 'absolute';
-                confetti.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
-
-                if (isJackpot) {
-                    confetti.style.zIndex = 2000;
-                }
-
-                // Custom animation for each particle
-                confetti.style.transition = `all ${1 + Math.random()}s cubic-bezier(0.25, 1, 0.5, 1)`;
-                confetti.style.opacity = '1';
-                confetti.style.background = 'transparent';
-                confetti.style.width = 'auto';
-                confetti.style.height = 'auto';
-
-                // Store target transform for later
-                confetti.dataset.tx = tx;
-                confetti.dataset.ty = ty;
-                confetti.dataset.rot = Math.random() * 360;
-
-                fragment.appendChild(confetti);
-            }
-
-            container.appendChild(fragment);
-
-            // Animate all in next frame (Batch layout/paint)
-            requestAnimationFrame(() => {
-                // Select only the new ones? Or just all children?
-                // For simplicity, animate children that don't have style.transform set yet?
-                // Actually, accessing container.children is live.
-                Array.from(container.children).forEach(child => {
-                    // Check if it's new (transient hack or just overwriting is fine)
-                    if (child.dataset.tx) {
-                        child.style.transform = `translate(${child.dataset.tx}vw, ${child.dataset.ty}vh) rotate(${child.dataset.rot}deg)`;
-                        child.style.opacity = '0';
-                        // Cleanup dataset
-                        delete child.dataset.tx;
-                        delete child.dataset.ty;
-                        delete child.dataset.rot;
-
-                        // Auto remove
-                        setTimeout(() => child.remove(), 2000);
-                    }
-                });
-            });
-        }
-
-        // Reset envelope
-        function resetEnvelope() {
-            isOpened = false;
-            resultCard.classList.remove('show');
-            document.body.classList.remove('jackpot-active'); // Remove jackpot state
-
-            // Stop any playing sounds if resetting immediately (optional)
-
-            // Reset Gambling State
-            document.getElementById('gambleBtn').disabled = false;
-            amountEl.style.color = ''; // Reset color
-
-            setTimeout(() => {
-                envelope.classList.remove('opened');
-                clickHint.classList.remove('hidden');
-
-                // Check for skin unlock (Auto-apply for now)
-                checkSkinUnlock();
-
-                // Reset Withdraw Button
-                const wBtn = document.getElementById('actionWithdrawBtn');
-                if (wBtn) {
-                    wBtn.disabled = false;
-                    wBtn.textContent = '💸 Rút Tiền';
-                }
-            }, 300);
-        }
-
-        function resetData() {
-            if (confirm('Bạn có chắc chắn muốn xóa toàn bộ dữ liệu (Tiền, Lịch sử, Thành tựu)?')) {
-                localStorage.removeItem('luckyMoney_data');
-                location.reload();
-            }
-        }
-
-        // Share result
-        function shareResult() {
-            if (!currentResult) return;
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const theme = urlParams.get('theme');
-
-            let senderName = 'Phòng CNTT';
-            let title = 'Lì Xì May Mắn - Phòng CNTT';
-
-            if (theme === 'normal') {
-                senderName = 'Lì Xì May Mắn'; // Generic
-                title = 'Lì Xì May Mắn';
-            }
-
-            const text = `🧧 Tôi vừa nhận được ${currentResult.money.display} VNĐ lì xì từ ${senderName}!\n\n"${currentResult.wish}"\n\n🎊 Thử vận may của bạn: ${window.location.href}`;
-
-            if (navigator.share) {
-                navigator.share({
-                    title: title,
-                    text: text
-                });
-            } else {
-                navigator.clipboard.writeText(text).then(() => {
-                    alert('Đã sao chép vào clipboard! 📋');
-                });
-            }
-        }
-
-        // Initialize
-        createParticles();
-
-        // Shake to Open Logic
-        let lastX, lastY, lastZ;
-        let lastShakeTime = 0;
-        const SHAKE_THRESHOLD = 25; // Increased from 15 to prevent accidental opens
+        // ==================== SHAKE DETECTION ====================
+        let lastX, lastY, lastZ, lastShakeTime = 0;
+        const SHAKE_THRESHOLD = 25;
 
         function handleMotion(event) {
             if (isOpened) return;
-
             const current = event.accelerationIncludingGravity;
             if (!current) return;
-            // ...
 
             const currentTime = Date.now();
             if ((currentTime - lastShakeTime) > 100) {
-                const diffTime = currentTime - lastShakeTime;
                 lastShakeTime = currentTime;
 
                 if (lastX === undefined) {
@@ -2870,7 +3039,7 @@
                 const deltaZ = Math.abs(lastZ - current.z);
 
                 if (deltaX > SHAKE_THRESHOLD || deltaY > SHAKE_THRESHOLD || deltaZ > SHAKE_THRESHOLD) {
-                    // Shake detected!
+                    vibrate(100);
                     openEnvelope();
                 }
 
@@ -2880,18 +3049,15 @@
             }
         }
 
-        // Request permission for iOS 13+
-        if (typeof DeviceMotionEvent !== 'undefined') {
+        function initShakeDetection() {
+            if (typeof DeviceMotionEvent === 'undefined') return;
+
             if (typeof DeviceMotionEvent.requestPermission === 'function') {
-                // We need a user interaction to request permission. 
-                // We can bind this to the first click on the page or add a button.
-                // For now, let's try to bind it to the "clickHint" if clicked? 
-                // Or simply rely on the fact that user might click the envelope first.
-                // Actually, let's add a small listener to body for first interaction.
+                // iOS 13+ requires permission
                 const permissionHandler = () => {
                     DeviceMotionEvent.requestPermission()
                         .then(response => {
-                            if (response == 'granted') {
+                            if (response === 'granted') {
                                 window.addEventListener('devicemotion', handleMotion, true);
                             }
                         })
@@ -2903,697 +3069,91 @@
                 window.addEventListener('devicemotion', handleMotion, true);
             }
         }
-        // Drag to Open Logic
-        const flap = document.querySelector('.envelope-flap');
-        let isDragging = false;
-        let startY = 0;
-        let currentRotation = 0;
 
-        function startDrag(e) {
-            if (isOpened) return;
-            isDragging = true;
-            startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-            flap.style.transition = 'none'; // Disable transition for direct control
+        // ==================== DRAG TO OPEN ====================
+        function initDragToOpen() {
+            const flap = document.querySelector('.envelope-flap');
+            let isDragging = false;
+            let startY = 0;
+            let currentRotation = 0;
 
-            // Prevent default scroll on touch
-            if (e.cancelable) e.preventDefault();
-        }
-
-        function onDrag(e) {
-            if (!isDragging || isOpened) return;
-
-            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-            const deltaY = clientY - startY;
-
-            // Only allow dragging down
-            if (deltaY > 0) {
-                // Map deltaY to rotation (0 to 180 degrees)
-                // Assuming 100px drag = 180 degrees
-                currentRotation = Math.min((deltaY / 150) * 180, 180);
-                flap.style.transform = `rotateX(${currentRotation}deg)`;
-            }
-        }
-
-        function endDrag() {
-            if (!isDragging) return;
-            isDragging = false;
-            flap.style.transition = 'transform 0.6s ease'; // Re-enable transition
-
-            if (currentRotation > 90) {
-                // Open if dragged past 90 degrees
-                openEnvelope();
-            } else {
-                // Snap back
-                flap.style.transform = 'rotateX(0deg)';
-            }
-            currentRotation = 0;
-        }
-
-        // Mouse Events
-        flap.addEventListener('mousedown', startDrag);
-        window.addEventListener('mousemove', onDrag);
-        window.addEventListener('mouseup', endDrag);
-
-        // Touch Events
-        flap.addEventListener('touchstart', startDrag, { passive: false });
-        window.addEventListener('touchmove', onDrag, { passive: false });
-        window.addEventListener('touchend', endDrag);
-        // --- DATA MANAGER ---
-        const DEFAULT_DATA = {
-            totalMoney: 0,
-            history: [], // { timestamp, amount, tier, gambleResult }
-            stats: {
-                totalPulls: 0,
-                tierCounts: { SSR: 0, SR: 0, R: 0, N: 0 },
-                luckiestStreak: 0,
-                consecutiveLosses: 0,
-                consecutiveN: 0
-            },
-            achievements: [],
-            settings: {
-                zodiac: null
-            }
-        };
-
-        function getData() {
-            const stored = localStorage.getItem('luckyMoneyData_v2') || localStorage.getItem('luckyMoney_data'); // Try new key first, then old
-            if (!stored) return DEFAULT_DATA;
-            const data = { ...DEFAULT_DATA, ...JSON.parse(stored) }; // Safe merge
-            if (!data.history) data.history = []; // Ensure history exists
-            // Migration: Add maxBalance for skin persistence
-            if (typeof data.maxBalance === 'undefined') {
-                data.maxBalance = data.totalMoney || 0;
-            }
-            return data;
-        }
-
-        function saveData(data) {
-            // Update maxBalance whenever we save
-            if (data.totalMoney > (data.maxBalance || 0)) {
-                data.maxBalance = data.totalMoney;
-            }
-            localStorage.setItem('luckyMoneyData_v2', JSON.stringify(data));
-            updateWalletDisplay(); // Auto sync UI
-        }
-
-        function addToHistory(entry) {
-            const data = getData();
-            data.history.unshift(entry); // Add to top
-            // Limit history to last 50 items to prevent lag
-            if (data.history.length > 50) {
-                data.history = data.history.slice(0, 50);
-            }
-            saveData(data);
-
-            // Update Stats Display if modal is open
-            if (document.getElementById('statsModal').classList.contains('open')) {
-                renderStats(); // Assuming renderStats updates the UI
-                renderHistory(); // Re-render history to show latest
-            }
-        }
-
-        function updateStats(tier, amount) {
-            const data = getData();
-            data.stats.totalPulls++;
-            data.stats.tierCounts[tier] = (data.stats.tierCounts[tier] || 0) + 1;
-
-            // Consecutive N logic
-            if (tier === 'N') {
-                data.stats.consecutiveN++;
-            } else {
-                data.stats.consecutiveN = 0;
+            function startDrag(e) {
+                if (isOpened) return;
+                isDragging = true;
+                startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                flap.style.transition = 'none';
+                if (e.cancelable) e.preventDefault();
             }
 
-            // Streak logic (placeholder, maybe just high score tracking?)
+            function onDrag(e) {
+                if (!isDragging || isOpened) return;
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                const deltaY = clientY - startY;
 
-            saveData(data);
-            checkAchievements(data);
-        }
-
-        // Wallet Logic via Data Manager
-        // let totalMoney = parseInt(localStorage.getItem('luckyMoney_total') || '0'); // MIGRATION
-        // Migrate old data if exists
-        (function migrateOldData() {
-            const oldTotal = localStorage.getItem('luckyMoney_total');
-            if (oldTotal) {
-                const data = getData();
-                if (data.totalMoney === 0 && parseInt(oldTotal) > 0) {
-                    data.totalMoney = parseInt(oldTotal);
-                    data.maxBalance = Math.max(data.maxBalance, parseInt(oldTotal)); // Update maxBalance during migration
-                    saveData(data);
+                if (deltaY > 0) {
+                    currentRotation = Math.min((deltaY / 150) * 180, 180);
+                    flap.style.transform = `rotateX(${currentRotation}deg)`;
                 }
-                localStorage.removeItem('luckyMoney_total');
             }
-        })();
 
-        const walletEl = document.getElementById('walletBalance');
-        const walletContainer = document.querySelector('.wallet-container');
+            function endDrag() {
+                if (!isDragging) return;
+                isDragging = false;
+                flap.style.transition = 'transform 0.6s ease';
 
-        function updateWalletDisplay() {
-            const data = getData();
-            walletEl.textContent = formatNumber(data.totalMoney);
-        }
-
-        function addToWallet(amount) {
-            const data = getData();
-            data.totalMoney += amount;
-            saveData(data);
-
-            // Pop animation
-            walletContainer.classList.add('update');
-            setTimeout(() => walletContainer.classList.remove('update'), 300);
-
-            // Check achievements on every wallet update
-            checkAchievements(data);
-        }
-
-        // Initialize Wallet
-        updateWalletDisplay();
-
-        // --- ACHIEVEMENTS ---
-        const ACHIEVEMENTS = {
-            'first_500k': { icon: '🥉', title: 'Khởi Nghiệp', desc: 'Có 500k trong ví' },
-            'millionaire': { icon: '💎', title: 'Triệu Phú', desc: 'Có 1 Triệu trong ví' },
-            'multimillionaire': { icon: '👑', title: 'Đại Gia', desc: 'Có 10 Triệu trong ví' },
-            'unlucky_10': { icon: '🌧️', title: 'Thánh Nhọ', desc: '10 lần liên tiếp ra N' },
-            'gambler_fail_5': { icon: '💸', title: 'Cờ Bạc Bác Thằng Bần', desc: 'Thua cược 5 lần liên tiếp' }
-        };
-
-        function checkAchievements(data) {
-            const newUnlocks = [];
-
-            // Money Based
-            if (data.totalMoney >= 500000 && !data.achievements.includes('first_500k')) newUnlocks.push('first_500k');
-            if (data.totalMoney >= 1000000 && !data.achievements.includes('millionaire')) newUnlocks.push('millionaire');
-            if (data.totalMoney >= 10000000 && !data.achievements.includes('multimillionaire')) newUnlocks.push('multimillionaire');
-
-            // Streak Based
-            if (data.stats.consecutiveN >= 10 && !data.achievements.includes('unlucky_10')) newUnlocks.push('unlucky_10');
-            if (data.stats.consecutiveLosses >= 5 && !data.achievements.includes('gambler_fail_5')) newUnlocks.push('gambler_fail_5');
-
-            if (newUnlocks.length > 0) {
-                data.achievements.push(...newUnlocks);
-                saveData(data);
-                newUnlocks.forEach(id => showAchievementToast(ACHIEVEMENTS[id]));
-            }
-        }
-
-        function showAchievementToast(achi) {
-            const toast = document.createElement('div');
-            toast.className = 'achievement-toast';
-            toast.innerHTML = `
-                <div class="icon">${achi.icon}</div>
-                <div class="info">
-                    <div class="title">Danh Hiệu Mới!</div>
-                    <div class="desc">${achi.title}: ${achi.desc}</div>
-                </div>
-            `;
-            document.body.appendChild(toast);
-
-            // Sound?
-            playSound('ssr'); // Reuse fanfare for now
-
-            setTimeout(() => toast.classList.add('show'), 100);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 500);
-            }, 4000);
-        }
-
-        // Gambling Logic
-        function gambleAll() {
-            const btn = document.getElementById('gambleBtn');
-            btn.disabled = true; // One shot only
-
-            const currentAmount = currentResult.money.value;
-            // Adjusting odds: 10% Win, 90% Lose (User requested "way lower")
-            const rand = Math.random();
-            const isWin = rand < 0.1;
-            console.log(`Gambling: Rolled ${rand.toFixed(2)} (Need < 0.1 for Win) -> ${isWin ? 'WIN' : 'LOSE'}`);
-
-            if (isWin) {
-                // WIN DOUBLE
-                const newAmount = currentAmount * 2;
-
-                // Track stats
-                const data = getData();
-                data.stats.consecutiveLosses = 0;
-                saveData(data);
-
-                addToHistory({
-                    timestamp: Date.now(),
-                    amount: newAmount,
-                    tier: 'GAMBLE_WIN', // Special tier
-                    action: 'gamble'
-                });
-
-                // Update Wallet (add the difference)
-                addToWallet(currentAmount); // We already added the base amount, so add it again = double total
-
-                // Update currentResult
-                currentResult.totalValue = newAmount;
-
-                // Update UI visually
-                amountEl.style.color = '#00FF00'; // Green
-                amountEl.textContent = formatNumber(newAmount);
-                playSound('ssr'); // Win sound
-
-                // Show happy message
-                wishEl.textContent = "🎉 KHÔNG TIN ĐƯỢC! Bạn đã thắng cược và gấp đôi tài sản! 🎲";
-
-                createConfetti(true); // Jackpot confetti
-            } else {
-                // LOSE ALL
-
-                // Track stats
-                const data = getData();
-                data.stats.consecutiveLosses++;
-                saveData(data);
-                checkAchievements(data); // Check for gambling addict
-
-                addToHistory({
-                    timestamp: Date.now(),
-                    amount: -currentAmount,
-                    tier: 'GAMBLE_LOSE',
-                    action: 'gamble'
-                });
-
-                // Deduct from wallet (remove the base amount we just added)
-                addToWallet(-currentAmount);
-
-                // Update currentResult
-                currentResult.totalValue = 0;
-
-                // Update UI visually
-                amountEl.style.color = '#555'; // Grey
-                amountEl.textContent = "0";
-
-                // Show sad message
-                wishEl.textContent = "💸 Tiếc quá! Chúc bạn may mắn lần sau. (Mất trắng!)";
-            }
-        }
-
-        // Skin Logic
-        function checkSkinUnlock() {
-            const data = getData();
-            const envelope = document.getElementById('envelope');
-            // Use maxBalance to ensure skins persist even after withdraw
-            const balance = data.maxBalance || data.totalMoney || 0;
-
-            // Remove all skin classes first
-            envelope.classList.remove('skin-gold', 'skin-holo', 'skin-diamond');
-
-            if (balance >= 10000000) {
-                envelope.classList.add('skin-diamond');
-            } else if (balance >= 5000000) {
-                envelope.classList.add('skin-holo');
-            } else if (balance >= 1000000) {
-                envelope.classList.add('skin-gold');
-            }
-        }
-
-        // Initial Check
-        checkSkinUnlock();
-
-        // --- UI LOGIC (Modals & New Features) ---
-        function openStats() {
-            document.body.classList.add('no-scroll');
-            document.getElementById('statsModal').classList.add('open');
-            renderStats();
-            renderHistory();
-            renderAchievements();
-            renderZodiac();
-        }
-
-        function openInfo() {
-            document.body.classList.add('no-scroll');
-            document.getElementById('infoModal').classList.add('open');
-        }
-
-        function closeModal(e, id) {
-            if (e && e.target !== e.currentTarget && e.target.className !== 'close-btn') return;
-            document.body.classList.remove('no-scroll');
-            document.getElementById(id).classList.remove('open');
-        }
-
-        function renderStats() {
-            const data = getData();
-            document.getElementById('statTotalPulls').textContent = data.stats.totalPulls;
-            document.getElementById('statSSRCount').textContent = data.stats.tierCounts.SSR;
-        }
-
-        function renderHistory() {
-            const data = getData();
-            const list = document.getElementById('historyList');
-            const fragment = document.createDocumentFragment();
-
-            list.innerHTML = '';
-
-            data.history.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'history-item';
-                if (item.action === 'gamble') {
-                    li.classList.add(item.amount > 0 ? 'gain' : 'loss');
+                if (currentRotation > 90) {
+                    vibrate(100);
+                    openEnvelope();
+                } else {
+                    flap.style.transform = 'rotateX(0deg)';
                 }
+                currentRotation = 0;
+            }
 
-                const timeStr = new Date(item.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-                const tierClass = item.tier.includes('GAMBLE') ? 'tier-SSR' : `tier-${item.tier}`;
-
-                li.innerHTML = `
-                    <span><span class="tier-badge ${tierClass}">${item.tier}</span> ${timeStr}</span>
-                    <span>${item.amount > 0 ? '+' : ''}${formatNumber(item.amount)}</span>
-                `;
-                fragment.appendChild(li);
-            });
-            list.appendChild(fragment);
+            flap.addEventListener('mousedown', startDrag);
+            window.addEventListener('mousemove', onDrag);
+            window.addEventListener('mouseup', endDrag);
+            flap.addEventListener('touchstart', startDrag, { passive: false });
+            window.addEventListener('touchmove', onDrag, { passive: false });
+            window.addEventListener('touchend', endDrag);
         }
 
-        function renderAchievements() {
-            const data = getData();
-            const list = document.getElementById('achievementsList');
-            list.innerHTML = '';
+        // ==================== INIT ====================
+        function init() {
+            // Initialize muted state from storage
+            isMuted = Storage.get('luckyMoney_muted') === 'true';
 
-            data.achievements.forEach(id => {
-                const chi = ACHIEVEMENTS[id];
-                const badge = document.createElement('div');
-                badge.className = 'icon-btn'; // Reuse style
-                badge.style.width = '50px';
-                badge.style.height = '50px';
-                badge.title = `${chi.title}: ${chi.desc}`;
-                badge.textContent = chi.icon;
-                badge.style.background = '#444';
-                badge.style.cursor = 'help';
-                list.appendChild(badge);
+            // Theme and year first
+            initTheme();
+
+            createParticles();
+            updateWalletDisplay();
+            updateMuteUI();
+            checkSkinUnlock();
+
+            // Event listeners
+            envelopeContainer.addEventListener('click', openEnvelope);
+
+            document.getElementById('moneyStackWrapper').addEventListener('click', function () {
+                this.classList.toggle('flipped');
             });
 
-            if (data.achievements.length === 0) {
-                list.innerHTML = '<span style="color:#888; font-style:italic;">Chưa có thành tựu nào...</span>';
-            }
-        }
-
-        // Zodiac Feature
-        const ZODIACS = [
-            { icon: '🐁', name: 'Tý' }, { icon: '🐂', name: 'Sửu' }, { icon: '🐅', name: 'Dần' }, { icon: '🐈', name: 'Mão' },
-            { icon: '🐉', name: 'Thìn' }, { icon: '🐍', name: 'Tỵ' }, { icon: '🐎', name: 'Ngọ' }, { icon: '🐐', name: 'Mùi' },
-            { icon: '🐒', name: 'Thân' }, { icon: '🐓', name: 'Dậu' }, { icon: '🐕', name: 'Tuất' }, { icon: '🐖', name: 'Hợi' }
-        ];
-
-        function renderZodiac() {
-            const grid = document.getElementById('zodiacGrid');
-            const data = getData();
-
-            if (grid.children.length === 0) {
-                ZODIACS.forEach((z, idx) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'zodiac-btn';
-                    btn.textContent = z.icon;
-                    btn.title = z.name;
-                    btn.onclick = () => showFortune(idx);
-                    grid.appendChild(btn);
-                });
-            }
-
-            // If already picked today? (Optional logic, keep simple for now)
-        }
-
-        function showFortune(zodiacIndex) {
-            const fortunes = [
-                "Đầu tư sinh lời, code không bug! 🚀",
-                "Tình duyên thăng hoa, server cũng 'kết nối' tốt! ❤️",
-                "Cẩn thận deadline, nhưng tiền về như nước! 💧",
-                "Quý nhân phù trợ, deploy một phát ăn ngay! ✨",
-                "Sức khỏe dồi dào, code xuyên đêm không mệt! 💪",
-                "May mắn bất ngờ, trúng số độc đắc (hoặc SSR)! 🎰",
-                "Năm tuổi rực rỡ (nếu là Ngọ), sự nghiệp thăng tiến! 🐎",
-                "Bình an vô sự, mọi ticket đều được resolved! ✅",
-                "Thông minh đột xuất, giải được bug khó nhất năm! 🧠",
-                "Lộc lá đầy nhà, lì xì mỏi tay! 🧧",
-                "Được sếp khen thưởng, thăng chức tăng lương! 📈",
-                "Ăn ngon mặc đẹp, tâm hồn phơi phới! 🌸"
-            ];
-
-            const resultEl = document.getElementById('fortuneResult');
-            resultEl.style.display = 'block';
-            resultEl.textContent = `Vận mệnh tuổi ${ZODIACS[zodiacIndex].name}: ${fortunes[Math.floor(Math.random() * fortunes.length)]}`;
-        }
-
-        // --- Fake Withdraw Feature ---
-        // (Removed old withdrawMoney function as it is replaced by unified logic below)
-
-        let notificationTimeout;
-        function showFakeNotification(appName, msg, timeAgo = 'bây giờ', iconChar = 'VCB') {
-            // Remove existing
-            const existing = document.querySelector('.fake-notification');
-            if (existing) existing.remove();
-
-            const notif = document.createElement('div');
-            notif.className = 'fake-notification';
-
-            // Icon Logic
-            let iconHtml = iconChar;
-            let iconStyle = '';
-
-            // Check if it's a known bank for image
-            const bankInfo = BANKS_DATA.find(b => b.code === iconChar);
-            if (bankInfo) {
-                iconHtml = `<img src="images/banks/${iconChar}.png" style="width: 100%; height: 100%; object-fit: contain;">`;
-                iconStyle = 'background: white; padding: 2px;';
-                // Use default appName if passed, OR force bank name?
-                // Actually the caller passes appName. We might want to override it or ensure caller passes correct one.
-                // Caller uses 'selectedBank' which is a code.
-                // Let's override appName with the real bank Name from our DB if it matches the iconChar (which is the selected bank code)
-                appName = bankInfo.name;
-            }
-
-            // iOS Style Structure
-            notif.innerHTML = `
-                <div class="fake-notification-header">
-                    <div class="app-info">
-                        <div class="app-icon" style="${iconStyle}">${iconHtml}</div>
-                        <span class="app-name">${appName}</span>
-                    </div>
-                    <span class="time">${timeAgo}</span>
-                </div>
-                <div class="fake-notification-content">
-                    ${msg}
-                </div>
-            `;
-
-            // Add click listener to dismiss
-            notif.onclick = () => {
-                notif.classList.remove('show');
-                setTimeout(() => notif.remove(), 500);
-            };
-
-            document.body.appendChild(notif);
-
-            // Animate in
-            requestAnimationFrame(() => notif.classList.add('show'));
-
-            // Auto dismiss after 7 seconds (iOS notifications stay longer)
-            if (notificationTimeout) clearTimeout(notificationTimeout);
-            notificationTimeout = setTimeout(() => {
-                notif.classList.remove('show');
-                setTimeout(() => notif.remove(), 500);
-            }, 7000);
-        }
-
-        // --- NEW WITHDRAW LOGIC ---
-        // --- NEW WITHDRAW LOGIC ---
-        // Source: vn-banks.json
-        const BANKS_DATA = [
-            { "code": "ABB", "name": "ABBANK" },
-            { "code": "ACB", "name": "ACB" },
-            { "code": "VBA", "name": "Agribank" },
-            { "code": "BAB", "name": "BacABank" },
-            { "code": "BVB", "name": "BaoVietBank" },
-            { "code": "BIDV", "name": "BIDV" },
-            { "code": "CAKE", "name": "CAKE" },
-            { "code": "CBB", "name": "CBBank" },
-            { "code": "CIMB", "name": "CIMB" },
-            { "code": "CITIBANK", "name": "Citibank" },
-            { "code": "COOPBANK", "name": "COOPBANK" },
-            { "code": "DBS", "name": "DBSBank" },
-            { "code": "EIB", "name": "Eximbank" },
-            { "code": "GPB", "name": "GPBank" },
-            { "code": "HDB", "name": "HDBank" },
-            { "code": "HLBVN", "name": "HongLeong" },
-            { "code": "HSBC", "name": "HSBC" },
-            { "code": "IBKHCM", "name": "IBKHCM" },
-            { "code": "IBKHN", "name": "IBKHN" },
-            { "code": "IVB", "name": "IndovinaBank" },
-            { "code": "KBank", "name": "KBank" },
-            { "code": "KEBHANAHCM", "name": "KEBHanaHCM" },
-            { "code": "KEBHANAHN", "name": "KEBHANAHN" },
-            { "code": "KLB", "name": "KienLongBank" },
-            { "code": "KBHCM", "name": "KookminHCM" },
-            { "code": "KBHN", "name": "KookminHN" },
-            { "code": "LPB", "name": "LPBank" },
-            { "code": "MB", "name": "MBBank" },
-            { "code": "MSB", "name": "MSB" },
-            { "code": "MBV", "name": "MBV" },
-            { "code": "NAB", "name": "NamABank" },
-            { "code": "NCB", "name": "NCB" },
-            { "code": "NHB HN", "name": "Nonghyup" },
-            { "code": "OCB", "name": "OCB" },
-            { "code": "PGB", "name": "PGBank" },
-            { "code": "PBVN", "name": "PublicBank" },
-            { "code": "PVCB", "name": "PVcomBank" },
-            { "code": "STB", "name": "Sacombank" },
-            { "code": "SGICB", "name": "SaigonBank" },
-            { "code": "SCB", "name": "SCB" },
-            { "code": "SCVN", "name": "StandardChartered" },
-            { "code": "SEAB", "name": "SeABank" },
-            { "code": "SHB", "name": "SHB" },
-            { "code": "SHBVN", "name": "ShinhanBank" },
-            { "code": "TCB", "name": "Techcombank" },
-            { "code": "TIMO", "name": "Timo" },
-            { "code": "TPB", "name": "TPBank" },
-            { "code": "Ubank", "name": "Ubank" },
-            { "code": "UOB", "name": "UnitedOverseas" },
-            { "code": "VAB", "name": "VietABank" },
-            { "code": "VCCB", "name": "VietCapitalBank" },
-            { "code": "VIETBANK", "name": "VietBank" },
-            { "code": "VCB", "name": "Vietcombank" },
-            { "code": "ICB", "name": "VietinBank" },
-            { "code": "VIB", "name": "VIB" },
-            { "code": "Vikki", "name": "Vikki" },
-            { "code": "VPB", "name": "VPBank" },
-            { "code": "VRB", "name": "VRB" },
-            { "code": "WVN", "name": "Woori" }
-        ];
-
-
-        function renderBanks() {
-            const grid = document.getElementById('bankGrid');
-            if (grid.children.length > 0) return; // Already rendered
-
-            const fragment = document.createDocumentFragment();
-
-            BANKS_DATA.forEach(bank => {
-                const div = document.createElement('div');
-                div.className = `bank-item ${bank.code === selectedBank ? 'selected' : ''}`;
-                div.onclick = () => selectBank(bank.code, div);
-
-                const img = document.createElement('img');
-                img.src = `images/banks/${bank.code}.png`;
-                img.alt = bank.name;
-                img.onerror = () => { div.style.display = 'none'; };
-
-                const name = document.createElement('span');
-                name.textContent = bank.name;
-
-                div.appendChild(img);
-                div.appendChild(name);
-                fragment.appendChild(div);
+            // Preload images
+            moneyAmounts.forEach(item => {
+                new Image().src = item.front;
+                new Image().src = item.back;
             });
 
-            grid.appendChild(fragment);
+            // Pre-render banks for instant modal
+            setTimeout(() => renderBanks(), 500);
+
+            // Initialize shake and drag features
+            initShakeDetection();
+            initDragToOpen();
         }
 
-        function selectBank(bank, el) {
-            selectedBank = bank;
-            // Update UI
-            document.querySelectorAll('.bank-item').forEach(item => item.classList.remove('selected'));
-            el.classList.add('selected');
-        }
-
-        function openWithdrawModal(mode) {
-            withdrawMode = mode;
-            const data = getData();
-
-            if (mode === 'current') {
-                if (!currentResult || currentResult.money.value <= 0) {
-                    alert('Không có tiền để rút!');
-                    return;
-                }
-                pendingAmount = currentResult.totalValue;
-            } else {
-                // Wallet mode
-                if (data.totalMoney <= 0) {
-                    alert('Ví của bạn đang trống!');
-                    return;
-                }
-                pendingAmount = data.totalMoney;
-            }
-
-            // Deduct logic check (for 'current' mode, check if we still have it in wallet? yes, usually)
-            if (data.totalMoney < pendingAmount) {
-                alert('Số dư thực tế không đủ (Có thể bạn đã rút rồi).');
-                return;
-            }
-
-            // Set amount display
-            document.getElementById('withdrawAmountDisplay').textContent = formatNumber(pendingAmount) + ' VNĐ';
-
-            document.body.classList.add('no-scroll');
-            document.getElementById('withdrawModal').classList.add('open');
-            renderBanks();
-        }
-
-        let isProcessingWithdraw = false; // Guard flag
-
-        function confirmWithdraw() {
-            if (isProcessingWithdraw) return; // Prevent double click
-
-            const stk = document.getElementById('stkInput').value;
-            if (!stk) {
-                alert('Vui lòng nhập số tài khoản!');
-                return;
-            }
-
-            const amount = pendingAmount;
-
-            // Double check balance
-            const data = getData();
-            if (data.totalMoney < amount) {
-                alert('Số dư không đủ! Giao dịch thất bại.');
-                return;
-            }
-
-            // Lock UI
-            isProcessingWithdraw = true;
-            const withdrawButton = document.querySelector('#withdrawModal .btn-primary');
-            if (withdrawButton) withdrawButton.disabled = true;
-
-            // Close modal
-            closeModal(null, 'withdrawModal');
-
-            // Deduct
-            addToWallet(-amount);
-
-            // If current mode, disable that button
-            if (withdrawMode === 'current') {
-                const wBtn = document.getElementById('actionWithdrawBtn');
-                if (wBtn) {
-                    wBtn.disabled = true;
-                    wBtn.textContent = '✅ Đã Rút';
-                }
-                const gBtn = document.getElementById('gambleBtn');
-                if (gBtn) gBtn.disabled = true;
-            }
-
-            // Fake Notification
-            const now = new Date();
-            const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-
-            const fakeBalance = 124500000 + amount; // Fake big balance
-            const maskedStk = stk.length > 4 ? stk.slice(0, 4) + 'xxxxx' : stk + 'xxxxx';
-            const msg = `TK ${maskedStk} +${formatNumber(amount)}VND ${hours}:${minutes} ${day}/${month}. SD: ${formatNumber(fakeBalance)}VND. ND: Rut tien li xi`;
-
-            // Delay slightly for realism
-            setTimeout(() => {
-                showFakeNotification(selectedBank, msg, 'bây giờ', selectedBank);
-                playSound('coin');
-
-                // Unlock
-                isProcessingWithdraw = false;
-                if (withdrawButton) withdrawButton.disabled = false;
-            }, 1000);
-        }
+        // Start
+        init();
     </script>
 </body>
 
