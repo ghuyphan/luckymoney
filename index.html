@@ -1127,6 +1127,19 @@
             opacity: 0.8;
         }
 
+        /* Very small screens - hide decorations */
+        @media (max-width: 320px) {
+
+            .result-card .wish::before,
+            .result-card .wish::after {
+                display: none;
+            }
+
+            .result-card .wish {
+                padding: 1.5rem 1rem;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 360px) {
             .buttons {
@@ -1168,8 +1181,15 @@
             }
 
             .result-card .wish {
-                padding: 2rem 1rem;
+                padding: 2.5rem 1rem;
                 font-size: 1rem;
+            }
+
+            /* Smaller decorations on mobile */
+            .result-card .wish::before,
+            .result-card .wish::after {
+                font-size: 1.2rem;
+                opacity: 0.4;
             }
         }
 
@@ -1218,6 +1238,17 @@
                 font-size: 1.3rem;
                 bottom: 15px;
                 right: 15px;
+            }
+
+            /* Smaller decorations on small phones */
+            .result-card .wish::before,
+            .result-card .wish::after {
+                font-size: 1.4rem;
+                opacity: 0.5;
+            }
+
+            .result-card .wish {
+                padding: 2.5rem 1rem;
             }
         }
 
@@ -1310,6 +1341,12 @@
             .result-card .wish {
                 padding: 1.5rem 1rem;
                 font-size: 0.95rem;
+            }
+
+            /* Hide decorations on landscape - not enough space */
+            .result-card .wish::before,
+            .result-card .wish::after {
+                display: none;
             }
         }
 
