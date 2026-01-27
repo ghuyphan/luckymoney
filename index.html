@@ -532,13 +532,26 @@
             z-index: 1;
         }
 
-        .money-stack-wrapper {
+        /* New Container for sizing & perspective */
+        .money-stack-container {
             position: relative;
             width: 100%;
             max-width: clamp(260px, 70vw, 340px);
             aspect-ratio: 2.2 / 1;
             margin: 0 auto;
             perspective: 1000px;
+        }
+
+        .money-stack-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+        }
+
+        .money-stack-wrapper.flipped {
+            transform: rotateY(180deg);
         }
 
         .money-card {
@@ -1515,7 +1528,88 @@
         }
 
         .reset-link:hover {
+            display: inline-block;
             color: var(--red-primary);
+        }
+
+        /* Withdraw Modal Styles */
+        .withdraw-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+        }
+
+        .bank-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 5px;
+            /* border: 1px solid #eee; */
+            border-radius: 8px;
+        }
+
+        .bank-item {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 60px;
+        }
+
+        .bank-item:hover {
+            border-color: var(--gold-primary);
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .bank-item.selected {
+            border: 2px solid var(--red-primary);
+            background: rgba(196, 30, 58, 0.05);
+            position: relative;
+        }
+
+        .bank-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .withdraw-note {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.5rem;
+            font-style: italic;
         }
     </style>
 </head>
@@ -1653,6 +1747,45 @@
         </div>
     </div>
 
+    <!-- Withdraw Modal -->
+    <div class="modal-overlay" id="withdrawModal" onclick="closeModal(event, 'withdrawModal')">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>Rút Tiền Về Tài Khoản</div>
+                <button class="close-btn" onclick="closeModal(null, 'withdrawModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="withdraw-form">
+                    <div class="form-group">
+                        <label>Số Tiền Rút</label>
+                        <div class="form-input"
+                            style="background: #f5f5f5; color: var(--red-primary); font-weight: bold;"
+                            id="withdrawAmountDisplay">0 VNĐ</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Số Tài Khoản (STK)</label>
+                        <input type="text" class="form-input" id="stkInput" placeholder="Nhập số tài khoản..."
+                            value="0123456789">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Chọn Ngân Hàng</label>
+                        <div class="bank-grid" id="bankGrid">
+                            <!-- Banks injected here -->
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="confirmWithdraw()">
+                        💸 Rút Ngay
+                    </button>
+
+                    <p class="withdraw-note">* Tiền sẽ về tài khoản trong giây lát (Fake notification)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <svg class="ecg-line" viewBox="0 0 500 100" preserveAspectRatio="none">
         <path class="ecg-path" d="M0,50 L50,50 L60,20 L70,80 L80,50 L400,50 L410,20 L420,80 L430,50 L500,50" />
     </svg>
@@ -1661,7 +1794,7 @@
         <div class="wallet-icon">💰</div>
         <div class="wallet-balance" id="walletBalance">0</div>
         <div class="wallet-currency">VNĐ</div>
-        <button class="withdraw-btn" onclick="withdrawMoney()">Rút</button>
+        <button class="withdraw-btn" onclick="openWithdrawModal('wallet')">Rút</button>
     </div>
 
     <div class="container">
@@ -1693,16 +1826,18 @@
             <div class="currency">VNĐ</div>
 
             <div class="money-display">
-                <div class="money-stack-wrapper" id="moneyStackWrapper">
-                    <div class="money-card" id="moneyCard">
-                        <div class="money-face money-front">
-                            <img id="moneyFront" src="" alt="Mặt trước">
+                <div class="money-stack-container" id="moneyStackContainer">
+                    <div class="money-stack-wrapper" id="moneyStackWrapper">
+                        <div class="money-card" id="moneyCard">
+                            <div class="money-face money-front">
+                                <img id="moneyFront" src="" alt="Mặt trước">
+                            </div>
+                            <div class="money-face money-back">
+                                <img id="moneyBack" src="" alt="Mặt sau">
+                            </div>
                         </div>
-                        <div class="money-face money-back">
-                            <img id="moneyBack" src="" alt="Mặt sau">
-                        </div>
-                    </div>
-                </div>
+                    </div> <!-- Closing wrapper -->
+                </div> <!-- Closing container -->
                 <div class="flip-hint">
                     <span class="flip-icon">🔄</span> Nhấn để lật xem mặt sau
                 </div>
@@ -1714,8 +1849,8 @@
                 <button class="btn btn-primary" onclick="resetEnvelope()">
                     🔄 Thử Lại
                 </button>
-                <button class="btn btn-secondary" onclick="shareResult()">
-                    📤 Chia Sẻ
+                <button class="btn btn-secondary" id="actionWithdrawBtn" onclick="openWithdrawModal('current')">
+                    💸 Rút Tiền
                 </button>
                 <button class="btn btn-danger" id="gambleBtn" onclick="gambleAll()">
                     🎲 Cược Tất Tay
@@ -1936,9 +2071,8 @@
         // Event listeners
         envelopeContainer.addEventListener('click', openEnvelope);
         // Delegate click for dynamically created cards
-        document.getElementById('moneyStackWrapper').addEventListener('click', () => {
-            const cards = document.querySelectorAll('.money-card');
-            cards.forEach(card => card.classList.toggle('flipped'));
+        document.getElementById('moneyStackWrapper').addEventListener('click', function () {
+            this.classList.toggle('flipped');
         });
 
         // Create floating particles
@@ -2254,13 +2388,12 @@
                 // Initialize bills array with the main item
                 let bills = [mainItem];
 
-                // Bonus Bills Logic (Mixed Stacks)
-                // Chance to add extra bills based on Main Tier
+                // Bonus Bills Logic (Reduced Variance for Cleaner Look)
                 let bonusChance = 0;
                 let maxBonus = 0;
 
                 if (tier === 'N') {
-                    bonusChance = 40; // High chance for extra small bills
+                    bonusChance = 40;
                     maxBonus = 5;
                 } else if (tier === 'R') {
                     bonusChance = 30;
@@ -2273,24 +2406,25 @@
                     maxBonus = 1;
                 }
 
+                // Determine "Filler" Item (Bonus Type)
+                // 70% chance to stack the SAME bill (clean look)
+                // 30% chance to stack a smaller bill (mixed look)
+                let bonusItem = mainItem;
+                if (Math.random() < 0.3) {
+                    // Pick a filler from N or R tier
+                    const fillerRand = Math.random() * 100;
+                    if (fillerRand < 20) bonusItem = getRandomItem(gachaTiers.R.items);
+                    else bonusItem = getRandomItem(gachaTiers.N.items);
+                }
+
                 // Roll for extra bills
                 for (let i = 0; i < maxBonus; i++) {
                     if (Math.random() * 100 < bonusChance) {
-                        // Add a random bill (mostly N or R)
-                        const bonusRand = Math.random() * 100;
-                        let bonusItem;
-                        if (bonusRand < 5) bonusItem = getRandomItem(gachaTiers.SR.items); // Small chance for big bonus
-                        else if (bonusRand < 30) bonusItem = getRandomItem(gachaTiers.R.items);
-                        else bonusItem = getRandomItem(gachaTiers.N.items);
-
                         bills.push(bonusItem);
                     }
                 }
 
                 // Return structure with bills array
-                // Use the highest tier in the stack as the overall tier for effects
-                // (Already determined by main pull, but could upgrade if bonus is better? keeping simple for now)
-
                 return { tier, bills };
             }
 
@@ -2367,8 +2501,8 @@
             container.innerHTML = ''; // Clear existing
 
             const count = bills.length;
-            // Limit max visual cards to avoid clutter (e.g. max 5)
-            const visualCount = Math.min(count, 5);
+            // Limit max visual cards to avoid clutter (e.g. max 3)
+            const visualCount = Math.min(count, 3);
 
             for (let i = 0; i < visualCount; i++) {
                 const card = document.createElement('div');
@@ -2400,7 +2534,11 @@
                 }
 
                 // Use CSS Variable so we don't overwrite the rotation on flip
-                card.style.setProperty('--stack-transform', `translate(${offsetX + jitterX}px, ${offsetY + jitterY}px) rotate(${randomRot}deg)`);
+                // Add Z-index translation for 3D effect
+                // i=0 is bottom (Z=0), i=max is top (Z=higher).
+                const zOffset = i * 2;
+
+                card.style.setProperty('--stack-transform', `translate3d(${offsetX + jitterX}px, ${offsetY + jitterY}px, ${zOffset}px) rotate(${randomRot}deg)`);
                 card.style.zIndex = i;
 
                 // Staggered flip animation
@@ -2442,8 +2580,13 @@
                 container.appendChild(card);
             }
 
-            // Add a badge if count > 1
+            // Add a badge to the CONTAINER (static), not the wrapper (rotating)
             if (count > 1) {
+                const staticContainer = document.getElementById('moneyStackContainer');
+                // Remove existing if any
+                const existingBadge = staticContainer.querySelector('.stack-badge');
+                if (existingBadge) existingBadge.remove();
+
                 const badge = document.createElement('div');
                 badge.className = 'stack-badge';
                 badge.textContent = `x${count}`;
@@ -2461,7 +2604,7 @@
                     border: 2px solid #fff;
                     animation: bounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s both;
                 `;
-                container.appendChild(badge);
+                staticContainer.appendChild(badge);
             }
         }
 
@@ -2567,6 +2710,13 @@
 
                 // Check for skin unlock (Auto-apply for now)
                 checkSkinUnlock();
+
+                // Reset Withdraw Button
+                const wBtn = document.getElementById('actionWithdrawBtn');
+                if (wBtn) {
+                    wBtn.disabled = false;
+                    wBtn.textContent = '💸 Rút Tiền';
+                }
             }, 300);
         }
 
@@ -2907,6 +3057,9 @@
                 // Update Wallet (add the difference)
                 addToWallet(currentAmount); // We already added the base amount, so add it again = double total
 
+                // Update currentResult
+                currentResult.totalValue = newAmount;
+
                 // Update UI visually
                 amountEl.style.color = '#00FF00'; // Green
                 amountEl.textContent = formatNumber(newAmount);
@@ -2934,6 +3087,9 @@
 
                 // Deduct from wallet (remove the base amount we just added)
                 addToWallet(-currentAmount);
+
+                // Update currentResult
+                currentResult.totalValue = 0;
 
                 // Update UI visually
                 amountEl.style.color = '#555'; // Grey
@@ -3085,50 +3241,8 @@
         }
 
         // --- Fake Withdraw Feature ---
-        function withdrawMoney() {
-            const data = getData();
-            if (data.totalMoney <= 0) {
-                // Use simple alert for error to distinguish from the "real" notification
-                alert('⚠️ Số dư không đủ để thực hiện giao dịch.');
-                return;
-            }
-
-            // 1. Processing (Simulate network delay)
-            const btn = document.querySelector('.withdraw-btn');
-            const originalText = btn.textContent;
-            btn.textContent = '...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.disabled = false;
-
-                // 2. Format Data
-                const now = new Date();
-                const day = String(now.getDate()).padStart(2, '0');
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const year = String(now.getFullYear()).slice(-2); // 24
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const timeStr = `${hours}:${minutes}`;
-                const dateStr = `${day}/${month}/${year}`;
-
-                const amount = data.totalMoney;
-                const fakeBankBalance = 124500000; // Fake base balance
-                const totalBankBalance = fakeBankBalance + amount;
-
-                // 3. Deduct Money (Real Logic!)
-                addToWallet(-amount);
-
-                // 4. Construct Message
-                // Format: TK 1234xxxxx +[Amount]VND [Time] [Date]. SD: [Balance]VND. ND: Rut tien li xi
-                const msg = `TK 1032xxxxx +${formatNumber(amount)}VND ${timeStr} ${day}/${month}. SD: ${formatNumber(totalBankBalance)}VND. ND: Rut tien li xi tu Lucky Money`;
-
-                // 5. Show Notification
-                showFakeNotification('VIETCOMBANK', msg, 'bây giờ');
-
-            }, 2000);
-        }
+        // --- Fake Withdraw Feature ---
+        // (Removed old withdrawMoney function as it is replaced by unified logic below)
 
         let notificationTimeout;
         function showFakeNotification(appName, msg, timeAgo = 'bây giờ', iconChar = 'VCB') {
@@ -3138,11 +3252,28 @@
 
             const notif = document.createElement('div');
             notif.className = 'fake-notification';
+
+            // Icon Logic
+            let iconHtml = iconChar;
+            let iconStyle = '';
+
+            // Check if it's a known bank for image
+            const bankInfo = BANKS_DATA.find(b => b.code === iconChar);
+            if (bankInfo) {
+                iconHtml = `<img src="images/banks/${iconChar}.png" style="width: 100%; height: 100%; object-fit: contain;">`;
+                iconStyle = 'background: white; padding: 2px;';
+                // Use default appName if passed, OR force bank name?
+                // Actually the caller passes appName. We might want to override it or ensure caller passes correct one.
+                // Caller uses 'selectedBank' which is a code.
+                // Let's override appName with the real bank Name from our DB if it matches the iconChar (which is the selected bank code)
+                appName = bankInfo.name;
+            }
+
             // iOS Style Structure
             notif.innerHTML = `
                 <div class="fake-notification-header">
                     <div class="app-info">
-                        <div class="app-icon">${iconChar}</div>
+                        <div class="app-icon" style="${iconStyle}">${iconHtml}</div>
                         <span class="app-name">${appName}</span>
                     </div>
                     <span class="time">${timeAgo}</span>
@@ -3169,6 +3300,194 @@
                 notif.classList.remove('show');
                 setTimeout(() => notif.remove(), 500);
             }, 7000);
+        }
+
+        // --- NEW WITHDRAW LOGIC ---
+        // --- NEW WITHDRAW LOGIC ---
+        // Source: vn-banks.json
+        const BANKS_DATA = [
+            { "code": "ABB", "name": "ABBANK" },
+            { "code": "ACB", "name": "ACB" },
+            { "code": "VBA", "name": "Agribank" },
+            { "code": "BAB", "name": "BacABank" },
+            { "code": "BVB", "name": "BaoVietBank" },
+            { "code": "BIDV", "name": "BIDV" },
+            { "code": "CAKE", "name": "CAKE" },
+            { "code": "CBB", "name": "CBBank" },
+            { "code": "CIMB", "name": "CIMB" },
+            { "code": "CITIBANK", "name": "Citibank" },
+            { "code": "COOPBANK", "name": "COOPBANK" },
+            { "code": "DBS", "name": "DBSBank" },
+            { "code": "EIB", "name": "Eximbank" },
+            { "code": "GPB", "name": "GPBank" },
+            { "code": "HDB", "name": "HDBank" },
+            { "code": "HLBVN", "name": "HongLeong" },
+            { "code": "HSBC", "name": "HSBC" },
+            { "code": "IBKHCM", "name": "IBKHCM" },
+            { "code": "IBKHN", "name": "IBKHN" },
+            { "code": "IVB", "name": "IndovinaBank" },
+            { "code": "KBank", "name": "KBank" },
+            { "code": "KEBHANAHCM", "name": "KEBHanaHCM" },
+            { "code": "KEBHANAHN", "name": "KEBHANAHN" },
+            { "code": "KLB", "name": "KienLongBank" },
+            { "code": "KBHCM", "name": "KookminHCM" },
+            { "code": "KBHN", "name": "KookminHN" },
+            { "code": "LPB", "name": "LPBank" },
+            { "code": "MB", "name": "MBBank" },
+            { "code": "MSB", "name": "MSB" },
+            { "code": "MBV", "name": "MBV" },
+            { "code": "NAB", "name": "NamABank" },
+            { "code": "NCB", "name": "NCB" },
+            { "code": "NHB HN", "name": "Nonghyup" },
+            { "code": "OCB", "name": "OCB" },
+            { "code": "PGB", "name": "PGBank" },
+            { "code": "PBVN", "name": "PublicBank" },
+            { "code": "PVCB", "name": "PVcomBank" },
+            { "code": "STB", "name": "Sacombank" },
+            { "code": "SGICB", "name": "SaigonBank" },
+            { "code": "SCB", "name": "SCB" },
+            { "code": "SCVN", "name": "StandardChartered" },
+            { "code": "SEAB", "name": "SeABank" },
+            { "code": "SHB", "name": "SHB" },
+            { "code": "SHBVN", "name": "ShinhanBank" },
+            { "code": "TCB", "name": "Techcombank" },
+            { "code": "TIMO", "name": "Timo" },
+            { "code": "TPB", "name": "TPBank" },
+            { "code": "Ubank", "name": "Ubank" },
+            { "code": "UOB", "name": "UnitedOverseas" },
+            { "code": "VAB", "name": "VietABank" },
+            { "code": "VCCB", "name": "VietCapitalBank" },
+            { "code": "VIETBANK", "name": "VietBank" },
+            { "code": "VCB", "name": "Vietcombank" },
+            { "code": "ICB", "name": "VietinBank" },
+            { "code": "VIB", "name": "VIB" },
+            { "code": "Vikki", "name": "Vikki" },
+            { "code": "VPB", "name": "VPBank" },
+            { "code": "VRB", "name": "VRB" },
+            { "code": "WVN", "name": "Woori" }
+        ];
+
+        let selectedBank = 'VCB'; // Default
+        let withdrawMode = 'current'; // 'current' or 'wallet'
+        let pendingAmount = 0;
+
+        function renderBanks() {
+            const grid = document.getElementById('bankGrid');
+            if (grid.children.length > 0) return; // Already rendered
+
+            BANKS_DATA.forEach(bank => {
+                const div = document.createElement('div');
+                div.className = `bank-item ${bank.code === selectedBank ? 'selected' : ''}`;
+                div.onclick = () => selectBank(bank.code, div);
+                div.style.flexDirection = 'column';
+                div.style.gap = '2px';
+
+                const img = document.createElement('img');
+                img.src = `images/banks/${bank.code}.png`;
+                img.alt = bank.name;
+                img.style.height = '30px';
+                img.onerror = () => { div.style.display = 'none'; };
+
+                const name = document.createElement('span');
+                name.textContent = bank.name;
+                name.style.fontSize = '0.7rem';
+                name.style.textAlign = 'center';
+                name.style.fontWeight = 'bold';
+                name.style.lineHeight = '1.1';
+
+                div.appendChild(img);
+                div.appendChild(name);
+                grid.appendChild(div);
+            });
+        }
+
+        function selectBank(bank, el) {
+            selectedBank = bank;
+            // Update UI
+            document.querySelectorAll('.bank-item').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function openWithdrawModal(mode) {
+            withdrawMode = mode;
+            const data = getData();
+
+            if (mode === 'current') {
+                if (!currentResult || currentResult.money.value <= 0) {
+                    alert('Không có tiền để rút!');
+                    return;
+                }
+                pendingAmount = currentResult.totalValue;
+            } else {
+                // Wallet mode
+                if (data.totalMoney <= 0) {
+                    alert('Ví của bạn đang trống!');
+                    return;
+                }
+                pendingAmount = data.totalMoney;
+            }
+
+            // Deduct logic check (for 'current' mode, check if we still have it in wallet? yes, usually)
+            if (data.totalMoney < pendingAmount) {
+                alert('Số dư thực tế không đủ (Có thể bạn đã rút rồi).');
+                return;
+            }
+
+            // Set amount display
+            document.getElementById('withdrawAmountDisplay').textContent = formatNumber(pendingAmount) + ' VNĐ';
+
+            document.body.classList.add('no-scroll');
+            document.getElementById('withdrawModal').classList.add('open');
+            renderBanks();
+        }
+
+        function confirmWithdraw() {
+            const stk = document.getElementById('stkInput').value;
+            if (!stk) {
+                alert('Vui lòng nhập số tài khoản!');
+                return;
+            }
+
+            const amount = pendingAmount;
+
+            // Double check balance
+            const data = getData();
+            if (data.totalMoney < amount) {
+                alert('Số dư không đủ! Giao dịch thất bại.');
+                return;
+            }
+
+            // Close modal
+            closeModal(null, 'withdrawModal');
+
+            // Deduct
+            addToWallet(-amount);
+
+            // If current mode, disable that button
+            if (withdrawMode === 'current') {
+                const wBtn = document.getElementById('actionWithdrawBtn');
+                if (wBtn) {
+                    wBtn.disabled = true;
+                    wBtn.textContent = '✅ Đã Rút';
+                }
+            }
+
+            // Fake Notification
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            const fakeBalance = 124500000 + amount; // Fake big balance
+            const maskedStk = stk.length > 4 ? stk.slice(0, 4) + 'xxxxx' : stk + 'xxxxx';
+            const msg = `TK ${maskedStk} +${formatNumber(amount)}VND ${hours}:${minutes} ${day}/${month}. SD: ${formatNumber(fakeBalance)}VND. ND: Rut tien li xi`;
+
+            // Delay slightly for realism
+            setTimeout(() => {
+                showFakeNotification(selectedBank, msg, 'bây giờ', selectedBank);
+                playSound('coin');
+            }, 1000);
         }
     </script>
 </body>
