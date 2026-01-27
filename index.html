@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>🧧 Lì Xì May Mắn</title>
+    <link rel="icon" href="favicon.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -1057,10 +1058,12 @@
             position: fixed;
             top: 10px;
             left: 50%;
-            transform: translateX(-50%) translateY(-150%);
+            /* Optimized transform transition */
+            transform: translate3d(-50%, -150%, 0);
             width: 95%;
             max-width: 380px;
-            background: rgba(240, 240, 240, 0.85);
+            background: rgba(240, 240, 240, 0.9);
+            /* Slightly more opaque for better contrast */
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             padding: 12px 15px;
@@ -1070,14 +1073,17 @@
             flex-direction: column;
             gap: 8px;
             z-index: 10000;
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            /* Use standard ease-out for cleaner motion */
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
             border: 1px solid rgba(255, 255, 255, 0.4);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: #000;
+            will-change: transform;
+            /* Hardware acceleration hint */
         }
 
         .fake-notification.show {
-            transform: translateX(-50%) translateY(0);
+            transform: translate3d(-50%, 0, 0);
         }
 
         .fake-notification-header {
@@ -1294,7 +1300,8 @@
 
         .modal-content {
             background: var(--white);
-            width: 100%;
+            width: 95%;
+            /* Responsive width */
             max-width: 500px;
             border-radius: 1rem;
             max-height: 80vh;
@@ -1567,25 +1574,34 @@
 
         .bank-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            max-height: 200px;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 8px;
+            max-height: 250px;
             overflow-y: auto;
+            overflow-x: hidden;
+            /* Prevent horizontal scroll */
             padding: 5px;
-            /* border: 1px solid #eee; */
+            border: 1px solid #f0f0f0;
             border-radius: 8px;
         }
 
         .bank-item {
             border: 1px solid #eee;
             border-radius: 8px;
-            padding: 5px;
+            padding: 8px 4px;
+            /* More vertical padding */
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
+            flex-direction: column;
+            /* Move from JS */
             align-items: center;
             justify-content: center;
-            height: 60px;
+            gap: 4px;
+            /* Move from JS */
+            width: 100%;
+            /* Fill the grid cell */
+            text-align: center;
         }
 
         .bank-item:hover {
@@ -1600,9 +1616,16 @@
         }
 
         .bank-item img {
-            max-width: 100%;
-            max-height: 100%;
+            height: 28px;
             object-fit: contain;
+        }
+
+        .bank-item span {
+            font-size: 0.65rem;
+            font-weight: bold;
+            line-height: 1.1;
+            word-break: break-word;
+            /* allow wrapping for long names */
         }
 
         .withdraw-note {
@@ -1776,11 +1799,12 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="confirmWithdraw()">
+                    <button class="btn btn-primary" style="width: 100%; max-width: 100%; margin-top: 0.5rem;"
+                        onclick="confirmWithdraw()">
                         💸 Rút Ngay
                     </button>
 
-                    <p class="withdraw-note">* Tiền sẽ về tài khoản trong giây lát (Fake notification)</p>
+                    <p class="withdraw-note">* Tiền sẽ về tài khoản trong giây lát</p>
                 </div>
             </div>
         </div>
@@ -1865,6 +1889,10 @@
     </div>
 
     <script>
+        // Global Variables
+        let withdrawMode = 'current'; // 'current' or 'wallet'
+        let pendingAmount = 0;
+        let selectedBank = 'VCB'; // Default
         // Money data with real banknote images (Front is -1, Back is -2)
         // Removed 1k and 5k as requested
         const moneyAmounts = [
@@ -2313,6 +2341,7 @@
 
         // Format number
         function formatNumber(num) {
+            if (num === null || num === undefined || isNaN(num)) return '0';
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         }
 
@@ -2894,13 +2923,23 @@
         };
 
         function getData() {
-            const stored = localStorage.getItem('luckyMoney_data');
+            const stored = localStorage.getItem('luckyMoneyData_v2') || localStorage.getItem('luckyMoney_data'); // Try new key first, then old
             if (!stored) return DEFAULT_DATA;
-            return { ...DEFAULT_DATA, ...JSON.parse(stored) }; // Safe merge
+            const data = { ...DEFAULT_DATA, ...JSON.parse(stored) }; // Safe merge
+            if (!data.history) data.history = []; // Ensure history exists
+            // Migration: Add maxBalance for skin persistence
+            if (typeof data.maxBalance === 'undefined') {
+                data.maxBalance = data.totalMoney || 0;
+            }
+            return data;
         }
 
         function saveData(data) {
-            localStorage.setItem('luckyMoney_data', JSON.stringify(data));
+            // Update maxBalance whenever we save
+            if (data.totalMoney > (data.maxBalance || 0)) {
+                data.maxBalance = data.totalMoney;
+            }
+            localStorage.setItem('luckyMoneyData_v2', JSON.stringify(data));
             updateWalletDisplay(); // Auto sync UI
         }
 
@@ -2947,6 +2986,7 @@
                 const data = getData();
                 if (data.totalMoney === 0 && parseInt(oldTotal) > 0) {
                     data.totalMoney = parseInt(oldTotal);
+                    data.maxBalance = Math.max(data.maxBalance, parseInt(oldTotal)); // Update maxBalance during migration
                     saveData(data);
                 }
                 localStorage.removeItem('luckyMoney_total');
@@ -3102,18 +3142,19 @@
 
         // Skin Logic
         function checkSkinUnlock() {
-            const envelope = document.getElementById('envelope');
             const data = getData();
-            const total = data.totalMoney;
+            const envelope = document.getElementById('envelope');
+            // Use maxBalance to ensure skins persist even after withdraw
+            const balance = data.maxBalance || data.totalMoney || 0;
 
-            // Remove all skins first
+            // Remove all skin classes first
             envelope.classList.remove('skin-gold', 'skin-holo', 'skin-diamond');
 
-            if (total >= 10000000) {
+            if (balance >= 10000000) {
                 envelope.classList.add('skin-diamond');
-            } else if (total >= 5000000) {
+            } else if (balance >= 5000000) {
                 envelope.classList.add('skin-holo');
-            } else if (total >= 1000000) {
+            } else if (balance >= 1000000) {
                 envelope.classList.add('skin-gold');
             }
         }
@@ -3241,7 +3282,6 @@
         }
 
         // --- Fake Withdraw Feature ---
-        // --- Fake Withdraw Feature ---
         // (Removed old withdrawMoney function as it is replaced by unified logic below)
 
         let notificationTimeout;
@@ -3367,9 +3407,6 @@
             { "code": "WVN", "name": "Woori" }
         ];
 
-        let selectedBank = 'VCB'; // Default
-        let withdrawMode = 'current'; // 'current' or 'wallet'
-        let pendingAmount = 0;
 
         function renderBanks() {
             const grid = document.getElementById('bankGrid');
@@ -3379,21 +3416,14 @@
                 const div = document.createElement('div');
                 div.className = `bank-item ${bank.code === selectedBank ? 'selected' : ''}`;
                 div.onclick = () => selectBank(bank.code, div);
-                div.style.flexDirection = 'column';
-                div.style.gap = '2px';
 
                 const img = document.createElement('img');
                 img.src = `images/banks/${bank.code}.png`;
                 img.alt = bank.name;
-                img.style.height = '30px';
                 img.onerror = () => { div.style.display = 'none'; };
 
                 const name = document.createElement('span');
                 name.textContent = bank.name;
-                name.style.fontSize = '0.7rem';
-                name.style.textAlign = 'center';
-                name.style.fontWeight = 'bold';
-                name.style.lineHeight = '1.1';
 
                 div.appendChild(img);
                 div.appendChild(name);
@@ -3470,6 +3500,8 @@
                     wBtn.disabled = true;
                     wBtn.textContent = '✅ Đã Rút';
                 }
+                const gBtn = document.getElementById('gambleBtn');
+                if (gBtn) gBtn.disabled = true;
             }
 
             // Fake Notification
