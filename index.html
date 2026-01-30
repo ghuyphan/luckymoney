@@ -92,23 +92,14 @@
         /* --- THEMES --- */
         body.theme-normal {
             background-color: #900000;
-            background-image:
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 80px 80px;
+            background-size: cover;
             background-position: center center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
         }
 
         body.theme-normal::before {
-            background-image:
-                radial-gradient(rgba(255, 220, 0, 0.15) 2px, transparent 3px);
-            background-size: 80px 80px;
-            background-position: center center;
-            content: '';
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
+            content: none;
         }
 
         body.theme-normal::after {
@@ -116,6 +107,7 @@
         }
 
         /* --- UI COMPONENTS --- */
+
         .utility-bar {
             position: fixed;
             top: 1rem;
@@ -292,20 +284,23 @@
         }
 
         /* Envelope */
+        /* Envelope */
         .envelope-container {
-            perspective: 1000px;
+            perspective: 1200px;
             margin: clamp(5rem, 15vw, 6rem) auto 2rem;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
+            filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.3));
         }
 
         .envelope {
-            width: clamp(200px, 60vw, 240px);
-            height: clamp(300px, 90vw, 360px);
+            width: clamp(220px, 65vw, 260px);
+            height: clamp(320px, 95vw, 380px);
             margin: 0 auto;
             position: relative;
-            transition: transform 0.3s ease;
-            animation: float 3s ease-in-out infinite;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: float 4s ease-in-out infinite;
+            transform-style: preserve-3d;
         }
 
         .envelope:hover {
@@ -313,68 +308,70 @@
             cursor: pointer;
         }
 
+        .envelope:active {
+            transform: scale(0.96) translateY(5px);
+        }
+
         .envelope.shake-click {
             animation: shake 0.5s ease-in-out infinite;
         }
 
         @keyframes shake {
-            0% {
-                transform: translateY(0) rotate(0deg);
+
+            0%,
+            100% {
+                transform: rotate(0deg);
             }
 
             25% {
-                transform: translateY(0) rotate(-2deg);
-            }
-
-            50% {
-                transform: translateY(0) rotate(0deg);
+                transform: rotate(-3deg);
             }
 
             75% {
-                transform: translateY(0) rotate(2deg);
+                transform: rotate(3deg);
             }
-
-            100% {
-                transform: translateY(0) rotate(0deg);
-            }
-        }
-
-        .envelope:hover,
-        .envelope:active {
-            transform: scale(1.05);
         }
 
         .envelope-body {
             width: 100%;
             height: 100%;
-            background: linear-gradient(180deg, var(--red-primary) 0%, var(--red-dark) 100%);
-            border-radius: clamp(8px, 2vw, 12px);
+            background: radial-gradient(circle at 50% 30%, #D32F2F 0%, #B71C1C 60%, #8b0000 100%);
+            border-radius: 12px;
             position: relative;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.1);
-            border: 3px solid var(--gold-primary);
+            box-shadow:
+                inset 0 0 30px rgba(0, 0, 0, 0.4),
+                0 0 0 2px #d4af37,
+                0 0 0 5px #8b0000,
+                0 0 0 7px #d4af37;
             overflow: hidden;
         }
 
         .envelope-body::before {
             content: '福';
             position: absolute;
-            top: 50%;
+            top: 55%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: clamp(3rem, 15vw, 5rem);
-            color: var(--gold-primary);
-            opacity: 0.3;
-            font-weight: bold;
+            font-size: clamp(4rem, 18vw, 6rem);
+            font-family: "Playfair Display", serif;
+            font-weight: 800;
+            background: linear-gradient(to bottom, #FFD700 20%, #B8860B 50%, #FFD700 80%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            opacity: 0.9;
+            z-index: 1;
         }
 
         .envelope-pattern {
             position: absolute;
             inset: 0;
-            background-image:
-                linear-gradient(45deg, transparent 45%, var(--gold-primary) 45%, var(--gold-primary) 55%, transparent 55%),
-                linear-gradient(-45deg, transparent 45%, var(--gold-primary) 45%, var(--gold-primary) 55%, transparent 55%);
-            background-size: 20px 20px;
             opacity: 0.1;
+            background-image:
+                repeating-linear-gradient(45deg, #FFD700 0, #FFD700 1px, transparent 0, transparent 40px),
+                repeating-linear-gradient(-45deg, #FFD700 0, #FFD700 1px, transparent 0, transparent 40px);
+            mix-blend-mode: overlay;
         }
 
         .envelope-flap {
@@ -382,60 +379,94 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 20%;
-            background: linear-gradient(180deg, var(--red-dark) 0%, var(--red-primary) 100%);
+            height: 32%;
+            background: linear-gradient(160deg, #C62828 0%, #8E0000 100%);
             clip-path: ellipse(80% 100% at 50% 0%);
-            border: 3px solid var(--gold-primary);
-            border-top: none;
-            border-radius: 0 0 50% 50%;
             transform-origin: top center;
-            transition: transform 0.6s ease;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 2;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Gold trim accent for flap */
+        .envelope-flap::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 100%, rgba(255, 215, 0, 0.2) 0%, transparent 60%);
+            pointer-events: none;
         }
 
         .envelope-seal {
             position: absolute;
-            top: 15%;
+            top: 26%;
             left: 50%;
-            transform: translateX(-50%);
-            width: clamp(36px, 12vw, 50px);
-            height: clamp(36px, 12vw, 50px);
-            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary), var(--gold-dark));
+            transform: translate(-50%, -50%);
+            width: clamp(48px, 14vw, 64px);
+            height: clamp(48px, 14vw, 64px);
+            background: radial-gradient(circle at 35% 35%, #FFD700 0%, #DAA520 50%, #B8860B 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(1.25rem, 5vw, 1.75rem);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             z-index: 3;
-            transition: all 0.3s ease;
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.5),
+                inset 0 0 0 2px rgba(255, 215, 0, 0.5),
+                inset 0 0 4px 4px rgba(184, 134, 11, 0.3);
+            transition: all 0.4s ease;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            color: #795548;
+            border: 1px solid #B8860B;
         }
 
         /* Gold Skin (Unlocked at 1M) */
         .envelope.skin-gold .envelope-body {
-            background: linear-gradient(135deg, #FFD700, #FDB931, #FFD700);
-            border-color: #FFF;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+            background: radial-gradient(circle at 50% 30%, #FFD700 0%, #FDB931 60%, #DAA520 100%);
+            box-shadow:
+                inset 0 0 20px rgba(255, 255, 255, 0.6),
+                0 0 0 2px #FFF,
+                0 0 0 5px #DAA520,
+                0 0 0 7px #FFF;
+        }
+
+        .envelope.skin-gold .envelope-body::before {
+            background: linear-gradient(to bottom, #d32f2f 20%, #b71c1c 50%, #d32f2f 80%);
+            -webkit-background-clip: text;
+            background-clip: text;
         }
 
         .envelope.skin-gold .envelope-flap {
-            background: linear-gradient(180deg, #FDB931, #FFD700);
-            border-color: #FFF;
+            background: linear-gradient(160deg, #FDB931 0%, #DAA520 100%);
+            filter: drop-shadow(0 4px 8px rgba(218, 165, 32, 0.4));
         }
 
         .envelope.skin-gold .envelope-seal {
-            background: #FFF;
+            background: radial-gradient(circle at 35% 35%, #FFF 0%, #F0F0F0 100%);
             color: #DAA520;
-            box-shadow: 0 0 15px #FFF;
+            border: 1px solid #FFF;
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 2px rgba(218, 165, 32, 0.5);
         }
 
         .envelope.opened .envelope-flap {
             transform: rotateX(180deg) !important;
+            z-index: 0;
+            /* Move behind body when opened so card can come out */
+        }
+
+        /* Fix z-index when opening */
+        .envelope.opened .envelope-body {
+            overflow: visible;
         }
 
         .envelope.opened .envelope-seal {
             opacity: 0;
-            transform: translateX(-50%) scale(0);
+            transform: translate(-50%, -50%) scale(0);
         }
 
         .click-hint {
@@ -544,17 +575,20 @@
             transform: rotateY(180deg);
         }
 
+        /* 3D Stack Transform */
         .money-card {
+            position: absolute;
             width: 100%;
             height: 100%;
-            position: absolute;
             top: 0;
             left: 0;
+            border-radius: 12px;
             transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-            --stack-transform: translate(0, 0) rotate(0deg);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transform: var(--stack-transform);
+            /* Set by JS */
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: grab;
         }
 
         .money-card:active {
@@ -584,6 +618,16 @@
 
         .money-back {
             transform: rotateY(180deg);
+        }
+
+        .money-card.holo-active,
+        .money-stack-wrapper.holo-active {
+            transition: none !important;
+        }
+
+        /* Force transition during flip */
+        .money-stack-wrapper.is-flipping {
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
         }
 
         .flip-hint {
@@ -1386,9 +1430,9 @@
         /* FIX: Improved no-scroll - no padding-right to avoid layout shift */
         body.no-scroll {
             overflow: hidden;
+            height: 100vh;
             position: fixed;
             width: 100%;
-            /* Removed padding-right: 15px which caused horizontal jump */
         }
 
         /* --- NEW SKINS --- */
@@ -2068,6 +2112,602 @@
             color: #999;
             font-style: italic;
         }
+
+        /* ==================== TIER-SPECIFIC REVEAL ANIMATIONS ==================== */
+        /* Reveal overlay for dramatic effects */
+        .reveal-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .reveal-overlay.active {
+            opacity: 1;
+        }
+
+        /* SSR: Golden explosion effect */
+        .reveal-ssr {
+            background: radial-gradient(circle at center,
+                    rgba(255, 215, 0, 0.9) 0%,
+                    rgba(255, 180, 0, 0.6) 30%,
+                    rgba(255, 100, 0, 0.3) 60%,
+                    transparent 80%);
+            animation: ssrReveal 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .reveal-ssr::before {
+            content: '⭐';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 8rem;
+            animation: ssrStar 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
+            filter: drop-shadow(0 0 30px gold);
+        }
+
+        @keyframes ssrReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            20% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+
+            40% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.5);
+            }
+        }
+
+        @keyframes ssrStar {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.5) rotate(180deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(0.5) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* SR: Purple shimmer wave */
+        .reveal-sr {
+            background: linear-gradient(135deg,
+                    rgba(138, 43, 226, 0) 0%,
+                    rgba(153, 50, 204, 0.6) 50%,
+                    rgba(138, 43, 226, 0) 100%);
+            background-size: 300% 300%;
+            animation: srShimmer 0.8s ease-out forwards;
+        }
+
+        .reveal-sr::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center,
+                    rgba(200, 100, 255, 0.4) 0%,
+                    transparent 60%);
+            animation: srPulse 0.6s ease-out 0.2s forwards;
+        }
+
+        @keyframes srShimmer {
+            0% {
+                background-position: 100% 100%;
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                background-position: 0% 0%;
+                opacity: 0;
+            }
+        }
+
+        @keyframes srPulse {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        /* R: Blue glow effect */
+        .reveal-r {
+            background: radial-gradient(circle at center,
+                    rgba(0, 191, 255, 0.5) 0%,
+                    rgba(0, 150, 255, 0.2) 40%,
+                    transparent 70%);
+            animation: rGlow 0.5s ease-out forwards;
+        }
+
+        @keyframes rGlow {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.3);
+            }
+        }
+
+        /* Result card entrance animations per tier */
+        .result-card.reveal-anim-ssr {
+            animation: cardRevealSSR 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .result-card.reveal-anim-sr {
+            animation: cardRevealSR 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .result-card.reveal-anim-r {
+            animation: cardRevealR 0.5s ease-out forwards;
+        }
+
+        @keyframes cardRevealSSR {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) rotateY(180deg);
+            }
+
+            60% {
+                transform: scale(1.1) rotateY(0deg);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateY(0deg);
+            }
+        }
+
+        @keyframes cardRevealSR {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) translateY(50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes cardRevealR {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* ==================== LUCK METER (PITY SYSTEM) ==================== */
+        .luck-meter-container {
+            position: relative;
+            width: 100%;
+            max-width: 200px;
+            margin: 1rem auto 0;
+            text-align: center;
+        }
+
+        .luck-meter {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .luck-meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FF6B6B, #FF4444);
+            border-radius: 4px;
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .luck-meter-label {
+            font-size: 0.75rem;
+            color: var(--gold-light);
+            margin-top: 0.3rem;
+            opacity: 0.9;
+        }
+
+        .luck-meter-container.near-pity .luck-meter {
+            animation: luckGlow 1s ease-in-out infinite;
+        }
+
+        .luck-meter-container.near-pity .luck-meter-label {
+            color: #FF6B6B;
+            font-weight: bold;
+        }
+
+        @keyframes luckGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 5px rgba(255, 100, 100, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(255, 100, 100, 0.8);
+            }
+        }
+
+        /* ==================== LEADERBOARD ==================== */
+        .leaderboard-container {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .leaderboard-title {
+            color: var(--gold-primary);
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #fff;
+            transition: all 0.2s;
+        }
+
+        .leaderboard-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .leaderboard-item.current-user {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 180, 0, 0.1));
+            border: 1px solid var(--gold-primary);
+            font-weight: bold;
+        }
+
+        .leaderboard-rank {
+            min-width: 28px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .leaderboard-rank.gold {
+            color: #FFD700;
+        }
+
+        .leaderboard-rank.silver {
+            color: #C0C0C0;
+        }
+
+        .leaderboard-rank.bronze {
+            color: #CD7F32;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .leaderboard-score {
+            color: var(--gold-light);
+            font-weight: 600;
+        }
+
+        /* ==================== HOLOGRAPHIC CARD EFFECT ==================== */
+        .money-card.holo-active {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        .money-card .holo-shine {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg,
+                    transparent 20%,
+                    rgba(255, 255, 255, 0.3) 30%,
+                    rgba(255, 220, 100, 0.2) 35%,
+                    rgba(100, 255, 200, 0.15) 40%,
+                    rgba(200, 100, 255, 0.15) 45%,
+                    rgba(255, 255, 255, 0.25) 50%,
+                    transparent 60%);
+            background-size: 250% 250%;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            mix-blend-mode: color-dodge;
+            transition: opacity 0.3s;
+        }
+
+        /* Tier Specific Holo Effects */
+        .holo-shine.SSR {
+            /* Rainbow already default but reinforced */
+            background: linear-gradient(105deg,
+                    transparent 20%,
+                    rgba(255, 0, 0, 0.2) 30%,
+                    rgba(255, 255, 0, 0.2) 35%,
+                    rgba(0, 255, 0, 0.2) 40%,
+                    rgba(0, 255, 255, 0.2) 45%,
+                    rgba(0, 0, 255, 0.2) 50%,
+                    rgba(255, 0, 255, 0.2) 55%,
+                    transparent 60%);
+        }
+
+        .holo-shine.SR {
+            /* Gold/Amber */
+            background: linear-gradient(105deg,
+                    transparent 20%,
+                    rgba(255, 223, 0, 0.1) 30%,
+                    rgba(255, 215, 0, 0.4) 40%,
+                    rgba(255, 223, 0, 0.1) 50%,
+                    transparent 60%);
+        }
+
+        .holo-shine.R {
+            /* Silver/Blue */
+            background: linear-gradient(105deg,
+                    transparent 20%,
+                    rgba(255, 255, 255, 0.1) 30%,
+                    rgba(200, 230, 255, 0.3) 40%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    transparent 60%);
+        }
+
+        /* Nothing for N (plain) */
+        /* Default Holo Style (for N tier or generic) */
+        .holo-shine {
+            /* Rainbow/Oil slick effect */
+            background: linear-gradient(105deg,
+                    transparent 20%,
+                    rgba(255, 0, 0, 0.2) 30%,
+                    rgba(0, 255, 0, 0.2) 40%,
+                    rgba(0, 0, 255, 0.2) 50%,
+                    transparent 60%);
+            display: block;
+            /* Ensure it exists in DOM */
+            opacity: 0;
+            /* Hidden by default until active */
+        }
+
+        /* Specific override to show when active, using ID for higher specificity */
+        #moneyStackWrapper.holo-active .holo-shine,
+        .money-card.holo-active .holo-shine {
+            opacity: 1 !important;
+            display: block !important;
+        }
+
+        /* Desktop Hover Effect Only */
+        @media (hover: hover) {
+            .money-card:hover .holo-shine {
+                opacity: 1 !important;
+                display: block !important;
+            }
+
+            .money-card:hover {
+                transform: var(--stack-transform) scale(1.05) !important;
+                z-index: 10 !important;
+            }
+        }
+
+        /* Enhanced Diamond Skin - Premium Holographic Rainbow */
+        .envelope.skin-diamond .envelope-body {
+            background: linear-gradient(135deg,
+                    #ff6b6b 0%, #feca57 15%, #48dbfb 30%,
+                    #ff9ff3 45%, #54a0ff 60%, #5f27cd 75%,
+                    #00d2d3 90%, #ff6b6b 100%);
+            background-size: 400% 400%;
+            animation: diamondShift 6s ease infinite;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            box-shadow:
+                0 0 40px rgba(255, 100, 255, 0.4),
+                0 0 80px rgba(100, 200, 255, 0.2),
+                inset 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .envelope.skin-diamond .envelope-body::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(125deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.5) 25%,
+                    transparent 50%,
+                    rgba(255, 255, 255, 0.3) 75%,
+                    transparent 100%);
+            background-size: 200% 200%;
+            animation: diamondShine 3s linear infinite;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+
+        .envelope.skin-diamond .envelope-flap {
+            background: linear-gradient(180deg,
+                    #ff9ff3 0%, #54a0ff 50%, #00d2d3 100%);
+            background-size: 200% 200%;
+            animation: diamondShift 6s ease infinite;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-top: none;
+        }
+
+        .envelope.skin-diamond .envelope-seal {
+            background: linear-gradient(135deg, #fff, #f0f0f0, #fff);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes diamondShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes diamondShine {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Diamond skin preview (stats modal) */
+        .diamond-preview {
+            background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3) !important;
+            background-size: 300% 300% !important;
+            animation: diamondShift 4s ease infinite !important;
+            box-shadow: 0 0 15px rgba(255, 100, 255, 0.5) !important;
+        }
+
+        /* Tap Event Styles */
+        .tap-event-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 5000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+            pointer-events: auto;
+            /* Changed to auto to capture clicks on mobile */
+        }
+
+        .tap-event-overlay.active {
+            display: flex;
+        }
+
+        .tap-event-content {
+            text-align: center;
+            color: white;
+            pointer-events: none;
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+        }
+
+        .tap-title {
+            font-size: clamp(2rem, 8vw, 3rem);
+            color: #FFD700;
+            text-shadow: 0 0 20px #FF4500;
+            animation: pulse-gold 0.5s infinite alternate;
+            margin-bottom: 0.5rem;
+        }
+
+        .tap-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #FFF;
+        }
+
+        .tap-timer-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .tap-timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FF4500);
+            width: 100%;
+            transform-origin: left;
+        }
+
+        .tap-counter {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00E676;
+        }
+
+        /* Shake Harder Animation */
+        @keyframes shake-extreme {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            10% {
+                transform: translate(-15px, -15px) rotate(-10deg);
+            }
+
+            30% {
+                transform: translate(15px, 15px) rotate(10deg);
+            }
+
+            50% {
+                transform: translate(-10px, -10px) rotate(-5deg);
+            }
+
+            70% {
+                transform: translate(10px, 10px) rotate(5deg);
+            }
+        }
+
+        .envelope.shake-extreme {
+            animation: shake-extreme 0.2s ease-in-out infinite;
+        }
     </style>
 </head>
 
@@ -2075,6 +2715,21 @@
     <div class="lucky-particles" id="particles"></div>
     <div class="confetti-container" id="confetti"></div>
     <div class="jackpot-overlay"></div>
+
+    <!-- Random Event Overlay -->
+    <div id="tapEventOverlay" class="tap-event-overlay" onclick="handleTapEventClick()">
+        <div class="tap-event-content">
+            <h2 class="tap-title">🔥 BÙNG NỔ VẬN MAY! 🔥</h2>
+            <p class="tap-subtitle">Chạm nhanh để tăng tỷ lệ nổ hũ!</p>
+            <div class="tap-timer-bar">
+                <div class="tap-timer-fill" id="tapTimerFill"></div>
+            </div>
+            <div class="tap-counter">Tỷ lệ: <span id="tapLuckDisplay">+0%</span></div>
+        </div>
+    </div>
+
+    <!-- Tier Reveal Overlay -->
+    <div class="reveal-overlay" id="revealOverlay"></div>
 
     <!-- Share Button -->
     <div class="share-btn" onclick="showShareModal()">
@@ -2172,6 +2827,16 @@
                     style="margin: 1rem 0; color: var(--red-dark); border-bottom: 2px solid var(--gold-primary); display: inline-block;">
                     Thành Tựu 🏆</h3>
                 <div id="achievementsList">
+                </div>
+
+                <!-- Leaderboard -->
+                <h3
+                    style="margin: 1rem 0; color: var(--red-dark); border-bottom: 2px solid var(--gold-primary); display: inline-block;">
+                    Bảng Xếp Hạng 🏅</h3>
+                <div class="leaderboard-container" id="leaderboardContainer">
+                    <div class="leaderboard-list" id="leaderboardList">
+                        <!-- Rendered by JS -->
+                    </div>
                 </div>
 
                 <h3 id="yearTitle"
@@ -2306,6 +2971,14 @@
 
         <p class="click-hint" id="clickHint">👆 Nhấn hoặc Lắc điện thoại 📳 để mở</p>
 
+        <!-- Luck Meter (Pity System) -->
+        <div class="luck-meter-container" id="luckMeterContainer">
+            <div class="luck-meter">
+                <div class="luck-meter-fill" id="luckMeterFill" style="width: 0%"></div>
+            </div>
+            <div class="luck-meter-label" id="luckMeterLabel">🔥 Vận may: 0/25</div>
+        </div>
+
         <div class="result-card" id="resultCard">
             <div class="amount" id="amount">0</div>
             <div class="currency">VNĐ</div>
@@ -2323,9 +2996,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="flip-hint">
-                    <span class="flip-icon">🔄</span> Nhấn để lật xem mặt sau
-                </div>
+
             </div>
 
             <div class="wish" id="wish"></div>
@@ -2440,10 +3111,10 @@
 
         // Audio
         const sounds = {
-            open: new Audio('sounds/open.mp3'),
-            coin: new Audio('sounds/coin.mp3'),
-            ssr: new Audio('sounds/ssr.mp3'),
-            sr: new Audio('sounds/sr.mp3')
+            open: new Audio('sounds/318636225-gacha-ready.m4a'),
+            coin: new Audio('sounds/318636226-gacha-start.m4a'),
+            ssr: new Audio('sounds/318636226-gacha-start.m4a'),
+            sr: new Audio('sounds/318636226-gacha-start.m4a')
         };
         Object.values(sounds).forEach(s => s.volume = 0.4);
 
@@ -2526,7 +3197,8 @@
                 consecutiveLosses: 0,
                 gambleWins: 0,
                 totalWithdrawn: 0,
-                hitZero: false
+                hitZero: false,
+                pityCounter: 0  // Tracks pulls since last SSR for pity system
             },
             achievements: [],
             maxBalance: 0
@@ -2580,7 +3252,7 @@
             data.stats.totalPulls++;
             data.stats.tierCounts[tier] = (data.stats.tierCounts[tier] || 0) + 1;
             if (tier === 'N') {
-                data.stats.consecutiveN++;
+                data.stats.consecutiveN = (data.stats.consecutiveN || 0) + 1;
             } else {
                 data.stats.consecutiveN = 0;
             }
@@ -2796,6 +3468,7 @@
         function openStats() {
             openModal('statsModal');
             renderStats();
+            renderLeaderboard();
             renderHistory();
             renderAchievements();
             renderZodiac();
@@ -2881,6 +3554,299 @@
                 fragment.appendChild(li);
             });
             list.appendChild(fragment);
+        }
+
+        // ==================== LEADERBOARD SYSTEM ====================
+        const FUNNY_NAMES = [
+            "Anh Hai Lúa 🌾", "Cô Ba Sài Gòn 💃", "Chú Tư Đại Gia 💎",
+            "Bà Năm Vàng 🏆", "Ông Sáu SSR 🌟", "Em Bé Lucky 🍀",
+            "Thần Tài Online 💰", "Vua Lì Xì 🧧", "Thánh May Mắn ✨",
+            "Đại Ca Jackpot 🎰", "Nữ Hoàng Đỏ 👑", "Chiến Thần Gacha ⚔️",
+            "Phú Ông 4.0 📱", "Cậu Vàng 999 🥇", "Chị Đẹp Giàu Sang 💅",
+            "Bác Tám Hên Xui 🎲", "Cô Chín Phát Tài 🔥", "Anh Mười Tỷ 💵",
+            "Thánh Rút Tiền 🏧", "Cao Thủ Lắc 📳", "Siêu Nhân May 🦸",
+            "Boss Cuối Năm 🐉", "Vip Kim Cương 💠", "Đệ Nhất Hên 🌈",
+            "Hoàng Tử Đỏ 🔴", "Công Chúa Vàng 👸", "Tỷ Phú Tết 🎊",
+            "Thần Rồng Phát 🐲", "Phượng Hoàng Lửa 🔥", "Kỳ Lân May Mắn 🦄"
+        ];
+
+        function generateLeaderboard() {
+            const data = getData();
+            const userScore = data.maxBalance || data.totalMoney || 0;
+
+            // Generate AI players with varied scores
+            const aiPlayers = [];
+            const scoreRanges = [
+                { min: 50000000, max: 100000000 },  // Top tier
+                { min: 20000000, max: 50000000 },   // High
+                { min: 10000000, max: 20000000 },   // Mid-high
+                { min: 5000000, max: 10000000 },    // Mid
+                { min: 2000000, max: 5000000 },     // Mid-low
+                { min: 1000000, max: 2000000 },     // Low
+                { min: 500000, max: 1000000 },      // Very low
+                { min: 200000, max: 500000 },       // Starter
+                { min: 50000, max: 200000 },        // Beginner
+            ];
+
+            // Pick 9 random unique names
+            const shuffledNames = [...FUNNY_NAMES].sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 9; i++) {
+                const range = scoreRanges[i] || scoreRanges[scoreRanges.length - 1];
+                aiPlayers.push({
+                    name: shuffledNames[i],
+                    score: Math.floor(Math.random() * (range.max - range.min) + range.min),
+                    isUser: false
+                });
+            }
+
+            // Add current user
+            aiPlayers.push({
+                name: "👤 Bạn",
+                score: userScore,
+                isUser: true
+            });
+
+            // Sort by score descending
+            aiPlayers.sort((a, b) => b.score - a.score);
+
+            return aiPlayers.slice(0, 10);  // Top 10
+        }
+
+        function renderLeaderboard() {
+            const list = document.getElementById('leaderboardList');
+            if (!list) return;
+
+            const leaderboard = generateLeaderboard();
+            list.innerHTML = '';
+
+            leaderboard.forEach((player, idx) => {
+                const rank = idx + 1;
+                let rankClass = '';
+                let rankIcon = rank;
+
+                if (rank === 1) { rankClass = 'gold'; rankIcon = '🥇'; }
+                else if (rank === 2) { rankClass = 'silver'; rankIcon = '🥈'; }
+                else if (rank === 3) { rankClass = 'bronze'; rankIcon = '🥉'; }
+
+                const item = document.createElement('div');
+                item.className = `leaderboard-item ${player.isUser ? 'current-user' : ''}`;
+                item.innerHTML = `
+                    <span class="leaderboard-rank ${rankClass}">${rankIcon}</span>
+                    <span class="leaderboard-name">${player.name}</span>
+                    <span class="leaderboard-score">${formatNumber(player.score)}</span>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // ==================== LUCK METER (PITY SYSTEM) ====================
+        const PITY_THRESHOLD = 25;      // Guaranteed SSR at this count
+        const SOFT_PITY_START = 20;     // Bonus rate starts here
+        const SOFT_PITY_BONUS = 0.03;   // +3% per pull after soft pity
+        const BASE_SSR_RATE = 3;        // Base 3% SSR rate
+
+        function updateLuckMeter() {
+            const data = getData();
+            const pity = data.stats.pityCounter || 0;
+            const percentage = Math.min((pity / PITY_THRESHOLD) * 100, 100);
+
+            const fill = document.getElementById('luckMeterFill');
+            const label = document.getElementById('luckMeterLabel');
+            const container = document.getElementById('luckMeterContainer');
+
+            if (fill) fill.style.width = `${percentage}%`;
+            if (label) {
+                if (pity >= SOFT_PITY_START) {
+                    label.textContent = `🔥 Vận may: ${pity}/${PITY_THRESHOLD} (Sắp SSR!)`;
+                } else {
+                    label.textContent = `🔥 Vận may: ${pity}/${PITY_THRESHOLD}`;
+                }
+            }
+
+            // Toggle near-pity glow effect
+            if (container) {
+                if (pity >= SOFT_PITY_START) {
+                    container.classList.add('near-pity');
+                } else {
+                    container.classList.remove('near-pity');
+                }
+            }
+        }
+
+        // ==================== TIER REVEAL ANIMATIONS ====================
+        function playTierRevealAnimation(tier) {
+            const overlay = document.getElementById('revealOverlay');
+            if (!overlay) return Promise.resolve();
+
+            // Remove any existing animation classes
+            overlay.classList.remove('reveal-ssr', 'reveal-sr', 'reveal-r', 'active');
+
+            let duration = 300;  // Default for N tier
+
+            if (tier === 'SSR') {
+                overlay.classList.add('reveal-ssr', 'active');
+                duration = 1500;
+            } else if (tier === 'SR') {
+                overlay.classList.add('reveal-sr', 'active');
+                duration = 800;
+            } else if (tier === 'R') {
+                overlay.classList.add('reveal-r', 'active');
+                duration = 500;
+            }
+
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    overlay.classList.remove('reveal-ssr', 'reveal-sr', 'reveal-r', 'active');
+                    resolve();
+                }, duration);
+            });
+        }
+
+        function getCardRevealClass(tier) {
+            if (tier === 'SSR') return 'reveal-anim-ssr';
+            if (tier === 'SR') return 'reveal-anim-sr';
+            if (tier === 'R') return 'reveal-anim-r';
+            return '';
+        }
+
+        // ==================== HOLOGRAPHIC CARD EFFECT ====================
+        function initHoloEffect() {
+            const wrapper = document.getElementById('moneyStackWrapper');
+            if (!wrapper) return;
+
+            // Mouse movement for 3D tilt
+            wrapper.addEventListener('mousemove', handleHoloTilt);
+            wrapper.addEventListener('mouseleave', resetHoloTilt);
+
+            // Touch support
+            wrapper.addEventListener('touchmove', e => {
+                e.preventDefault(); // Prevent scrolling while interacting
+                if (e.touches.length === 1) {
+                    const touch = e.touches[0];
+                    handleHoloTilt({
+                        clientX: touch.clientX,
+                        clientY: touch.clientY,
+                        currentTarget: wrapper
+                    });
+                }
+            }, {
+                passive: false
+            });
+            wrapper.addEventListener('touchend', resetHoloTilt);
+
+            // Device Orientation (Gyroscope) Support for Mobile
+            // We set up the listener here, but on iOS it triggers after permission is granted
+            if (window.DeviceOrientationEvent) {
+                window.addEventListener('deviceorientation', handleGyroscopeTilt);
+            }
+        }
+
+        // Request permission on iOS 13+ (must be called on user interaction)
+        function requestMotionPermission() {
+            if (
+                typeof DeviceOrientationEvent !== 'undefined' &&
+                typeof DeviceOrientationEvent.requestPermission === 'function'
+            ) {
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            window.addEventListener('deviceorientation', handleGyroscopeTilt);
+                        }
+                    })
+                    .catch(console.error);
+            }
+        }
+
+        function handleGyroscopeTilt(e) {
+            const wrapper = document.getElementById('moneyStackWrapper');
+            if (!wrapper) return;
+
+            // Beta: x-axis (front-to-back tilt) [-180, 180]
+            // Gamma: y-axis (left-to-right tilt) [-90, 90]
+            const tiltX = e.beta;
+            const tiltY = e.gamma;
+
+            // Normalize for effect
+            // Limit tilt to reasonable range for effect visibility
+            // X: 0 to 40 (tilted up), Y: -30 to 30
+
+            // We want 'neutral' holding position (approx 45deg) to be 0 rotation
+            // If phone is flat (0), rotateX should be positive?
+            // Let's just create a dynamic feel.
+
+            let rotateX = 0;
+            let rotateY = 0;
+
+            if (tiltX !== null && tiltY !== null) {
+                // Adjust beta so 45deg is 'center' (holding phone naturally)
+                rotateX = (tiltX - 45) * 0.5; // Sensitivity
+                rotateY = tiltY * 0.5;
+
+                // Clamp
+                rotateX = Math.max(-20, Math.min(20, rotateX));
+                rotateY = Math.max(-30, Math.min(30, rotateY));
+
+                wrapper.classList.add('holo-active');
+                wrapper.style.transform = `perspective(1000px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg)`;
+
+                const cards = wrapper.querySelectorAll('.money-card');
+                cards.forEach(card => {
+                    const shine = card.querySelector('.holo-shine');
+                    if (shine) {
+                        // Map rotation to 0-100% position
+                        const xPos = 50 + (rotateY / 30) * 50;
+                        const yPos = 50 + (rotateX / 20) * 50;
+                        shine.style.backgroundPosition = `${xPos}% ${yPos}%`;
+                    }
+                });
+            }
+        }
+
+        function handleHoloTilt(e) {
+            const wrapper = e.currentTarget;
+            const rect = wrapper.getBoundingClientRect();
+
+            // Use SCREEN coordinates for smoother, less sensitive control
+            const screenX = e.clientX;
+            const screenY = e.clientY;
+
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            // X-axis movement controls Y-axis rotation (Spin)
+            // Range: Move from center to edge of screen = 180 degrees
+            const rotateY = ((screenX - centerX) / (window.innerWidth / 2)) * 180;
+
+            // Y-axis movement controls X-axis rotation (Tilt)
+            // Range: Max 20 degrees up/down
+            const rotateX = ((centerY - screenY) / (window.innerHeight / 2)) * 20;
+
+            // Apply tilt to the WHOLE wrapper
+            wrapper.classList.add('holo-active');
+
+            // Apply Transform
+            wrapper.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+            // Update shine on individual cards
+            const cards = wrapper.querySelectorAll('.money-card');
+            cards.forEach(card => {
+                const shine = card.querySelector('.holo-shine');
+                if (shine) {
+                    // Shine moves based on rotation angle [0-100%]
+                    const xPos = 50 + (rotateY / 180) * 50;
+                    const yPos = 50 + (rotateX / 20) * 50;
+                    shine.style.backgroundPosition = `${xPos}% ${yPos}%`;
+                }
+            });
+        }
+
+        function resetHoloTilt(e) {
+            const wrapper = e?.currentTarget || document.getElementById('moneyStackWrapper');
+            if (!wrapper) return;
+
+            // Remove active class to re-enable transition for smooth reset
+            wrapper.classList.remove('holo-active');
+            wrapper.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
         }
 
         // ==================== TOAST QUEUE SYSTEM ====================
@@ -3305,7 +4271,7 @@
             type();
         }
 
-        function openEnvelope() {
+        function openEnvelope(luckBonus = 0) {
             if (isOpened) return;
             isOpened = true;
 
@@ -3316,20 +4282,49 @@
             envelope.classList.add('opened');
             clickHint.classList.add('hidden');
 
-            // Gacha Logic
+            // Get current pity counter
+            const data = getData();
+            const pityCount = data.stats.pityCounter || 0;
+
+            // Calculate SSR rate with pity system
+            let ssrRate = BASE_SSR_RATE;  // Base 3%
+            if (pityCount >= SOFT_PITY_START) {
+                // Soft pity: +3% per pull after threshold
+                ssrRate += (pityCount - SOFT_PITY_START + 1) * (SOFT_PITY_BONUS * 100);
+            }
+
+            // Add Luck Bonus from Random Event
+            if (luckBonus > 0) {
+                ssrRate += luckBonus;
+                console.log('Luck Bonus Applied:', luckBonus, 'Total SSR Rate:', ssrRate);
+            }
+
+            // Hard pity: guaranteed SSR at threshold
+            const isHardPity = pityCount >= PITY_THRESHOLD - 1;
+
+            // Gacha Logic with dynamic rates
             const gachaTiers = {
-                SSR: { chance: 5, items: [moneyAmounts[5]] },
+                SSR: { chance: ssrRate, items: [moneyAmounts[5]] },
                 SR: { chance: 20, items: [moneyAmounts[4]] },
-                R: { chance: 35, items: [moneyAmounts[2], moneyAmounts[3]] },
+                R: { chance: 37, items: [moneyAmounts[2], moneyAmounts[3]] },
                 N: { chance: 40, items: [moneyAmounts[0], moneyAmounts[1]] }
             };
 
             function getGachaResult() {
+                // Forced SSR on hard pity
+                if (isHardPity) {
+                    return {
+                        tier: 'SSR',
+                        bills: [getRandomItem(gachaTiers.SSR.items)],
+                        isPity: true
+                    };
+                }
+
                 const rand = Math.random() * 100;
                 let tier = 'N';
                 let mainItem = gachaTiers.N.items[0];
 
-                // Cumulative chances: SSR=5, SR=5+20=25, R=25+35=60, N=rest
+                // Cumulative chances
                 const ssrThreshold = gachaTiers.SSR.chance;
                 const srThreshold = ssrThreshold + gachaTiers.SR.chance;
                 const rThreshold = srThreshold + gachaTiers.R.chance;
@@ -3358,11 +4353,20 @@
                     }
                 }
 
-                return { tier, bills };
+                return { tier, bills, isPity: false };
             }
 
             const happyResult = getGachaResult();
             const totalValue = happyResult.bills.reduce((sum, bill) => sum + bill.value, 0);
+
+            // Update pity counter
+            if (happyResult.tier === 'SSR') {
+                data.stats.pityCounter = 0;  // Reset on SSR
+            } else {
+                data.stats.pityCounter = (data.stats.pityCounter || 0) + 1;
+            }
+            saveData(data);
+            updateLuckMeter();
 
             currentResult = {
                 money: happyResult,
@@ -3370,14 +4374,19 @@
                 wish: getNextWish()
             };
 
+            // Play tier-specific sounds
             if (currentResult.money.tier === 'SSR') {
                 vibrate([50, 30, 50, 30, 100]); // Exciting pattern for SSR
                 playSound('ssr');
             } else if (currentResult.money.tier === 'SR') playSound('sr');
             else playSound('coin');
 
-            setTimeout(() => {
+            // Trigger visual reveal animation first
+            playTierRevealAnimation(currentResult.money.tier).then(() => {
                 resultCard.classList.add('show');
+                // Add specific reveal animation class
+                const revealClass = getCardRevealClass(currentResult.money.tier);
+                if (revealClass) resultCard.classList.add(revealClass);
                 resultCard.setAttribute('data-rarity', currentResult.money.tier);
 
                 updateStats(currentResult.money.tier, currentResult.totalValue);
@@ -3388,25 +4397,36 @@
                     action: 'pull'
                 });
 
-                renderMoneyStack(currentResult.money.bills);
+                renderMoneyStack(currentResult.money.bills, currentResult.money.tier);
                 animateValue(amountEl, 0, totalValue, 1500);
                 addToWallet(totalValue);
                 typeWriter(wishEl, currentResult.wish);
 
+                // Initialize holo effect if multiple cards
+                setTimeout(() => initHoloEffect(), 100);
+
                 requestAnimationFrame(() => {
-                    resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Force layout check to ensure element is considered visible by browser
+                    const _ = resultCard.offsetHeight;
+
+                    setTimeout(() => {
+                        resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
                 });
+
+                // Confetti timing based on tier
+                const confettiDelay = currentResult.money.tier === 'SSR' ? 1000 : 500;
 
                 setTimeout(() => {
                     createConfetti();
                     if (currentResult.money.tier === 'SSR') {
                         triggerJackpot();
                     }
-                }, 800);
-            }, 600);
+                }, confettiDelay);
+            });
         }
 
-        function renderMoneyStack(bills) {
+        function renderMoneyStack(bills, tier = 'N') {
             const container = document.getElementById('moneyStackWrapper');
             container.innerHTML = '';
 
@@ -3440,6 +4460,7 @@
                 const currentBill = bills[billIndex] || bills[0];
 
                 card.innerHTML = `
+                    <div class="holo-shine ${tier}"></div>
                     <div class="money-face money-front">
                         <img src="${currentBill.front}" alt="Mặt trước" loading="lazy">
                     </div>
@@ -3860,6 +4881,98 @@
         }
 
         // ==================== INIT ====================
+        // ==================== RANDOM EVENT LOGIC ====================
+        let isTapEventActive = false;
+        let tapEventTimer = null;
+        let tapEventCount = 0;
+        let tapEventDuration = 3000; // 3 seconds
+
+        async function tryOpenEnvelope() {
+            if (isOpened) return;
+
+            // Try to request Gyro permission on this interaction (iOS)
+            requestMotionPermission();
+
+            const now = Date.now(); // 20% chance to trigger random event if not in jackpot mode
+            // and not already having this event
+            if (!isTapEventActive && Math.random() < 0.2) {
+                startTapEvent();
+            } else {
+                if (isTapEventActive) {
+                    handleTapEventClick();
+                } else {
+                    openEnvelope();
+                }
+            }
+        }
+
+        function startTapEvent() {
+            isTapEventActive = true;
+            tapEventCount = 0;
+
+            // Show Overlay
+            const overlay = document.getElementById('tapEventOverlay');
+            const timerFill = document.getElementById('tapTimerFill');
+            const luckDisplay = document.getElementById('tapLuckDisplay');
+
+            overlay.classList.add('active');
+            luckDisplay.textContent = '+0%';
+
+            // Animate Timer
+            // Reset width first
+            timerFill.style.transition = 'none';
+            timerFill.style.width = '100%';
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    timerFill.style.transition = `width ${tapEventDuration}ms linear`;
+                    timerFill.style.width = '0%';
+                });
+            });
+
+            // Start Timer
+            tapEventTimer = setTimeout(() => {
+                endTapEvent();
+            }, tapEventDuration);
+        }
+
+        function handleTapEventClick() {
+            tapEventCount++;
+
+            // Visual Feedback
+            const luckBonus = Math.min(tapEventCount * 5, 50); // 5% per tap, max 50%
+            document.getElementById('tapLuckDisplay').textContent = `+${luckBonus}%`;
+
+            // Shake Envelope
+            envelope.classList.remove('shake-extreme');
+            void envelope.offsetWidth; // force reflow
+            envelope.classList.add('shake-extreme');
+
+            // Haptic & Sound
+            vibrate(50);
+            playSound('coin'); // Use coin sound for taps
+
+            // Remove shake class after animation
+            setTimeout(() => {
+                envelope.classList.remove('shake-extreme');
+            }, 200);
+        }
+
+        function endTapEvent() {
+            isTapEventActive = false;
+            document.getElementById('tapEventOverlay').classList.remove('active');
+
+            // Reset timer bar for next time
+            document.getElementById('tapTimerFill').style.width = '100%';
+            document.getElementById('tapTimerFill').style.transition = 'none';
+
+            // Calculate Bonus
+            const luckBonus = Math.min(tapEventCount * 5, 50); // Max 50% bonus
+
+            // Open Envelope with Bonus
+            openEnvelope(luckBonus);
+        }
+
         function init() {
             // Initialize muted state from storage
             isMuted = Storage.get('luckyMoney_muted') === 'true';
@@ -3873,11 +4986,10 @@
             checkSkinUnlock();
 
             // Event listeners
-            envelopeContainer.addEventListener('click', openEnvelope);
+            // Event listeners
+            envelopeContainer.addEventListener('click', tryOpenEnvelope);
 
-            document.getElementById('moneyStackWrapper').addEventListener('click', function () {
-                this.classList.toggle('flipped');
-            });
+            // Holographic Spin enabled - click to flip removed
 
             // Preload images
             moneyAmounts.forEach(item => {
