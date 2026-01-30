@@ -355,12 +355,12 @@
             font-size: clamp(4rem, 18vw, 6rem);
             font-family: "Playfair Display", serif;
             font-weight: 800;
-            background: linear-gradient(to bottom, #FFD700 20%, #B8860B 50%, #FFD700 80%);
+            background: linear-gradient(to bottom, #FFD700 0%, #FDB931 25%, #DAA520 50%, #FDB931 75%, #FFD700 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-            opacity: 0.9;
+            filter: drop-shadow(0 2px 0 #8B0000) drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
+            opacity: 1;
             z-index: 1;
         }
 
@@ -433,11 +433,7 @@
                 0 0 0 7px #FFF;
         }
 
-        .envelope.skin-gold .envelope-body::before {
-            background: linear-gradient(to bottom, #d32f2f 20%, #b71c1c 50%, #d32f2f 80%);
-            -webkit-background-clip: text;
-            background-clip: text;
-        }
+
 
         .envelope.skin-gold .envelope-flap {
             background: linear-gradient(160deg, #FDB931 0%, #DAA520 100%);
@@ -582,7 +578,7 @@
             height: 100%;
             top: 0;
             left: 0;
-            border-radius: 12px;
+            border-radius: 16px;
             transform-style: preserve-3d;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transform: var(--stack-transform);
@@ -604,7 +600,7 @@
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            border-radius: 8px;
+            border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(255, 255, 255, 0.2);
         }
@@ -2464,17 +2460,18 @@
                     rgba(255, 255, 255, 0.25) 50%,
                     transparent 60%);
             background-size: 250% 250%;
-            border-radius: 8px;
+            border-radius: 16px;
             pointer-events: none;
             opacity: 0;
             mix-blend-mode: color-dodge;
             transition: opacity 0.3s;
+            z-index: 10;
         }
 
         /* Tier Specific Holo Effects */
         .holo-shine.SSR {
             /* Rainbow already default but reinforced */
-            background: linear-gradient(105deg,
+            background-image: linear-gradient(105deg,
                     transparent 20%,
                     rgba(255, 0, 0, 0.2) 30%,
                     rgba(255, 255, 0, 0.2) 35%,
@@ -2487,7 +2484,7 @@
 
         .holo-shine.SR {
             /* Gold/Amber */
-            background: linear-gradient(105deg,
+            background-image: linear-gradient(105deg,
                     transparent 20%,
                     rgba(255, 223, 0, 0.1) 30%,
                     rgba(255, 215, 0, 0.4) 40%,
@@ -2497,7 +2494,7 @@
 
         .holo-shine.R {
             /* Silver/Blue */
-            background: linear-gradient(105deg,
+            background-image: linear-gradient(105deg,
                     transparent 20%,
                     rgba(255, 255, 255, 0.1) 30%,
                     rgba(200, 230, 255, 0.3) 40%,
@@ -2505,11 +2502,19 @@
                     transparent 60%);
         }
 
-        /* Nothing for N (plain) */
-        /* Default Holo Style (for N tier or generic) */
+        /* Simple Gloss/White effect for Common */
+        background-image: linear-gradient(105deg,
+            transparent 20%,
+            rgba(255, 255, 255, 0.2) 30%,
+            rgba(255, 255, 255, 0.4) 40%,
+            rgba(255, 255, 255, 0.2) 50%,
+            transparent 60%);
+        mix-blend-mode: screen;
+        /* Ensure visibility on dark/light backgrounds */
+
         .holo-shine {
             /* Rainbow/Oil slick effect */
-            background: linear-gradient(105deg,
+            background-image: linear-gradient(105deg,
                     transparent 20%,
                     rgba(255, 0, 0, 0.2) 30%,
                     rgba(0, 255, 0, 0.2) 40%,
@@ -2556,21 +2561,7 @@
                 inset 0 0 30px rgba(255, 255, 255, 0.3);
         }
 
-        .envelope.skin-diamond .envelope-body::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(125deg,
-                    transparent 0%,
-                    rgba(255, 255, 255, 0.5) 25%,
-                    transparent 50%,
-                    rgba(255, 255, 255, 0.3) 75%,
-                    transparent 100%);
-            background-size: 200% 200%;
-            animation: diamondShine 3s linear infinite;
-            pointer-events: none;
-            mix-blend-mode: overlay;
-        }
+
 
         .envelope.skin-diamond .envelope-flap {
             background: linear-gradient(180deg,
@@ -3830,13 +3821,13 @@
             // Update shine on individual cards
             const cards = wrapper.querySelectorAll('.money-card');
             cards.forEach(card => {
-                const shine = card.querySelector('.holo-shine');
-                if (shine) {
+                const shines = card.querySelectorAll('.holo-shine');
+                shines.forEach(shine => {
                     // Shine moves based on rotation angle [0-100%]
                     const xPos = 50 + (rotateY / 180) * 50;
                     const yPos = 50 + (rotateX / 20) * 50;
                     shine.style.backgroundPosition = `${xPos}% ${yPos}%`;
-                }
+                });
             });
         }
 
@@ -4278,7 +4269,8 @@
             vibrate(50); // Haptic feedback
             playSound('open');
 
-            document.querySelector('.envelope-flap').style.transform = '';
+            const flap = document.querySelector('.envelope-flap');
+            flap.style.transform = '';
             envelope.classList.add('opened');
             clickHint.classList.add('hidden');
 
@@ -4374,56 +4366,77 @@
                 wish: getNextWish()
             };
 
-            // Play tier-specific sounds
-            if (currentResult.money.tier === 'SSR') {
-                vibrate([50, 30, 50, 30, 100]); // Exciting pattern for SSR
-                playSound('ssr');
-            } else if (currentResult.money.tier === 'SR') playSound('sr');
-            else playSound('coin');
+            // SYNCHRONIZATION: Wait for flap animation to finish before revealing result
+            let revealTriggered = false;
 
-            // Trigger visual reveal animation first
-            playTierRevealAnimation(currentResult.money.tier).then(() => {
-                resultCard.classList.add('show');
-                // Add specific reveal animation class
-                const revealClass = getCardRevealClass(currentResult.money.tier);
-                if (revealClass) resultCard.classList.add(revealClass);
-                resultCard.setAttribute('data-rarity', currentResult.money.tier);
+            const triggerReveal = () => {
+                if (revealTriggered) return;
+                revealTriggered = true;
 
-                updateStats(currentResult.money.tier, currentResult.totalValue);
-                addToHistory({
-                    timestamp: Date.now(),
-                    amount: currentResult.totalValue,
-                    tier: 'PULL',
-                    action: 'pull'
-                });
+                // Play tier-specific sounds EXACTLY when revealed
+                if (currentResult.money.tier === 'SSR') {
+                    vibrate([50, 30, 50, 30, 100]); // Exciting pattern for SSR
+                    playSound('ssr');
+                } else if (currentResult.money.tier === 'SR') playSound('sr');
+                else playSound('coin');
 
-                renderMoneyStack(currentResult.money.bills, currentResult.money.tier);
-                animateValue(amountEl, 0, totalValue, 1500);
-                addToWallet(totalValue);
-                typeWriter(wishEl, currentResult.wish);
+                // Trigger visual reveal animation first
+                playTierRevealAnimation(currentResult.money.tier).then(() => {
+                    resultCard.classList.add('show');
+                    // Add specific reveal animation class
+                    const revealClass = getCardRevealClass(currentResult.money.tier);
+                    if (revealClass) resultCard.classList.add(revealClass);
+                    resultCard.setAttribute('data-rarity', currentResult.money.tier);
 
-                // Initialize holo effect if multiple cards
-                setTimeout(() => initHoloEffect(), 100);
+                    updateStats(currentResult.money.tier, currentResult.totalValue);
+                    addToHistory({
+                        timestamp: Date.now(),
+                        amount: currentResult.totalValue,
+                        tier: 'PULL',
+                        action: 'pull'
+                    });
 
-                requestAnimationFrame(() => {
-                    // Force layout check to ensure element is considered visible by browser
-                    const _ = resultCard.offsetHeight;
+                    renderMoneyStack(currentResult.money.bills, currentResult.money.tier);
+                    animateValue(amountEl, 0, totalValue, 1500);
+                    addToWallet(totalValue);
+                    typeWriter(wishEl, currentResult.wish);
+
+                    // Initialize holo effect if multiple cards
+                    setTimeout(() => initHoloEffect(), 100);
+
+                    requestAnimationFrame(() => {
+                        // Force layout check to ensure element is considered visible by browser
+                        const _ = resultCard.offsetHeight;
+
+                        setTimeout(() => {
+                            resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 100);
+                    });
+
+                    // Confetti timing based on tier
+                    const confettiDelay = currentResult.money.tier === 'SSR' ? 1000 : 500;
 
                     setTimeout(() => {
-                        resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 100);
+                        createConfetti();
+                        if (currentResult.money.tier === 'SSR') {
+                            triggerJackpot();
+                        }
+                    }, confettiDelay);
                 });
+            };
 
-                // Confetti timing based on tier
-                const confettiDelay = currentResult.money.tier === 'SSR' ? 1000 : 500;
+            // Use transitionend for perfect sync
+            const onTransitionEnd = (e) => {
+                if (e.propertyName !== 'transform') return;
+                flap.removeEventListener('transitionend', onTransitionEnd);
+                triggerReveal();
+            };
 
-                setTimeout(() => {
-                    createConfetti();
-                    if (currentResult.money.tier === 'SSR') {
-                        triggerJackpot();
-                    }
-                }, confettiDelay);
-            });
+            flap.addEventListener('transitionend', onTransitionEnd);
+
+            // Fallback safety timer in case transitionend missed (e.g. background tab)
+            // 600ms is CSS transition time + 50ms buffer
+            setTimeout(triggerReveal, 650);
         }
 
         function renderMoneyStack(bills, tier = 'N') {
@@ -4460,11 +4473,12 @@
                 const currentBill = bills[billIndex] || bills[0];
 
                 card.innerHTML = `
-                    <div class="holo-shine ${tier}"></div>
                     <div class="money-face money-front">
+                        <div class="holo-shine ${tier}"></div>
                         <img src="${currentBill.front}" alt="Mặt trước" loading="lazy">
                     </div>
                     <div class="money-face money-back">
+                        <div class="holo-shine ${tier}"></div>
                         <img src="${currentBill.back}" alt="Mặt sau" loading="lazy">
                     </div>
                 `;
