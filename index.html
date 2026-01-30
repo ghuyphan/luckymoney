@@ -91,7 +91,7 @@
 
         /* --- THEMES --- */
         body.theme-normal {
-            background-color: #900000;
+            background: linear-gradient(135deg, #8E0000 0%, #B71C1C 50%, #900000 100%) !important;
             background-size: cover;
             background-position: center center;
             background-attachment: fixed;
@@ -4885,7 +4885,7 @@
         let isTapEventActive = false;
         let tapEventTimer = null;
         let tapEventCount = 0;
-        let tapEventDuration = 3000; // 3 seconds
+        let tapEventDuration = 2000; // 2 seconds (Reduced from 3s for more intensity)
 
         async function tryOpenEnvelope() {
             if (isOpened) return;
