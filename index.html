@@ -75,11 +75,24 @@
 
         .utility-bar {
             position: fixed;
-            top: 1rem;
-            left: 1rem;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            /* Push items to edges */
+            align-items: center;
+            z-index: 100;
+            pointer-events: none;
+            /* Let clicks pass through empty space */
+        }
+
+        .utility-left {
             display: flex;
             gap: 0.5rem;
-            z-index: 100;
+            pointer-events: auto;
+            /* Re-enable clicks for buttons */
         }
 
 
@@ -987,10 +1000,13 @@
         }
 
         /* Wallet styles */
+        /* Wallet styles */
         .wallet-container {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
+            pointer-events: auto;
+            position: relative;
+            /* Changed from fixed */
+            top: auto;
+            right: auto;
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid var(--gold-primary);
             border-radius: 50px;
@@ -1003,8 +1019,8 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             font-family: 'Be Vietnam Pro', sans-serif;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            max-width: calc(100vw - 160px);
-            /* Prevent overlap with utility bar */
+            max-width: 60%;
+            /* Allow it to take up reasonable space */
         }
 
         .wallet-container.update {
@@ -2735,11 +2751,22 @@
     </div>
 
     <!-- Utility Buttons (includes sound control) -->
+    <!-- Utility Buttons (includes sound control) -->
     <div class="utility-bar">
-        <button class="icon-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
-        <button class="icon-btn" onclick="openStats()">📊</button>
-        <button class="icon-btn" onclick="openInfo()">ℹ️</button>
-        <button class="icon-btn" onclick="openCustomizeModal()">✏️</button>
+        <div class="utility-left">
+            <button class="icon-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
+            <button class="icon-btn" onclick="openStats()">📊</button>
+            <button class="icon-btn" onclick="openInfo()">ℹ️</button>
+            <button class="icon-btn" onclick="openCustomizeModal()">✏️</button>
+        </div>
+
+        <!-- Wallet Moved Here -->
+        <div class="wallet-container">
+            <div class="wallet-icon">💰</div>
+            <div class="wallet-balance" id="walletBalance">0</div>
+            <div class="wallet-currency">VNĐ</div>
+            <button class="withdraw-btn" onclick="openWithdrawModal('wallet')">Rút</button>
+        </div>
     </div>
 
     <!-- Customize Modal -->
@@ -2983,12 +3010,7 @@
         <path class="ecg-path" d="M0,50 L50,50 L60,20 L70,80 L80,50 L400,50 L410,20 L420,80 L430,50 L500,50" />
     </svg>
 
-    <div class="wallet-container">
-        <div class="wallet-icon">💰</div>
-        <div class="wallet-balance" id="walletBalance">0</div>
-        <div class="wallet-currency">VNĐ</div>
-        <button class="withdraw-btn" onclick="openWithdrawModal('wallet')">Rút</button>
-    </div>
+    <!-- Wallet moved to utility bar -->
 
     <div class="container">
         <header class="header">
