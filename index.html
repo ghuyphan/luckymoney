@@ -4965,8 +4965,8 @@
             // Custom Luck Feature
             const customWish = urlParams.get('customWish');
             if (customWish) {
-                const decodedWish = decodeURIComponent(customWish);
-                wishes = [decodedWish];
+                // URLSearchParams automatically decodes, so we use the value directly
+                wishes = [customWish];
                 // Show notification? 
                 setTimeout(() => {
                     const toast = document.createElement('div');
