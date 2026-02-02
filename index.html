@@ -22,9 +22,7 @@
             --gold-dark: #DAA520;
             --cream: #FFF8DC;
             --white: #FFFFFF;
-            --medical-blue: #008080;
-            --medical-light: #E0F2F1;
-            --medical-glass: rgba(0, 128, 128, 0.15);
+
         }
 
         * {
@@ -43,7 +41,11 @@
             font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
             min-height: 100vh;
             min-height: 100dvh;
-            background: linear-gradient(135deg, var(--red-dark) 0%, var(--red-primary) 60%, var(--medical-blue) 100%);
+            background: linear-gradient(135deg, #8E0000 0%, #B71C1C 50%, #900000 100%);
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -51,18 +53,6 @@
             padding: clamp(1rem, 4vw, 2rem);
             overflow-x: hidden;
             position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image:
-                radial-gradient(circle at 20% 80%, rgba(0, 128, 128, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0v60M0 30h60' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3Cpath d='M25 25h10v10H25z' fill='rgba(255,215,0,0.05)'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 0;
         }
 
         .container {
@@ -77,34 +67,9 @@
             margin-top: 3.5rem;
         }
 
-        /* Medical Heartbeat Animation */
-        .ecg-line {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100px;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.1;
-        }
 
-        /* --- THEMES --- */
-        body.theme-normal {
-            background: linear-gradient(135deg, #8E0000 0%, #B71C1C 50%, #900000 100%) !important;
-            background-size: cover;
-            background-position: center center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-        }
 
-        body.theme-normal::before {
-            content: none;
-        }
 
-        body.theme-normal::after {
-            content: none;
-        }
 
         /* --- UI COMPONENTS --- */
 
@@ -117,14 +82,7 @@
             z-index: 100;
         }
 
-        .ecg-path {
-            fill: none;
-            stroke: var(--white);
-            stroke-width: 2;
-            stroke-dasharray: 1000;
-            stroke-dashoffset: 1000;
-            animation: ecgDraw 3s linear infinite;
-        }
+
 
         /* Header */
         .header {
@@ -1972,6 +1930,18 @@
             border-radius: 8px;
             font-size: 1rem;
             font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #fff;
+        }
+
+        /* Fix Select Arrow for Safari/Others after appearance:none */
+        select.form-input {
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 0.65em auto;
+            padding-right: 2.5rem;
         }
 
         .form-input:focus {
@@ -2503,13 +2473,16 @@
         }
 
         /* Simple Gloss/White effect for Common */
-        background-image: linear-gradient(105deg,
-            transparent 20%,
-            rgba(255, 255, 255, 0.2) 30%,
-            rgba(255, 255, 255, 0.4) 40%,
-            rgba(255, 255, 255, 0.2) 50%,
-            transparent 60%);
-        mix-blend-mode: screen;
+        .holo-shine.N {
+            background-image: linear-gradient(105deg,
+                    transparent 20%,
+                    rgba(255, 255, 255, 0.2) 30%,
+                    rgba(255, 255, 255, 0.4) 40%,
+                    rgba(255, 255, 255, 0.2) 50%,
+                    transparent 60%);
+            mix-blend-mode: screen;
+        }
+
         /* Ensure visibility on dark/light backgrounds */
 
         .holo-shine {
@@ -2748,6 +2721,10 @@
                 <button class="share-action-btn btn-download" onclick="downloadQR()">
                     ⬇️ Tải QR
                 </button>
+                <button class="share-action-btn btn-share-native" id="nativeShareBtn" onclick="nativeShare()"
+                    style="display: none; background: #007AFF; color: white;">
+                    📤 Chia sẻ
+                </button>
             </div>
         </div>
     </div>
@@ -2757,6 +2734,71 @@
         <button class="icon-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
         <button class="icon-btn" onclick="openStats()">📊</button>
         <button class="icon-btn" onclick="openInfo()">ℹ️</button>
+        <button class="icon-btn" onclick="openCustomizeModal()">✏️</button>
+    </div>
+
+    <!-- Customize Modal -->
+    <div class="modal-overlay" id="customizeModal">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div>Tự Tạo Lì Xì 🧧</div>
+                <button class="close-btn" onclick="closeModal('customizeModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem;">Tạo phong bao lì xì với lời chúc và độ
+                    may mắn tùy chỉnh để gửi tặng bạn bè!</p>
+
+                <div class="form-group">
+                    <label>Lời Chúc May Mắn ✍️</label>
+                    <textarea id="customWishInput" placeholder="Nhập lời chúc của bạn... (Ví dụ: Năm mới phát tài!)"
+                        rows="3"
+                        style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"></textarea>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label>Tên người nhận (Tùy chọn) 👤</label>
+                    <input type="text" id="customNameInput" placeholder="Ví dụ: Tí, Tèo, Vợ yêu..." class="form-input">
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label>Số Tiền (Tùy chọn) 💰</label>
+                    <select id="customAmountInput" class="form-input" onchange="toggleLuckInput()">
+                        <option value="random">🎲 Ngẫu nhiên (Theo nhân phẩm)</option>
+                        <option value="10000">10.000 VNĐ</option>
+                        <option value="20000">20.000 VNĐ</option>
+                        <option value="50000">50.000 VNĐ</option>
+                        <option value="100000">100.000 VNĐ</option>
+                        <option value="200000">200.000 VNĐ</option>
+                        <option value="500000">500.000 VNĐ</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;" id="luckInputGroup">
+                    <label>Độ "Nhân Phẩm" (Luck) 🍀</label>
+                    <select id="customLuckInput" class="form-input">
+                        <option value="random">🎲 Ngẫu nhiên (Mặc định)</option>
+                        <option value="high">🌟 Nhân phẩm cao (Dễ ra SSR)</option>
+                        <option value="prank">🤡 Cú lừa (100% ra 10k/20k)</option>
+                        <option value="rich">💎 Đại gia (100% ra 200k/500k)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label>Chọn Skin Bao Lì Xì 🎨</label>
+                    <select id="customSkinInput" class="form-input">
+                        <option value="default">🧧 Mặc định</option>
+                        <option value="gold">🌟 Vàng (Gold)</option>
+                        <option value="holo">🌈 Hologram</option>
+                        <option value="diamond">💎 Kim Cương</option>
+                    </select>
+                </div>
+
+                <button onclick="createCustomLink()" class="btn"
+                    style="width: 100%; max-width: 100%; margin-top: 1.5rem; background: var(--red-primary); color: var(--gold-primary); display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid var(--gold-primary);">
+                    🔗 Tạo & Chia Sẻ
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Stats Modal -->
@@ -2947,7 +2989,7 @@
         <header class="header">
             <h1>🧧 Lì Xì May Mắn</h1>
             <p>Chúc Mừng Năm Mới 2026 - Xuân Bính Ngọ 🐎</p>
-            <div class="department-badge">🏥 Phòng CNTT - Bệnh Viện Đa Khoa Hoàn Mỹ Sài Gòn</div>
+
         </header>
 
         <div class="envelope-container" id="envelopeContainer">
@@ -3021,6 +3063,10 @@
         let isMuted = false; // Will be initialized in init()
         let banksRendered = false; // Track if banks are rendered
         let scrollPosition = 0; // Store scroll position for no-scroll fix
+        let customLuckMode = null; // Stores custom luck setting (high, prank, rich)
+        let customFixedAmount = null; // Stores fixed amount
+        let customSkin = null; // Stores custom skin
+        let receiverName = null; // Stores receiver name
 
         // ==================== DATA ====================
         const moneyAmounts = [
@@ -3076,29 +3122,22 @@
         ];
 
         // Wishes
-        const wishesIT = [
-            "Hệ thống HIS vận hành trơn tru, không ticket nào treo! 🏥",
-            "PACS load hình siêu tốc, bác sĩ khen nức nở! ⚡",
-            "Server uptime 100%, trực Tết nhàn tênh! 🖥️",
-            "Mạng bệnh viện mạnh như rồng, VPN không bao giờ rớt! 🐉",
-            "Máy in hoạt động êm ái, giấy không bao giờ kẹt! 🖨️",
-            "Các khoa phòng vui vẻ, yêu thương đội IT! ❤️",
-            "Code bệnh án điện tử không bug, data chuẩn chỉ! 📊",
-            "Lương thưởng ngập tràn, sức khỏe dồi dào như thanh RAM 64GB! 💪",
-            "Năm mới fix bug nhanh hơn bác sĩ chẩn đoán! 🩺",
-            "An toàn thông tin vững chãi, virus/ransomware tránh xa! 🛡️"
-        ];
-
-        const wishesGeneral = [
+        // Wishes
+        const wishes = [
             "An khang thịnh vượng - Vạn sự như ý! 🌸",
             "Tấn tài tấn lộc - Mã đáo thành công! 🧧",
             "Sức khỏe dồi dào, tiền vào như nước! 💰",
             "Năm mới bình an, hạnh phúc tràn đầy! ❤️",
-            "Công việc thuận lợi, thăng tiến vù vù! 🚀"
+            "Công việc thuận lợi, thăng tiến vù vù! 🚀",
+            "Vạn sự như ý - Tỷ sự như mơ! ✨",
+            "Xuân sang đắc lộc - Gia đạo bình an! 🏡",
+            "Tiền vào cửa trước - Vàng vào cửa sau! 🚪",
+            "Đánh đâu thắng đó - Sự nghiệp hanh thông! 📈",
+            "Cung hỷ phát tài - May mắn cả năm! 🍀"
         ];
 
-        let wishes = wishesIT;
         let wishDeck = [];
+
 
         // Audio
         const sounds = {
@@ -4303,6 +4342,34 @@
             };
 
             function getGachaResult() {
+                // FIXED AMOUNT OVERRIDE
+                if (customFixedAmount) {
+                    const bill = moneyAmounts.find(m => m.value === customFixedAmount);
+                    if (bill) {
+                        let tier = 'N';
+                        if (bill.value >= 500000) tier = 'SSR';
+                        else if (bill.value >= 200000) tier = 'SR';
+                        else if (bill.value >= 50000) tier = 'R';
+
+                        return { tier: tier, bills: [bill], isPity: false };
+                    }
+                }
+
+                // Custom Luck Overrides (Priority over Pity, but below Fixed Amount)
+                if (customLuckMode === 'rich') {
+                    return { tier: 'SSR', bills: [getRandomItem(gachaTiers.SSR.items)], isPity: false };
+                }
+                if (customLuckMode === 'prank') {
+                    return { tier: 'N', bills: [getRandomItem(gachaTiers.N.items)], isPity: false };
+                }
+
+                if (customLuckMode === 'high') {
+                    // 50% chance for SSR
+                    if (Math.random() * 100 < 50) {
+                        return { tier: 'SSR', bills: [getRandomItem(gachaTiers.SSR.items)], isPity: false };
+                    }
+                }
+
                 // Forced SSR on hard pity
                 if (isHardPity) {
                     return {
@@ -4646,7 +4713,13 @@
             const achievements = data.achievements || [];
             envelope.classList.remove('skin-gold', 'skin-holo', 'skin-diamond');
 
-            // Skins are unlocked via achievements (persist even if money is spent)
+            // Custom Skin Override (Priority)
+            if (customSkin) {
+                envelope.classList.add(`skin-${customSkin}`);
+                return;
+            }
+
+            // Skins are unlocked via achievements
             if (achievements.includes('multimillionaire')) {
                 envelope.classList.add('skin-diamond');
             } else if (achievements.includes('five_million')) {
@@ -4688,10 +4761,10 @@
             return url.toString();
         }
 
-        function showShareModal() {
+        function showShareModal(customUrl = null) {
             const modal = document.getElementById('shareModal');
             const qrContainer = document.getElementById('qrcode');
-            const shareUrl = getSmartShareUrl();
+            const shareUrl = customUrl || getSmartShareUrl();
 
             modal.style.display = 'flex';
             document.getElementById('shareUrl').textContent = shareUrl;
@@ -4705,6 +4778,11 @@
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
+
+            // Check native share support
+            if (navigator.share) {
+                document.getElementById('nativeShareBtn').style.display = 'flex';
+            }
         }
 
         function hideShareModal() {
@@ -4730,6 +4808,19 @@
             }
         }
 
+        async function nativeShare() {
+            const url = document.getElementById('shareUrl').textContent;
+            try {
+                await navigator.share({
+                    title: '🧧 Lì Xì May Mắn',
+                    text: 'Nhận lì xì ngay! Chúc mừng năm mới 2026!',
+                    url: url
+                });
+            } catch (err) {
+                console.log('Share failed:', err);
+            }
+        }
+
         // ==================== PARTICLES ====================
         function createParticles() {
             const container = document.getElementById('particles');
@@ -4748,6 +4839,60 @@
             if ('vibrate' in navigator) {
                 navigator.vibrate(pattern);
             }
+        }
+
+        function toggleLuckInput() {
+            const amount = document.getElementById('customAmountInput').value;
+            const luckGroup = document.getElementById('luckInputGroup');
+            if (amount !== 'random') {
+                luckGroup.style.opacity = '0.5';
+                luckGroup.style.pointerEvents = 'none';
+            } else {
+                luckGroup.style.opacity = '1';
+                luckGroup.style.pointerEvents = 'auto';
+            }
+        }
+
+        function openCustomizeModal() {
+            openModal('customizeModal');
+        }
+
+        function createCustomLink() {
+            const wish = document.getElementById('customWishInput').value.trim();
+            const luck = document.getElementById('customLuckInput').value;
+            const name = document.getElementById('customNameInput').value.trim();
+            const amount = document.getElementById('customAmountInput').value;
+            const skin = document.getElementById('customSkinInput').value;
+
+
+            if (!wish) {
+                alert('Vui lòng nhập lời chúc của bạn!');
+                return;
+            }
+
+            const url = new URL(window.location.origin + window.location.pathname);
+            url.searchParams.set('customWish', encodeURIComponent(wish));
+
+            if (luck !== 'random' && amount === 'random') {
+                url.searchParams.set('customLuck', luck);
+            }
+
+            if (name) {
+                url.searchParams.set('receiverName', encodeURIComponent(name));
+            }
+
+            if (amount !== 'random') {
+                url.searchParams.set('fixedAmount', amount);
+            }
+
+            if (skin !== 'default') {
+                url.searchParams.set('skin', skin);
+            }
+
+            // Show share modal with this Custom URL
+            const finalUrl = url.toString();
+            showShareModal(finalUrl);
+            closeModal('customizeModal');
         }
 
         // ==================== THEME & YEAR INIT ====================
@@ -4777,14 +4922,67 @@
             if (yearTitle) yearTitle.textContent = `Năm Mới ${lunarName} ${lunarEmoji}`;
 
             // Apply theme
-            if (theme === 'normal') {
-                document.body.classList.add('theme-normal');
-                document.title = '🧧 Lì Xì May Mắn';
-                const badge = document.querySelector('.department-badge');
-                if (badge) badge.style.display = 'none';
-                const ecg = document.querySelector('.ecg-line');
-                if (ecg) ecg.style.display = 'none';
-                wishes = wishesGeneral;
+            // Apply theme (Normal by default)
+            document.body.classList.add('theme-normal');
+            document.title = '🧧 Lì Xì May Mắn';
+
+            // Remove hospital specific elements if they exist (legacy cleanup)
+            const badge = document.querySelector('.department-badge');
+            if (badge) badge.remove();
+            const ecg = document.querySelector('.ecg-line');
+            if (ecg) ecg.remove();
+
+            // Custom Luck Feature
+            const customWish = urlParams.get('customWish');
+            if (customWish) {
+                const decodedWish = decodeURIComponent(customWish);
+                wishes = [decodedWish];
+                // Show notification? 
+                setTimeout(() => {
+                    const toast = document.createElement('div');
+                    toast.className = 'achievement-toast show';
+                    toast.innerHTML = `
+                        <div class="icon">📩</div>
+                        <div class="info">
+                            <div class="title">Lì Xì Đặc Biệt</div>
+                            <div class="desc">Bạn nhận được lời chúc riêng!</div>
+                        </div>
+                    `;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.classList.remove('show'), 3000);
+                }, 1000);
+            }
+
+            const customLuck = urlParams.get('customLuck');
+            if (customLuck) {
+                customLuckMode = customLuck;
+            }
+
+            // Handle Receiver Name
+            const nameParam = urlParams.get('receiverName');
+            if (nameParam) {
+                receiverName = decodeURIComponent(nameParam);
+                // Update generic header
+                const headerDesc = document.querySelector('.header p');
+                if (headerDesc) {
+                    headerDesc.innerHTML = `🧧 Lì xì gửi riêng cho <strong>${receiverName}</strong>!`;
+                    headerDesc.style.color = 'var(--gold-primary)';
+                }
+            }
+
+            // Handle Fixed Amount
+            const amountParam = urlParams.get('fixedAmount');
+            if (amountParam) {
+                const amount = parseInt(amountParam);
+                if (!isNaN(amount) && [10000, 20000, 50000, 100000, 200000, 500000].includes(amount)) {
+                    customFixedAmount = amount;
+                }
+            }
+
+            // Handle Custom Skin
+            const skinParam = urlParams.get('skin');
+            if (skinParam && ['gold', 'holo', 'diamond'].includes(skinParam)) {
+                customSkin = skinParam;
             }
 
             wishDeck = []; // Reset wish deck
