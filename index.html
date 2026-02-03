@@ -125,6 +125,7 @@
 
         /* --- UI COMPONENTS --- */
 
+
         .utility-bar {
             position: fixed;
             top: 0;
@@ -138,6 +139,17 @@
             z-index: 100;
             pointer-events: none;
             /* Let clicks pass through empty space */
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1500;
+            /* Above most things, below modals */
+            pointer-events: none;
         }
 
         .utility-left {
@@ -797,6 +809,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            cursor: pointer;
         }
 
         .flip-icon {
@@ -1587,12 +1600,10 @@
             }
         }
 
-        /* FIX: Improved no-scroll - no padding-right to avoid layout shift */
+        /* FIX: Improved no-scroll - simply prevent overflow */
         body.no-scroll {
             overflow: hidden;
             height: 100vh;
-            position: fixed;
-            width: 100%;
         }
 
         /* --- NEW SKINS --- */
@@ -2885,10 +2896,30 @@
         .envelope.shake-extreme {
             animation: shake-extreme 0.2s ease-in-out infinite;
         }
+
+        #bankSearchInput {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--gold-primary);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-family: inherit;
+            font-size: 1rem;
+            background: #fffafa;
+            color: var(--red-dark);
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        #bankSearchInput:focus {
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+            border-color: var(--gold-dark);
+        }
     </style>
 </head>
 
 <body>
+    <canvas id="confetti-canvas"></canvas>
     <div class="lucky-particles" id="particles"></div>
     <div class="confetti-container" id="confetti"></div>
     <div class="jackpot-overlay"></div>
@@ -3192,6 +3223,8 @@
 
                     <div class="form-group">
                         <label>Chọn Ngân Hàng</label>
+                        <input type="text" id="bankSearchInput" placeholder="🔍 Tìm ngân hàng (VD: VCB, Vietcombank)..."
+                            autocomplete="off">
                         <div class="bank-grid" id="bankGrid">
                             <!-- Banks will be rendered here -->
                         </div>
@@ -3591,19 +3624,17 @@
 
         // ==================== MODAL FUNCTIONS - FIXED ====================
         function openModal(id) {
-            // Store scroll position before locking
-            scrollPosition = window.pageYOffset;
-            document.body.style.top = `-${scrollPosition}px`;
             document.body.classList.add('no-scroll');
             document.getElementById(id).classList.add('open');
         }
 
         function closeModal(id) {
             document.getElementById(id).classList.remove('open');
-            document.body.classList.remove('no-scroll');
-            document.body.style.top = '';
-            // Restore scroll position
-            window.scrollTo(0, scrollPosition);
+            // Only remove no-scroll if no other modals are open
+            const anyOpen = document.querySelectorAll('.modal-overlay.open').length > 0;
+            if (!anyOpen) {
+                document.body.classList.remove('no-scroll');
+            }
         }
 
         // Click on overlay to close (not on content)
@@ -3632,20 +3663,28 @@
         });
 
         // ==================== BANK MODAL - FIXED ====================
-        function renderBanks() {
+        function renderBanks(searchTerm = '') {
             const grid = document.getElementById('bankGrid');
-
-            // Don't re-render if already done
-            if (banksRendered && grid.children.length > 0) {
-                // Just update selection state
-                updateBankSelection();
-                return;
-            }
+            const normalizedSearch = searchTerm.toLowerCase().trim();
 
             grid.innerHTML = '';
             const fragment = document.createDocumentFragment();
 
-            BANKS_DATA.forEach(bank => {
+            // Filter banks
+            const filteredBanks = BANKS_DATA.filter(bank => {
+                if (!normalizedSearch) return true;
+                const viName = (bank.fullName && bank.fullName.vi) ? bank.fullName.vi : '';
+                const enName = (bank.fullName && bank.fullName.en) ? bank.fullName.en : '';
+                const searchStr = `${bank.code} ${bank.name} ${viName} ${enName}`.toLowerCase();
+                return searchStr.includes(normalizedSearch);
+            });
+
+            if (filteredBanks.length === 0) {
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#888;">Không tìm thấy ngân hàng nào...</div>';
+                return;
+            }
+
+            filteredBanks.forEach(bank => {
                 const div = document.createElement('div');
                 div.className = `bank-item ${bank.code === selectedBank ? 'selected' : ''}`;
                 div.dataset.code = bank.code;
@@ -3676,6 +3715,10 @@
                 div.addEventListener('click', function (e) {
                     e.stopPropagation(); // Prevent event bubbling
                     selectBank(bank.code);
+
+                    // Clear search on selection
+                    const searchInput = document.getElementById('bankSearchInput');
+                    if (searchInput) searchInput.value = '';
                 });
 
                 fragment.appendChild(div);
@@ -3684,6 +3727,16 @@
             grid.appendChild(fragment);
             banksRendered = true;
         }
+
+        // Init search listener
+        document.addEventListener('DOMContentLoaded', () => {
+            const bankSearch = document.getElementById('bankSearchInput');
+            if (bankSearch) {
+                bankSearch.addEventListener('input', (e) => {
+                    renderBanks(e.target.value);
+                });
+            }
+        });
 
         function updateBankSelection() {
             document.querySelectorAll('.bank-item').forEach(item => {
@@ -4116,17 +4169,40 @@
                 rotateY = Math.max(-30, Math.min(30, rotateY));
 
                 wrapper.classList.add('holo-active');
-                wrapper.style.transform = `perspective(1000px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg)`;
+
+                const isFlipped = wrapper.classList.contains('flipped');
+                const baseRotateY = isFlipped ? 180 : 0;
+
+                // If flipped, invert rotateX for natural feel (or keep as is? Let's keep as is but add base rotation)
+                // Actually if flipped 180 around Y, X rotation might appear inverted. 
+                // Let's just add 180 to Y for now.
+
+                wrapper.style.transform = `perspective(1000px) rotateX(${-rotateX}deg) rotateY(${baseRotateY + rotateY}deg)`;
 
                 const cards = wrapper.querySelectorAll('.money-card');
                 cards.forEach(card => {
-                    const shine = card.querySelector('.holo-shine');
-                    if (shine) {
+                    const shines = card.querySelectorAll('.holo-shine');
+                    shines.forEach(shine => {
+                        const isBack = shine.parentElement.classList.contains('money-back');
+
                         // Map rotation to 0-100% position
-                        const xPos = 50 + (rotateY / 30) * 50;
+                        // If back face, we need to correct for the 180deg rotation of the face itself
+                        let effectiveRotateY = rotateY;
+
+                        // Current logic: rotateY is approx -30 to 30 from tilt
+                        // center is 0. 
+                        // xPos = 50 + (rotateY / 30) * 50
+
+                        let xPos = 50 + (effectiveRotateY / 30) * 50;
+
+                        if (isBack) {
+                            // Invert X movement for back face to match light source direction
+                            xPos = 100 - xPos;
+                        }
+
                         const yPos = 50 + (rotateX / 20) * 50;
                         shine.style.backgroundPosition = `${xPos}% ${yPos}%`;
-                    }
+                    });
                 });
             }
         }
@@ -4153,16 +4229,28 @@
             // Apply tilt to the WHOLE wrapper
             wrapper.classList.add('holo-active');
 
+            const isFlipped = wrapper.classList.contains('flipped');
+            const baseRotateY = isFlipped ? 180 : 0;
+
             // Apply Transform
-            wrapper.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            wrapper.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${baseRotateY + rotateY}deg)`;
 
             // Update shine on individual cards
             const cards = wrapper.querySelectorAll('.money-card');
             cards.forEach(card => {
                 const shines = card.querySelectorAll('.holo-shine');
                 shines.forEach(shine => {
+                    const isBack = shine.parentElement.classList.contains('money-back');
+
                     // Shine moves based on rotation angle [0-100%]
-                    const xPos = 50 + (rotateY / 180) * 50;
+                    // rotateY is -180 to 180 based on screen width
+                    let xPos = 50 + (rotateY / 180) * 50;
+
+                    if (isBack) {
+                        // Invert calculation for back face so light moves naturally
+                        xPos = 100 - xPos;
+                    }
+
                     const yPos = 50 + (rotateX / 20) * 50;
                     shine.style.backgroundPosition = `${xPos}% ${yPos}%`;
                 });
@@ -4174,8 +4262,9 @@
             if (!wrapper) return;
 
             // Remove active class to re-enable transition for smooth reset
+            // Remove active class to re-enable transition for smooth reset
             wrapper.classList.remove('holo-active');
-            wrapper.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+            wrapper.style.transform = ''; // Clear inline transform so CSS class takes over (for flipped state)
         }
 
         // ==================== TOAST QUEUE SYSTEM ====================
@@ -4889,50 +4978,6 @@
             }
         }
 
-        function createConfetti(isJackpot = false) {
-            const container = document.getElementById('confetti');
-            let emojis = isJackpot ? ['💰', '✨', '👑', '💎', '🌕'] : ['🐎', '🧧', '💰', '🌸', '🏮', '✨', '🍀'];
-            const particleCount = isJackpot ? 60 : 30;
-
-            const fragment = document.createDocumentFragment();
-            const particles = []; // Track for cleanup
-
-            for (let i = 0; i < particleCount; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-
-                const angle = Math.random() * Math.PI * 2;
-                const velocity = (15 + Math.random() * 30) * (isJackpot ? 1.5 : 1);
-                const tx = Math.cos(angle) * velocity;
-                const ty = Math.sin(angle) * velocity - 20;
-                const duration = 1 + Math.random();
-
-                confetti.style.cssText = `left:50%;top:50%;position:absolute;font-size:${Math.random() * 1.5 + 1}rem;transition:all ${duration}s cubic-bezier(0.25,1,0.5,1);opacity:1;background:transparent;width:auto;height:auto;${isJackpot ? 'z-index:2000;' : ''}`;
-                confetti.dataset.tx = tx;
-                confetti.dataset.ty = ty;
-                confetti.dataset.rot = Math.random() * 360;
-
-                particles.push(confetti);
-                fragment.appendChild(confetti);
-            }
-            container.appendChild(fragment);
-
-            // Animate in next frame
-            requestAnimationFrame(() => {
-                particles.forEach(child => {
-                    child.style.transform = `translate(${child.dataset.tx}vw, ${child.dataset.ty}vh) rotate(${child.dataset.rot}deg)`;
-                    child.style.opacity = '0';
-                });
-            });
-
-            // Cleanup all particles after max possible duration + buffer
-            setTimeout(() => {
-                particles.forEach(p => {
-                    if (p.parentNode) p.remove();
-                });
-            }, 3000);
-        }
 
         function resetEnvelope() {
             isOpened = false;
@@ -5446,7 +5491,7 @@
             tapEventCount++;
 
             // Visual Feedback
-            const luckBonus = Math.min(tapEventCount * 5, 50); // 5% per tap, max 50%
+            const luckBonus = Math.min(tapEventCount * 3, 50); // 5% per tap, max 50%
             document.getElementById('tapLuckDisplay').textContent = `+${luckBonus}%`;
 
             // Shake Envelope
@@ -5473,7 +5518,7 @@
             document.getElementById('tapTimerFill').style.transition = 'none';
 
             // Calculate Bonus
-            const luckBonus = Math.min(tapEventCount * 5, 50); // Max 50% bonus
+            const luckBonus = Math.min(tapEventCount * 3, 50); // Max 50% bonus
 
             // Open Envelope with Bonus
             openEnvelope(luckBonus);
@@ -5495,7 +5540,15 @@
             // Event listeners
             envelopeContainer.addEventListener('click', tryOpenEnvelope);
 
-            // Holographic Spin enabled - click to flip removed
+            // Holographic Spin enabled - click to flip reinstated
+            const wrapper = document.getElementById('moneyStackWrapper');
+            if (wrapper) {
+                wrapper.addEventListener('click', function () {
+                    this.classList.toggle('flipped');
+                    // Haptic feedback
+                    vibrate([20]);
+                });
+            }
 
             // Preload images
             moneyAmounts.forEach(item => {
@@ -5513,6 +5566,111 @@
 
         // Start
         init();
+
+        // ==================== CANVAS CONFETTI SYSTEM ====================
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const ctx = confettiCanvas ? confettiCanvas.getContext('2d') : null;
+        let confettiParticles = [];
+        let animationId = null;
+
+        function resizeCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(isJackpot, x, y) {
+                this.emojis = isJackpot ? ['💰', '✨', '👑', '💎', '🌕'] : ['🐎', '🧧', '💰', '🌸', '🏮', '✨', '🍀'];
+                this.emoji = this.emojis[Math.floor(Math.random() * this.emojis.length)];
+                this.x = x || Math.random() * confettiCanvas.width;
+                this.y = y || Math.random() * confettiCanvas.height - confettiCanvas.height;
+                this.size = (Math.random() * 20 + 20) * (isJackpot ? 1.5 : 1);
+
+                // Physics
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = (Math.random() * 5 + 2) * (isJackpot ? 1.5 : 1);
+                this.vx = Math.cos(angle) * velocity;
+                this.vy = Math.random() * 5 + 2; // Gravity effect
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() - 0.5) * 10;
+                this.friction = 0.99;
+                this.gravity = 0.1;
+                this.opacity = 1;
+                this.fadeSpeed = Math.random() * 0.01 + 0.005;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += this.gravity;
+                this.vx *= this.friction;
+                this.rotation += this.rotationSpeed;
+
+                // Fade out when near bottom
+                if (this.y > confettiCanvas.height * 0.8) {
+                    this.opacity -= this.fadeSpeed;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.opacity);
+                ctx.font = `${this.size}px serif`;
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.emoji, 0, 0);
+                ctx.restore();
+            }
+        }
+
+        function createConfetti(isJackpot = false) {
+            // Safety check
+            if (!confettiCanvas || !ctx) return;
+
+            // Clear existing if too many
+            if (confettiParticles.length > 500) confettiParticles = [];
+
+            const particleCount = isJackpot ? 150 : 60; // Increased count for better visual since canvas is efficient
+
+            for (let i = 0; i < particleCount; i++) {
+                // Burst from center or fall from top
+                const startX = isJackpot ? window.innerWidth / 2 : undefined;
+                const startY = isJackpot ? window.innerHeight / 2 : undefined;
+                confettiParticles.push(new Particle(isJackpot, startX, startY));
+            }
+
+            if (!animationId) {
+                animateConfetti();
+            }
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+            // Update and draw particles
+            for (let i = confettiParticles.length - 1; i >= 0; i--) {
+                const p = confettiParticles[i];
+                p.update();
+                p.draw();
+
+                // Remove off-screen or faded particles
+                if (p.y > confettiCanvas.height + 50 || p.opacity <= 0) {
+                    confettiParticles.splice(i, 1);
+                }
+            }
+
+            if (confettiParticles.length > 0) {
+                animationId = requestAnimationFrame(animateConfetti);
+            } else {
+                animationId = null;
+                ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            }
+        }
+
     </script>
 </body>
 
