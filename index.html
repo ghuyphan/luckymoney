@@ -100,6 +100,7 @@
             overflow: hidden;
             z-index: 0;
             pointer-events: none;
+            contain: strict;
         }
 
         .particle {
@@ -110,6 +111,7 @@
             align-items: center;
             justify-content: center;
             user-select: none;
+            will-change: transform, opacity;
         }
 
         /* Default circle particle */
@@ -226,6 +228,7 @@
             display: flex;
             justify-content: center;
             pointer-events: none;
+            contain: layout style;
         }
 
         .fab-content-width {
@@ -249,7 +252,9 @@
             flex-direction: column;
             align-items: flex-end;
             gap: 10px;
-            pointer-events: auto;
+            pointer-events: none;
+            will-change: transform;
+            transform: translateZ(0);
         }
 
         .fab-options {
@@ -258,10 +263,11 @@
             align-items: flex-end;
             gap: 10px;
             opacity: 0;
-            transform: translateY(20px) scale(0.8);
+            transform: translateY(20px) scale(0.8) translateZ(0);
             pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             margin-bottom: 5px;
+            will-change: transform, opacity;
         }
 
         .share-btn {
@@ -276,12 +282,15 @@
             color: var(--red-primary);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             border: 2px solid var(--gold-primary);
             position: relative;
             z-index: 2;
             margin: 0;
             padding: 0;
+            will-change: transform;
+            transform: translateZ(0);
+            pointer-events: auto;
         }
 
         .share-btn:hover {
@@ -298,7 +307,7 @@
 
         .fab-container.active .fab-options {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0) scale(1) translateZ(0);
             pointer-events: auto;
         }
 
@@ -449,19 +458,17 @@
             -webkit-tap-highlight-color: transparent;
             filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.3));
             position: relative;
-            /* Ensure we can position absolute children */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            /* Use inline-block to shrink-wrap content for proper absolute positioning */
+            display: inline-block;
         }
 
         .rate-info-btn {
-            position: absolute;
-            top: 50%;
-            right: -35px;
-            transform: translateY(-50%);
+            /* Smaller button next to luck meter */
+            position: relative;
             width: 28px;
             height: 28px;
+            min-width: 28px;
+            min-height: 28px;
             background: var(--red-dark);
             border: 1.5px solid var(--gold-primary);
             border-radius: 50%;
@@ -471,18 +478,29 @@
             justify-content: center;
             cursor: pointer;
             z-index: 10;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease, background 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            /* Touch-friendly properties */
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+            flex-shrink: 0;
         }
 
         .rate-info-btn i {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--gold-primary);
+            pointer-events: none;
         }
 
         .rate-info-btn:hover {
             background: var(--red-primary);
-            transform: translateY(-50%) scale(1.1);
+            transform: scale(1.1);
+        }
+
+        .rate-info-btn:active {
+            transform: scale(0.95);
+            background: var(--red-primary);
         }
 
 
@@ -494,6 +512,7 @@
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             animation: float 4s ease-in-out infinite;
             transform-style: preserve-3d;
+            will-change: transform;
         }
 
         .envelope:hover {
@@ -579,6 +598,7 @@
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 2;
             filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            border-radius: 12px 12px 0 0;
         }
 
         /* Gold trim accent for flap */
@@ -683,6 +703,7 @@
             width: 100%;
             max-width: min(450px, 95vw);
             transition: box-shadow 0.3s ease;
+            contain: layout paint;
         }
 
         /* Rarity Styles */
@@ -1049,11 +1070,11 @@
 
             0%,
             100% {
-                transform: translateY(0);
+                transform: translate3d(0, 0, 0);
             }
 
             50% {
-                transform: translateY(-10px);
+                transform: translate3d(0, -10px, 0);
             }
         }
 
@@ -2529,8 +2550,16 @@
         .luck-meter-container {
             position: relative;
             width: 100%;
-            max-width: 200px;
+            max-width: 240px;
             margin: 1rem auto 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .luck-meter-wrapper {
+            flex: 1;
             text-align: center;
         }
 
@@ -2679,6 +2708,8 @@
             mix-blend-mode: color-dodge;
             transition: opacity 0.3s;
             z-index: 10;
+            transform: translateZ(1px);
+            /* Prevent Z-fighting */
         }
 
         /* Tier Specific Holo Effects */
@@ -2747,6 +2778,56 @@
         .money-card.holo-active .holo-shine {
             opacity: 1 !important;
             display: block !important;
+        }
+
+        /* Back face holo-shine needs mirrored gradient direction */
+        .money-back .holo-shine {
+            /* Mirror the gradient angle for the back face (105deg -> 75deg reflected) */
+            background-image: linear-gradient(-105deg,
+                    transparent 20%,
+                    rgba(255, 0, 0, 0.2) 30%,
+                    rgba(0, 255, 0, 0.2) 40%,
+                    rgba(0, 0, 255, 0.2) 50%,
+                    transparent 60%);
+        }
+
+        .money-back .holo-shine.SSR {
+            background-image: linear-gradient(-105deg,
+                    transparent 20%,
+                    rgba(255, 0, 0, 0.2) 30%,
+                    rgba(255, 255, 0, 0.2) 35%,
+                    rgba(0, 255, 0, 0.2) 40%,
+                    rgba(0, 255, 255, 0.2) 45%,
+                    rgba(0, 0, 255, 0.2) 50%,
+                    rgba(255, 0, 255, 0.2) 55%,
+                    transparent 60%);
+        }
+
+        .money-back .holo-shine.SR {
+            background-image: linear-gradient(-105deg,
+                    transparent 20%,
+                    rgba(255, 223, 0, 0.1) 30%,
+                    rgba(255, 215, 0, 0.4) 40%,
+                    rgba(255, 223, 0, 0.1) 50%,
+                    transparent 60%);
+        }
+
+        .money-back .holo-shine.R {
+            background-image: linear-gradient(-105deg,
+                    transparent 20%,
+                    rgba(255, 255, 255, 0.1) 30%,
+                    rgba(200, 230, 255, 0.3) 40%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    transparent 60%);
+        }
+
+        .money-back .holo-shine.N {
+            background-image: linear-gradient(-105deg,
+                    transparent 20%,
+                    rgba(255, 255, 255, 0.2) 30%,
+                    rgba(255, 255, 255, 0.4) 40%,
+                    rgba(255, 255, 255, 0.2) 50%,
+                    transparent 60%);
         }
 
         /* Desktop Hover Effect Only */
@@ -2933,6 +3014,28 @@
         #bankSearchInput:focus {
             box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
             border-color: var(--gold-dark);
+        }
+
+        /* Mobile-specific: Disable hover effects on touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            .envelope:hover {
+                animation: float 4s ease-in-out infinite;
+            }
+
+            .share-btn:hover {
+                transform: translateZ(0);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            }
+
+            .fab-option-btn:hover {
+                transform: none;
+                background: white;
+            }
+
+            .rate-info-btn:hover {
+                transform: none;
+                background: var(--red-dark);
+            }
         }
     </style>
 </head>
@@ -3300,12 +3403,14 @@
 
         <!-- Luck Meter (Pity System) -->
         <div class="luck-meter-container" id="luckMeterContainer">
-            <div class="luck-meter">
-                <div class="luck-meter-fill" id="luckMeterFill" style="width: 0%"></div>
+            <div class="luck-meter-wrapper">
+                <div class="luck-meter">
+                    <div class="luck-meter-fill" id="luckMeterFill" style="width: 0%"></div>
+                </div>
+                <div class="luck-meter-label" id="luckMeterLabel">🔥 Vận may: 0/25</div>
             </div>
-            <div class="luck-meter-label" id="luckMeterLabel">🔥 Vận may: 0/25</div>
             <!-- Rate Info Button -->
-            <div class="rate-info-btn" onclick="openInfo()" title="Xem Tỷ Lệ & Thông Tin">
+            <div class="rate-info-btn" onclick="openInfo()" title="Xem Tỷ Lệ &amp; Thông Tin">
                 <i class="fa-solid fa-circle-info"></i>
             </div>
         </div>
@@ -4274,25 +4379,29 @@
                 cards.forEach(card => {
                     const shines = card.querySelectorAll('.holo-shine');
                     shines.forEach(shine => {
-                        const isBack = shine.parentElement.classList.contains('money-back');
+                        const isBackFace = shine.parentElement.classList.contains('money-back');
+
+                        // Determine if this shine is on the currently VISIBLE face
+                        // When flipped: back face is visible. When not flipped: front face is visible.
+                        const isVisibleFace = isFlipped ? isBackFace : !isBackFace;
 
                         // Map rotation to 0-100% position
-                        // If back face, we need to correct for the 180deg rotation of the face itself
-                        let effectiveRotateY = rotateY;
+                        let xPos = 50 + (rotateY / 30) * 50;
 
-                        // Current logic: rotateY is approx -30 to 30 from tilt
-                        // center is 0. 
-                        // xPos = 50 + (rotateY / 30) * 50
-
-                        let xPos = 50 + (effectiveRotateY / 30) * 50;
-
-                        if (isBack) {
-                            // Invert X movement for back face to match light source direction
+                        if (isBackFace) {
                             xPos = 100 - xPos;
                         }
-
                         const yPos = 50 + (rotateX / 20) * 50;
-                        shine.style.backgroundPosition = `${xPos}% ${yPos}%`;
+
+                        // Only actively animate the visible face's shine
+                        if (isVisibleFace) {
+                            shine.style.backgroundPosition = `${xPos}% ${yPos}%`;
+                            shine.style.opacity = '1';
+                        } else {
+                            // Reset hidden face shine to center
+                            shine.style.backgroundPosition = '50% 50%';
+                            shine.style.opacity = '0';
+                        }
                     });
                 });
             }
@@ -4331,19 +4440,32 @@
             cards.forEach(card => {
                 const shines = card.querySelectorAll('.holo-shine');
                 shines.forEach(shine => {
-                    const isBack = shine.parentElement.classList.contains('money-back');
+                    const isBackFace = shine.parentElement.classList.contains('money-back');
+
+                    // Determine if this shine is on the currently VISIBLE face
+                    // When flipped: back face is visible. When not flipped: front face is visible.
+                    const isVisibleFace = isFlipped ? isBackFace : !isBackFace;
 
                     // Shine moves based on rotation angle [0-100%]
                     // rotateY is -180 to 180 based on screen width
                     let xPos = 50 + (rotateY / 180) * 50;
 
-                    if (isBack) {
-                        // Invert calculation for back face so light moves naturally
+                    if (isBackFace) {
+                        // Invert X movement for back face to match light source direction
+                        // This compensates for the 180deg rotation of the back face
                         xPos = 100 - xPos;
                     }
-
                     const yPos = 50 + (rotateX / 20) * 50;
-                    shine.style.backgroundPosition = `${xPos}% ${yPos}%`;
+
+                    // Only actively animate the visible face's shine
+                    if (isVisibleFace) {
+                        shine.style.backgroundPosition = `${xPos}% ${yPos}%`;
+                        shine.style.opacity = '1';
+                    } else {
+                        // Reset hidden face shine to center
+                        shine.style.backgroundPosition = '50% 50%';
+                        shine.style.opacity = '0';
+                    }
                 });
             });
         }
@@ -4353,9 +4475,15 @@
             if (!wrapper) return;
 
             // Remove active class to re-enable transition for smooth reset
-            // Remove active class to re-enable transition for smooth reset
             wrapper.classList.remove('holo-active');
-            wrapper.style.transform = ''; // Clear inline transform so CSS class takes over (for flipped state)
+            wrapper.style.transform = ''; // Clear inline transform
+
+            // Reset shines
+            const shines = wrapper.querySelectorAll('.holo-shine');
+            shines.forEach(shine => {
+                shine.style.opacity = '';
+                shine.style.backgroundPosition = '';
+            });
         }
 
         // ==================== TOAST QUEUE SYSTEM ====================
@@ -5020,12 +5148,12 @@
 
                 card.innerHTML = `
                     <div class="money-face money-front">
-                        <div class="holo-shine ${tier}"></div>
                         <img src="${currentBill.front}" alt="Mặt trước" loading="lazy">
+                        <div class="holo-shine ${tier}"></div>
                     </div>
                     <div class="money-face money-back">
-                        <div class="holo-shine ${tier}"></div>
                         <img src="${currentBill.back}" alt="Mặt sau" loading="lazy">
+                        <div class="holo-shine ${tier}"></div>
                     </div>
                 `;
                 container.appendChild(card);
