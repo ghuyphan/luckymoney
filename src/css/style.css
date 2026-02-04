@@ -49,13 +49,18 @@
             content: '';
             position: fixed;
             inset: 0;
-            background-image: url('images/assets/pattern.png');
-            background-size: 300px;
+            /* Dual-layer pattern with different sizes to hide repetition */
+            background-image:
+                url('../../images/assets/pattern.png'),
+                url('../../images/assets/pattern.png');
+            background-size: 550px, 350px;
+            background-position: 0 0, 100px 100px;
             background-repeat: repeat;
-            opacity: 0.6;
+            /* Overlay mode provides better definition against the red gradient */
+            mix-blend-mode: overlay;
+            opacity: 0.4;
             pointer-events: none;
             z-index: 0;
-            mix-blend-mode: screen;
         }
 
         @keyframes gradientBG {
@@ -529,14 +534,17 @@
         .envelope-body {
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 50% 30%, #D32F2F 0%, #B71C1C 60%, #8b0000 100%);
-            border-radius: 12px;
+            /* Cute Gradient: Pinkish Red */
+            background: radial-gradient(circle at 50% 30%, #FF5252 0%, #D50000 60%, #B71C1C 100%);
+            border-radius: 24px;
+            /* Rounder corners */
             position: relative;
             box-shadow:
-                inset 0 0 30px rgba(0, 0, 0, 0.4),
-                0 0 0 2px #d4af37,
-                0 0 0 5px #8b0000,
-                0 0 0 7px #d4af37;
+                inset 0 0 30px rgba(0, 0, 0, 0.2),
+                0 0 0 4px #FFD700,
+                /* Gold border */
+                0 0 0 8px #FF8A80;
+            /* Soft pink outer border */
             overflow: hidden;
         }
 
@@ -549,11 +557,11 @@
             font-size: clamp(4rem, 18vw, 6rem);
             font-family: "Playfair Display", serif;
             font-weight: 800;
-            background: linear-gradient(to bottom, #FFD700 0%, #FDB931 25%, #DAA520 50%, #FDB931 75%, #FFD700 100%);
+            background: linear-gradient(to bottom, #FFF 0%, #FFD700 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            filter: drop-shadow(0 2px 0 #8B0000) drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
+            filter: drop-shadow(0 2px 0 #D50000) drop-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
             opacity: 1;
             z-index: 1;
         }
@@ -561,10 +569,10 @@
         .envelope-pattern {
             position: absolute;
             inset: 0;
-            opacity: 0.1;
-            background-image:
-                repeating-linear-gradient(45deg, #FFD700 0, #FFD700 1px, transparent 0, transparent 40px),
-                repeating-linear-gradient(-45deg, #FFD700 0, #FFD700 1px, transparent 0, transparent 40px);
+            opacity: 0.15;
+            /* Polka dots pattern */
+            background-image: radial-gradient(#FFD700 2px, transparent 2px);
+            background-size: 20px 20px;
             mix-blend-mode: overlay;
         }
 
@@ -574,13 +582,14 @@
             left: 0;
             right: 0;
             height: 32%;
-            background: linear-gradient(160deg, #C62828 0%, #8E0000 100%);
+            /* Brighter flap color */
+            background: linear-gradient(160deg, #FF5252 0%, #D32F2F 100%);
             clip-path: ellipse(80% 100% at 50% 0%);
             transform-origin: top center;
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 2;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-            border-radius: 12px 12px 0 0;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            border-radius: 24px 24px 0 0;
         }
 
         /* Gold trim accent for flap */
@@ -591,7 +600,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at 50% 100%, rgba(255, 215, 0, 0.2) 0%, transparent 60%);
+            background: radial-gradient(circle at 50% 100%, rgba(255, 235, 59, 0.3) 0%, transparent 60%);
             pointer-events: none;
         }
 
@@ -600,48 +609,48 @@
             top: 26%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: clamp(48px, 14vw, 64px);
-            height: clamp(48px, 14vw, 64px);
-            background: radial-gradient(circle at 35% 35%, #FFD700 0%, #DAA520 50%, #B8860B 100%);
+            width: clamp(50px, 15vw, 68px);
+            height: clamp(50px, 15vw, 68px);
+            /* Heart Shape using clip-path or just a cute circle */
+            /* Using a circle with a heart icon inside is safer for layout */
+            background: radial-gradient(circle at 35% 35%, #FFD700 0%, #FBC02D 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 3;
             box-shadow:
-                0 4px 15px rgba(0, 0, 0, 0.5),
-                inset 0 0 0 2px rgba(255, 215, 0, 0.5),
-                inset 0 0 4px 4px rgba(184, 134, 11, 0.3);
+                0 4px 15px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 2px #FFF;
             transition: all 0.4s ease;
-            font-size: clamp(1.5rem, 5vw, 2rem);
-            color: #795548;
-            border: 1px solid #B8860B;
+            font-size: clamp(1rem, 4vw, 1.4rem);
+            font-weight: 800;
+            font-family: 'Playfair Display', serif;
+            color: #D32F2F;
+            border: 2px solid #FFF;
+            text-transform: uppercase;
         }
 
-        /* Gold Skin (Unlocked at 1M) */
+
+
+        /* Hide original text if any (it was empty before) */
+
+        /* Gold Skin (Unlocked at 1M) - Update to match cute style */
         .envelope.skin-gold .envelope-body {
-            background: radial-gradient(circle at 50% 30%, #FFD700 0%, #FDB931 60%, #DAA520 100%);
+            background: radial-gradient(circle at 50% 30%, #FFECB3 0%, #FFD54F 100%);
             box-shadow:
                 inset 0 0 20px rgba(255, 255, 255, 0.6),
-                0 0 0 2px #FFF,
-                0 0 0 5px #DAA520,
-                0 0 0 7px #FFF;
+                0 0 0 4px #FFF,
+                0 0 0 8px #FFD700;
         }
 
-
-
         .envelope.skin-gold .envelope-flap {
-            background: linear-gradient(160deg, #FDB931 0%, #DAA520 100%);
-            filter: drop-shadow(0 4px 8px rgba(218, 165, 32, 0.4));
+            background: linear-gradient(160deg, #FFD54F 0%, #FFA000 100%);
         }
 
         .envelope.skin-gold .envelope-seal {
-            background: radial-gradient(circle at 35% 35%, #FFF 0%, #F0F0F0 100%);
-            color: #DAA520;
-            border: 1px solid #FFF;
-            box-shadow:
-                0 4px 15px rgba(0, 0, 0, 0.2),
-                inset 0 0 0 2px rgba(218, 165, 32, 0.5);
+            background: radial-gradient(circle at 35% 35%, #FFF 0%, #FFECB3 100%);
+            color: #FFA000;
         }
 
         .envelope.opened .envelope-flap {
@@ -673,49 +682,166 @@
 
         /* Result Card */
         .result-card {
-            background: linear-gradient(135deg, var(--cream) 0%, #FFF 100%);
-            border-radius: clamp(1rem, 4vw, 1.5rem);
-            padding: clamp(1.25rem, 5vw, 2.5rem);
-            margin-top: clamp(1.25rem, 4vw, 2rem);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 4px var(--gold-primary);
+            background: #FFF9E6;
+            /* Soft Cream Background */
+            border-radius: 32px;
+            /* Very round corners */
+            padding: clamp(1.5rem, 6vw, 2.5rem);
+            margin-top: clamp(1.5rem, 5vw, 2.5rem);
+            /* Cute Default Border */
+            border: 4px dashed #FFD700;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             display: none;
             animation: popIn 0.5s ease-out;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
+            /* Allow borders to stick out if needed */
             width: 100%;
             max-width: min(450px, 95vw);
             transition: box-shadow 0.3s ease;
-            contain: layout paint;
+            z-index: 10;
         }
 
-        /* Rarity Styles */
-        .result-card[data-rarity="SSR"] {
-            box-shadow: 0 20px 60px rgba(255, 0, 0, 0.5), 0 0 0 6px #FFD700, 0 0 50px #FFD700;
-            border: 2px solid #FFD700;
+        /* Pseudo-element Base Styles */
+        .result-card::before,
+        .result-card::after {
+            content: '';
+            position: absolute;
+            border-radius: inherit;
+            pointer-events: none;
         }
 
-        .result-card[data-rarity="SR"] {
-            box-shadow: 0 20px 60px rgba(138, 43, 226, 0.4), 0 0 0 5px #9932CC;
+        /* ::before - The Card Background Layer (used for Rare cards to layer above border) */
+        .result-card::before {
+            inset: 0;
+            z-index: 0;
+            background: #FFF9E6;
+            border-radius: 32px;
+            display: none;
+            /* Hidden by default, explicit for Rare cards */
         }
 
+        /* ::after - The Gradient Border Layer */
+        .result-card::after {
+            inset: -5px;
+            z-index: -1;
+            /* Behind ::before */
+            border-radius: 36px;
+            /* 32px + 4px border roughly */
+            background: conic-gradient(from var(--a, 0deg), transparent 0%, transparent 100%);
+            display: none;
+            /* Hidden by default */
+        }
+
+        @property --a {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        @keyframes rotateBorder {
+            0% {
+                --a: 0deg;
+            }
+
+            100% {
+                --a: 360deg;
+            }
+        }
+
+        /* Rarity Styles - AWESOME GLOW Borders */
+
+        /* Shared overrides for all Rare types */
+        .result-card[data-rarity="SSR"],
+        .result-card[data-rarity="SR"],
         .result-card[data-rarity="R"] {
-            box-shadow: 0 20px 60px rgba(0, 191, 255, 0.3), 0 0 0 4px #00BFFF;
+            background: transparent !important;
+            /* Hide main bg, move to ::before */
+            border-color: transparent !important;
+            /* Keep physical space but invisible */
+            background-clip: padding-box;
+        }
+
+        .result-card[data-rarity="SSR"]::before,
+        .result-card[data-rarity="SR"]::before,
+        .result-card[data-rarity="R"]::before {
+            display: block;
+            /* Show background layer */
+        }
+
+        /* SSR - Legendary Gold/Rainbow Spin */
+        .result-card[data-rarity="SSR"] {
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.4);
+        }
+
+        .result-card[data-rarity="SSR"]::after {
+            display: block;
+            background: conic-gradient(from var(--a, 0deg),
+                    #FFD700,
+                    #FFF,
+                    #FFA000,
+                    #FFECB3,
+                    #FFD700);
+            animation: rotateBorder 3s linear infinite;
+        }
+
+        /* SR - Epic Purple */
+        .result-card[data-rarity="SR"] {
+            box-shadow: 0 0 40px rgba(186, 104, 200, 0.4);
+        }
+
+        .result-card[data-rarity="SR"]::after {
+            display: block;
+            background: conic-gradient(from var(--a, 0deg),
+                    #9C27B0,
+                    #E040FB,
+                    #FFF,
+                    #BA68C8,
+                    #9C27B0);
+            animation: rotateBorder 4s linear infinite;
+        }
+
+        /* R - Rare Blue */
+        .result-card[data-rarity="R"] {
+            box-shadow: 0 0 40px rgba(3, 169, 244, 0.4);
+        }
+
+        .result-card[data-rarity="R"]::after {
+            display: block;
+            background: conic-gradient(from var(--a, 0deg),
+                    #03A9F4,
+                    #4FC3F7,
+                    #FFF,
+                    #29B6F6,
+                    #03A9F4);
+            animation: rotateBorder 4s linear infinite;
+        }
+
+        /* Default/Common - Cute Dashed Stripes */
+        .result-card:not([data-rarity="SSR"]):not([data-rarity="SR"]):not([data-rarity="R"]) {
+            /* Use specialized dashing or border-image if possible, or just refined dashed */
+            border: 4px dashed #FFD700;
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.15);
+            animation: borderPulse 3s infinite alternate;
+        }
+
+        @keyframes borderPulse {
+            0% {
+                border-color: #FFD700;
+                box-shadow: 0 10px 25px rgba(255, 215, 0, 0.15);
+            }
+
+            100% {
+                border-color: #FFA000;
+                box-shadow: 0 10px 35px rgba(255, 215, 0, 0.3);
+            }
         }
 
         .result-card.show {
             display: block;
         }
 
-        .result-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
-            animation: shimmer 3s linear infinite;
-        }
+        /* Old shimmer effect removed to prevent conflict with ::before bg */
 
         .result-card .amount {
             font-family: 'Playfair Display', serif;
@@ -886,10 +1012,19 @@
             font-family: 'Playfair Display', serif;
             font-size: clamp(1.1rem, 4vw, 1.4rem);
             font-style: italic;
-            color: var(--red-dark);
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            font-style: italic;
+            color: #D84315;
+            /* Slightly deeper orange/red for better contrast */
             line-height: 1.6;
-            padding: clamp(3rem, 6vw, 4rem) clamp(1.5rem, 5vw, 2.5rem);
+
+            padding: clamp(1.5rem, 5vw, 2rem);
             background-color: #FFF;
+            border: 2px dashed #FFD54F;
+            /* Dotted/Dashed border */
+            border-radius: 16px;
+            margin: 1.5rem 0;
+            position: relative;
             background-image:
                 radial-gradient(var(--gold-light) 1px, transparent 1px),
                 linear-gradient(to bottom, transparent, rgba(255, 248, 220, 0.3) 100%);
@@ -901,8 +1036,24 @@
             z-index: 1;
             text-align: center;
             box-shadow:
-                inset 0 0 20px rgba(255, 215, 0, 0.1),
+                inset 0 0 20px rgba(255, 215, 0, 0.05),
                 0 5px 15px rgba(0, 0, 0, 0.05);
+            animation: wishBreathe 3s ease-in-out infinite;
+        }
+
+        @keyframes wishBreathe {
+
+            0%,
+            100% {
+                box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+                border-color: #FFD54F;
+            }
+
+            50% {
+                box-shadow: inset 0 0 25px rgba(255, 215, 0, 0.3), 0 5px 20px rgba(0, 0, 0, 0.1);
+                border-color: #FFA000;
+            }
+
         }
 
         .result-card .wish::before {
@@ -937,55 +1088,80 @@
         }
 
         .btn {
-            padding: clamp(0.7rem, 2.5vw, 0.9rem) clamp(1.5rem, 5vw, 2.5rem);
-            font-size: clamp(0.9rem, 3vw, 1rem);
-            font-weight: 600;
             border: none;
             border-radius: 50px;
+            /* Pill shape */
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             position: relative;
-            z-index: 1;
-            -webkit-tap-highlight-color: transparent;
+            overflow: hidden;
+            font-family: 'Be Vietnam Pro', sans-serif;
             flex: 1;
             min-width: 120px;
-            max-width: 180px;
+            max-width: 200px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
-            color: var(--red-dark);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+            /* Yellow Button */
+            background: linear-gradient(to bottom, #FFD700, #FBC02D);
+            color: #D32F2F;
+            /* Red text for contrast */
+            box-shadow: 0 4px 0 #F57F17;
+            /* 3D effect */
         }
 
-        .btn-primary:hover,
-        .btn-primary:active {
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+            box-shadow: 0 6px 0 #F57F17;
+        }
+
+        .btn-primary:active {
+            transform: translateY(2px);
+            box-shadow: 0 0 0 #F57F17;
         }
 
         .btn-secondary {
-            background: transparent;
-            color: var(--red-primary);
-            border: 2px solid var(--red-primary);
+            /* White Button with Red Border */
+            background: #FFF;
+            color: #D32F2F;
+            border: 2px solid #D32F2F;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-secondary:hover,
-        .btn-secondary:active {
-            background: var(--red-primary);
-            color: white;
+        .btn-secondary:hover {
+            background: #FFEBEE;
+            transform: translateY(-2px);
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, #FF4444, #8B0000);
-            color: white;
-            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.4);
+            /* Red Button (Gamble) */
+            background: linear-gradient(to bottom, #D32F2F, #B71C1C);
+            color: #FFD700;
+            box-shadow: 0 4px 0 #8B0000;
         }
 
         .btn-danger:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(139, 0, 0, 0.6);
+            box-shadow: 0 6px 0 #8B0000;
+        }
+
+        .btn-danger:active {
+            transform: translateY(2px);
+            box-shadow: 0 0 0 #8B0000;
         }
 
         .btn:disabled {
@@ -3020,46 +3196,64 @@
             }
         }
 
-/* --- TOAST & CUSTOM MODAL --- */
-.toast-container {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 3000;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    pointer-events: none;
-    width: max-content;
-    max-width: 90vw;
-}
+        /* --- TOAST & CUSTOM MODAL --- */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+            width: max-content;
+            max-width: 90vw;
+        }
 
-.toast {
-    background: rgba(20, 20, 20, 0.9);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 50px;
-    font-size: 0.95rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    animation: toastSlideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transform-origin: center bottom;
-}
+        .toast {
+            background: rgba(20, 20, 20, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            animation: toastSlideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform-origin: center bottom;
+        }
 
-.toast.error { border-left: 4px solid #ff4444; }
-.toast.success { border-left: 4px solid #00C851; }
-.toast.warning { border-left: 4px solid #FF8800; }
+        .toast.error {
+            border-left: 4px solid #ff4444;
+        }
 
-@keyframes toastSlideUp {
-    from { opacity: 0; transform: translateY(20px) scale(0.9); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
+        .toast.success {
+            border-left: 4px solid #00C851;
+        }
 
-@keyframes toastFadeOut {
-    to { opacity: 0; transform: translateY(-10px) scale(0.95); }
-}
+        .toast.warning {
+            border-left: 4px solid #FF8800;
+        }
+
+        @keyframes toastSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes toastFadeOut {
+            to {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+        }
