@@ -1130,6 +1130,16 @@ function showToast(message, type = 'info', duration = 3000) {
     ToastQueue.add(toast, duration);
 }
 
+// Confirmation Dialog Helper
+let confirmCallback = null;
+
+function showConfirm(message, onConfirm) {
+    const msgEl = document.getElementById('confirmMessage');
+    if (msgEl) msgEl.textContent = message;
+    confirmCallback = onConfirm;
+    openModal('confirmModal');
+}
+
 // ==================== ACHIEVEMENTS ====================
 const ACHIEVEMENTS = {
     // Milestone achievements
@@ -2371,6 +2381,15 @@ function init() {
     // Initialize shake and drag features
     initShakeDetection();
     initDragToOpen();
+
+    // Modal Confirm Listener
+    const confirmBtn = document.getElementById('confirmActionBtn');
+    if (confirmBtn) {
+        confirmBtn.onclick = () => {
+            if (confirmCallback) confirmCallback();
+            closeModal('confirmModal');
+        };
+    }
 }
 
 // Start
