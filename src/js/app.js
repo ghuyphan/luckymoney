@@ -1,0 +1,2413 @@
+// ==================== GLOBAL STATE ====================
+let withdrawMode = 'current';
+let pendingAmount = 0;
+let selectedBank = 'VCB';
+let isOpened = false;
+let currentResult = null;
+let isMuted = false; // Will be initialized in init()
+let banksRendered = false; // Track if banks are rendered
+let scrollPosition = 0; // Store scroll position for no-scroll fix
+let customLuckMode = null; // Stores custom luck setting (high, prank, rich)
+let customFixedAmount = null; // Stores fixed amount
+let customSkin = null; // Stores custom skin
+let receiverName = null; // Stores receiver name
+
+// ==================== DATA ====================
+const moneyAmounts = [
+    { value: 10000, display: '10.000', front: 'images/10k-1.jpg', back: 'images/10k-2.jpg' },
+    { value: 20000, display: '20.000', front: 'images/20k-1.jpg', back: 'images/20k-2.jpg' },
+    { value: 50000, display: '50.000', front: 'images/50k-1.jpg', back: 'images/50k-2.jpg' },
+    { value: 100000, display: '100.000', front: 'images/100k-1.jpg', back: 'images/100k-2.jpg' },
+    { value: 200000, display: '200.000', front: 'images/200k-1.jpg', back: 'images/200k-2.jpg' },
+    { value: 500000, display: '500.000', front: 'images/500k-1.jpg', back: 'images/500k-2.jpg' }
+];
+
+const BANKS_DATA = [
+    { "code": "ABB", "name": "ABBANK" },
+    { "code": "ACB", "name": "ACB" },
+    { "code": "VBA", "name": "Agribank" },
+    { "code": "BAB", "name": "BacABank" },
+    { "code": "BVB", "name": "BaoVietBank" },
+    { "code": "BIDV", "name": "BIDV" },
+    { "code": "CAKE", "name": "CAKE" },
+    { "code": "CBB", "name": "CBBank" },
+    { "code": "CIMB", "name": "CIMB" },
+    { "code": "COOPBANK", "name": "COOPBANK" },
+    { "code": "EIB", "name": "Eximbank" },
+    { "code": "HDB", "name": "HDBank" },
+    { "code": "HSBC", "name": "HSBC" },
+    { "code": "KLB", "name": "KienLongBank" },
+    { "code": "LPB", "name": "LPBank" },
+    { "code": "MB", "name": "MBBank" },
+    { "code": "MSB", "name": "MSB" },
+    { "code": "NAB", "name": "NamABank" },
+    { "code": "NCB", "name": "NCB" },
+    { "code": "OCB", "name": "OCB" },
+    { "code": "PGB", "name": "PGBank" },
+    { "code": "PVCB", "name": "PVcomBank" },
+    { "code": "STB", "name": "Sacombank" },
+    { "code": "SGICB", "name": "SaigonBank" },
+    { "code": "SCB", "name": "SCB" },
+    { "code": "SEAB", "name": "SeABank" },
+    { "code": "SHB", "name": "SHB" },
+    { "code": "SHBVN", "name": "ShinhanBank" },
+    { "code": "TCB", "name": "Techcombank" },
+    { "code": "TIMO", "name": "Timo" },
+    { "code": "TPB", "name": "TPBank" },
+    { "code": "Ubank", "name": "Ubank" },
+    { "code": "VAB", "name": "VietABank" },
+    { "code": "VCCB", "name": "VietCapitalBank" },
+    { "code": "VIETBANK", "name": "VietBank" },
+    { "code": "VCB", "name": "Vietcombank" },
+    { "code": "ICB", "name": "VietinBank" },
+    { "code": "VIB", "name": "VIB" },
+    { "code": "VPB", "name": "VPBank" },
+    { "code": "VRB", "name": "VRB" }
+];
+
+// Wishes
+// Wishes
+let wishes = [
+    "An khang thịnh vượng - Vạn sự như ý! 🌸",
+    "Tấn tài tấn lộc - Mã đáo thành công! 🧧",
+    "Sức khỏe dồi dào, tiền vào như nước! 💰",
+    "Năm mới bình an, hạnh phúc tràn đầy! ❤️",
+    "Công việc thuận lợi, thăng tiến vù vù! 🚀",
+    "Vạn sự như ý - Tỷ sự như mơ! ✨",
+    "Xuân sang đắc lộc - Gia đạo bình an! 🏡",
+    "Tiền vào cửa trước - Vàng vào cửa sau! 🚪",
+    "Đánh đâu thắng đó - Sự nghiệp hanh thông! 📈",
+    "Cung hỷ phát tài - May mắn cả năm! 🍀"
+];
+
+let wishDeck = [];
+
+
+// Audio
+const sounds = {
+    open: new Audio('sounds/318636225-gacha-ready.m4a'),
+    coin: new Audio('sounds/318636226-gacha-start.m4a'),
+    ssr: new Audio('sounds/318636226-gacha-start.m4a'),
+    sr: new Audio('sounds/318636226-gacha-start.m4a')
+};
+Object.values(sounds).forEach(s => s.volume = 0.4);
+
+// ==================== DOM ELEMENTS ====================
+const envelope = document.getElementById('envelope');
+const envelopeContainer = document.getElementById('envelopeContainer');
+const clickHint = document.getElementById('clickHint');
+const resultCard = document.getElementById('resultCard');
+const amountEl = document.getElementById('amount');
+const wishEl = document.getElementById('wish');
+const walletEl = document.getElementById('walletBalance');
+const walletContainer = document.querySelector('.wallet-container');
+function initParticles() {
+    const container = document.getElementById('particlesContainer');
+    const particleCount = 20; // Slightly fewer but higher quality particles
+
+    for (let i = 0; i < particleCount; i++) {
+        createParticle(container);
+    }
+
+    // Re-spawn particles occasionally to maintain density
+    setInterval(() => {
+        if (container.children.length < particleCount) {
+            createParticle(container);
+        }
+    }, 2000);
+
+    // Spotlight mouse interaction
+    document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth) * 100;
+        const y = (e.clientY / window.innerHeight) * 100;
+        document.body.style.setProperty('--mouse-x', `${x}%`);
+        document.body.style.setProperty('--mouse-y', `${y}%`);
+    });
+
+    // Handle touch for mobile spotlight
+    document.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches[0]) {
+            const x = (e.touches[0].clientX / window.innerWidth) * 100;
+            const y = (e.touches[0].clientY / window.innerHeight) * 100;
+            document.body.style.setProperty('--mouse-x', `${x}%`);
+            document.body.style.setProperty('--mouse-y', `${y}%`);
+        }
+    }, { passive: true });
+}
+
+function createParticle(container) {
+    const particle = document.createElement('div');
+
+    // Randomly choose particle type
+    const types = ['dot', 'envelope', 'coin', 'sparkle', 'flower'];
+    const type = types[Math.floor(Math.random() * types.length)];
+
+    particle.classList.add('particle');
+
+    if (type === 'dot') {
+        particle.classList.add('particle-dot');
+        const size = Math.random() * 6 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+    } else if (type === 'flower') {
+        // Use image assets for flowers
+        const img = document.createElement('img');
+        const flowerAssets = ['images/assets/big-flower.png', 'images/assets/big-flower1.png'];
+        img.src = flowerAssets[Math.floor(Math.random() * flowerAssets.length)];
+        img.classList.add('particle-img');
+        const size = Math.random() * 20 + 20; // Flowers are slightly larger
+        img.style.setProperty('--p-size', `${size}px`);
+        particle.appendChild(img);
+    } else {
+        particle.classList.add('particle-emoji');
+        const emojis = {
+            envelope: '🧧',
+            coin: '🪙',
+            sparkle: '✨'
+        };
+        particle.textContent = emojis[type];
+        const size = Math.random() * 15 + 10;
+        particle.style.setProperty('--p-size', `${size}px`);
+    }
+
+    // Random properties
+    const posX = Math.random() * 100;
+    const duration = Math.random() * 15 + 12;
+    const delay = Math.random() * 20;
+    const drift = (Math.random() - 0.5) * 100; // Left or right drift
+    const rotation = (Math.random() - 0.5) * 720; // Random end rotation
+
+    particle.style.left = `${posX}%`;
+    particle.style.animationDuration = `${duration}s`;
+    particle.style.animationDelay = `-${delay}s`;
+    particle.style.setProperty('--drift', `${drift}px`);
+    particle.style.setProperty('--rot', `${rotation}deg`);
+
+    container.appendChild(particle);
+
+    // Remove after animation to prevent memory leak
+    setTimeout(() => {
+        particle.remove();
+    }, duration * 1000);
+}
+
+const muteBtn = document.getElementById('muteBtn');
+
+// ==================== UTILITY FUNCTIONS ====================
+function toggleFabMenu() {
+    const container = document.getElementById('fabContainer');
+    const mainBtn = container.querySelector('.share-btn');
+    container.classList.toggle('active');
+    mainBtn.classList.toggle('active');
+}
+
+// Close FAB when clicking outside
+document.addEventListener('click', (e) => {
+    const container = document.getElementById('fabContainer');
+    if (container && !container.contains(e.target) && container.classList.contains('active')) {
+        toggleFabMenu();
+    }
+});
+
+function formatNumber(num) {
+    if (num === null || num === undefined || isNaN(num)) return '0';
+
+    // Compact formatting for Wallet display
+    // If we are formatting for the wallet specifically, we might want this.
+    // But this function is used everywhere. 
+    // Let's modify where it's used in Wallet instead.
+
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function formatCompactNumber(num) {
+    if (num === null || num === undefined || isNaN(num)) return '0';
+    if (num >= 1000000000) {
+        return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+    }
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    }
+    if (num >= 1000) {
+        return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    }
+    return formatNumber(num);
+}
+
+function getRandomItem(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function getNextWish() {
+    if (wishDeck.length === 0) {
+        wishDeck = [...wishes];
+        for (let i = wishDeck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [wishDeck[i], wishDeck[j]] = [wishDeck[j], wishDeck[i]];
+        }
+    }
+    return wishDeck.pop();
+}
+
+function playSound(name) {
+    if (isMuted) return;
+    try {
+        sounds[name].currentTime = 0;
+        sounds[name].play().catch(e => { });
+    } catch (err) { }
+}
+
+// ==================== SAFE STORAGE ====================
+const Storage = {
+    get(key) {
+        try {
+            return localStorage.getItem(key);
+        } catch (e) {
+            console.warn('localStorage not available:', e);
+            return null;
+        }
+    },
+    set(key, value) {
+        try {
+            localStorage.setItem(key, value);
+            return true;
+        } catch (e) {
+            console.warn('localStorage not available:', e);
+            return false;
+        }
+    },
+    remove(key) {
+        try {
+            localStorage.removeItem(key);
+        } catch (e) {
+            console.warn('localStorage not available:', e);
+        }
+    }
+};
+
+// ==================== DATA MANAGER ====================
+const DEFAULT_DATA = {
+    totalMoney: 0,
+    history: [],
+    stats: {
+        totalPulls: 0,
+        tierCounts: { SSR: 0, SR: 0, R: 0, N: 0 },
+        consecutiveN: 0,
+        consecutiveLosses: 0,
+        gambleWins: 0,
+        totalWithdrawn: 0,
+        hitZero: false,
+        pityCounter: 0  // Tracks pulls since last SSR for pity system
+    },
+    achievements: [],
+    maxBalance: 0
+};
+
+function getData() {
+    const stored = Storage.get('luckyMoneyData_v2') || Storage.get('luckyMoney_data');
+    if (!stored) return { ...DEFAULT_DATA };
+    try {
+        const data = { ...DEFAULT_DATA, ...JSON.parse(stored) };
+        if (!data.history) data.history = [];
+        if (typeof data.maxBalance === 'undefined') data.maxBalance = data.totalMoney || 0;
+        return data;
+    } catch (e) {
+        console.warn('Failed to parse saved data:', e);
+        return { ...DEFAULT_DATA };
+    }
+}
+
+function saveData(data) {
+    if (data.totalMoney > (data.maxBalance || 0)) {
+        data.maxBalance = data.totalMoney;
+    }
+    Storage.set('luckyMoneyData_v2', JSON.stringify(data));
+    updateWalletDisplay();
+}
+
+function updateWalletDisplay() {
+    const data = getData();
+    walletEl.textContent = formatCompactNumber(data.totalMoney);
+}
+
+function addToWallet(amount) {
+    const data = getData();
+    data.totalMoney += amount;
+    saveData(data);
+    walletContainer.classList.add('update');
+    setTimeout(() => walletContainer.classList.remove('update'), 300);
+    checkAchievements(data);
+}
+
+function addToHistory(entry) {
+    const data = getData();
+    data.history.unshift(entry);
+    if (data.history.length > 50) data.history = data.history.slice(0, 50);
+    saveData(data);
+}
+
+function updateStats(tier, amount) {
+    const data = getData();
+    data.stats.totalPulls++;
+    data.stats.tierCounts[tier] = (data.stats.tierCounts[tier] || 0) + 1;
+    if (tier === 'N') {
+        data.stats.consecutiveN = (data.stats.consecutiveN || 0) + 1;
+    } else {
+        data.stats.consecutiveN = 0;
+    }
+    saveData(data);
+    checkAchievements(data);
+}
+
+// ==================== MODAL FUNCTIONS - FIXED ====================
+function openModal(id) {
+    document.body.classList.add('no-scroll');
+    document.getElementById(id).classList.add('open');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    // Only remove no-scroll if no other modals are open
+    const anyOpen = document.querySelectorAll('.modal-overlay.open').length > 0;
+    if (!anyOpen) {
+        document.body.classList.remove('no-scroll');
+    }
+}
+
+// Click on overlay to close (not on content)
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function (e) {
+        // Only close if clicking directly on the overlay, not its children
+        if (e.target === this) {
+            closeModal(this.id);
+        }
+    });
+});
+
+// ESC key to close any open modal
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        const openModal = document.querySelector('.modal-overlay.open');
+        if (openModal) {
+            closeModal(openModal.id);
+        }
+        // Also close share modal
+        const shareModal = document.getElementById('shareModal');
+        if (shareModal && shareModal.style.display === 'flex') {
+            hideShareModal();
+        }
+    }
+});
+
+// ==================== BANK MODAL - FIXED ====================
+function renderBanks(searchTerm = '') {
+    const grid = document.getElementById('bankGrid');
+    const normalizedSearch = searchTerm.toLowerCase().trim();
+
+    grid.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
+    // Filter banks
+    const filteredBanks = BANKS_DATA.filter(bank => {
+        if (!normalizedSearch) return true;
+        const viName = (bank.fullName && bank.fullName.vi) ? bank.fullName.vi : '';
+        const enName = (bank.fullName && bank.fullName.en) ? bank.fullName.en : '';
+        const searchStr = `${bank.code} ${bank.name} ${viName} ${enName}`.toLowerCase();
+        return searchStr.includes(normalizedSearch);
+    });
+
+    if (filteredBanks.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#888;">Không tìm thấy ngân hàng nào...</div>';
+        return;
+    }
+
+    filteredBanks.forEach(bank => {
+        const div = document.createElement('div');
+        div.className = `bank-item ${bank.code === selectedBank ? 'selected' : ''}`;
+        div.dataset.code = bank.code;
+
+        // Create image with error handling
+        const img = document.createElement('img');
+        img.src = `images/banks/${bank.code}.png`;
+        img.alt = bank.name;
+        img.loading = 'lazy'; // Lazy load for performance
+
+        // Handle image load error - show fallback instead of hiding
+        img.onerror = function () {
+            this.style.display = 'none';
+            const fallback = document.createElement('div');
+            fallback.className = 'bank-fallback';
+            fallback.textContent = bank.code.substring(0, 3);
+            div.insertBefore(fallback, div.firstChild);
+            div.classList.add('img-error');
+        };
+
+        const name = document.createElement('span');
+        name.textContent = bank.name;
+
+        div.appendChild(img);
+        div.appendChild(name);
+
+        // Click handler
+        div.addEventListener('click', function (e) {
+            e.stopPropagation(); // Prevent event bubbling
+            selectBank(bank.code);
+
+            // Clear search on selection
+            const searchInput = document.getElementById('bankSearchInput');
+            if (searchInput) searchInput.value = '';
+        });
+
+        fragment.appendChild(div);
+    });
+
+    grid.appendChild(fragment);
+    banksRendered = true;
+}
+
+// Init search listener
+document.addEventListener('DOMContentLoaded', () => {
+    const bankSearch = document.getElementById('bankSearchInput');
+    if (bankSearch) {
+        bankSearch.addEventListener('input', (e) => {
+            renderBanks(e.target.value);
+        });
+    }
+});
+
+function updateBankSelection() {
+    document.querySelectorAll('.bank-item').forEach(item => {
+        if (item.dataset.code === selectedBank) {
+            item.classList.add('selected');
+        } else {
+            item.classList.remove('selected');
+        }
+    });
+}
+
+function selectBank(code) {
+    selectedBank = code;
+    updateBankSelection();
+}
+
+function openWithdrawModal(mode) {
+    withdrawMode = mode;
+    const data = getData();
+
+    if (mode === 'current') {
+        if (!currentResult || currentResult.totalValue <= 0) {
+            showToast('Không có tiền để rút!', 'error');
+            return;
+        }
+        pendingAmount = currentResult.totalValue;
+    } else {
+        if (data.totalMoney <= 0) {
+            showToast('Ví của bạn đang trống!', 'warning');
+            return;
+        }
+        pendingAmount = data.totalMoney;
+    }
+
+    if (data.totalMoney < pendingAmount) {
+        showToast('Số dư thực tế không đủ!', 'error');
+        return;
+    }
+
+    document.getElementById('withdrawAmountDisplay').textContent = formatNumber(pendingAmount) + ' VNĐ';
+
+    openModal('withdrawModal');
+
+    // Render banks after modal is visible for better UX
+    requestAnimationFrame(() => {
+        renderBanks();
+    });
+}
+
+let isProcessingWithdraw = false;
+
+function confirmWithdraw() {
+    if (isProcessingWithdraw) return;
+
+    const stk = document.getElementById('stkInput').value;
+    if (!stk) {
+        showToast('Vui lòng nhập số tài khoản!', 'warning');
+        return;
+    }
+
+    const data = getData();
+    if (data.totalMoney < pendingAmount) {
+        showToast('Số dư không đủ!', 'error');
+        return;
+    }
+
+    isProcessingWithdraw = true;
+    const withdrawButton = document.getElementById('confirmWithdrawBtn');
+    if (withdrawButton) withdrawButton.disabled = true;
+
+    closeModal('withdrawModal');
+    addToWallet(-pendingAmount);
+
+    // Track withdrawal stats
+    const updatedData = getData();
+    updatedData.stats.totalWithdrawn = (updatedData.stats.totalWithdrawn || 0) + pendingAmount;
+    saveData(updatedData);
+    checkAchievements(updatedData);
+
+    if (withdrawMode === 'current') {
+        const wBtn = document.getElementById('actionWithdrawBtn');
+        if (wBtn) {
+            wBtn.disabled = true;
+            wBtn.textContent = '✅ Đã Rút';
+        }
+        const gBtn = document.getElementById('gambleBtn');
+        if (gBtn) gBtn.disabled = true;
+    }
+
+    // Fake notification
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+    const fakeBalance = 124500000 + pendingAmount;
+    const maskedStk = stk.length > 4 ? stk.slice(0, 4) + 'xxxxx' : stk + 'xxxxx';
+    const msg = `TK ${maskedStk} +${formatNumber(pendingAmount)}VND ${hours}:${minutes} ${day}/${month}. SD: ${formatNumber(fakeBalance)}VND. ND: Rut tien li xi`;
+
+    setTimeout(() => {
+        showFakeNotification(selectedBank, msg, 'bây giờ', selectedBank);
+        playSound('coin');
+        vibrate(100);
+        isProcessingWithdraw = false;
+        if (withdrawButton) withdrawButton.disabled = false;
+    }, 1000);
+}
+
+// ==================== STATS MODAL ====================
+function openStats() {
+    openModal('statsModal');
+    renderStats();
+    renderLeaderboard();
+    renderHistory();
+    renderAchievements();
+    renderZodiac();
+    renderSkinCollection();
+}
+
+function renderSkinCollection() {
+    const data = getData();
+    const achievements = data.achievements || [];
+
+    // Update skin items based on achievements
+    const skinGold = document.getElementById('skinGold');
+    const skinHolo = document.getElementById('skinHolo');
+    const skinDiamond = document.getElementById('skinDiamond');
+
+    if (achievements.includes('millionaire')) {
+        skinGold.classList.add('unlocked');
+        skinGold.classList.remove('locked');
+        skinGold.querySelector('.skin-status').textContent = '✓';
+        skinGold.querySelector('.skin-status').classList.add('unlocked');
+    }
+
+    if (achievements.includes('five_million')) {
+        skinHolo.classList.add('unlocked');
+        skinHolo.classList.remove('locked');
+        skinHolo.querySelector('.skin-status').textContent = '✓';
+        skinHolo.querySelector('.skin-status').classList.add('unlocked');
+    }
+
+    if (achievements.includes('multimillionaire')) {
+        skinDiamond.classList.add('unlocked');
+        skinDiamond.classList.remove('locked');
+        skinDiamond.querySelector('.skin-status').textContent = '✓';
+        skinDiamond.querySelector('.skin-status').classList.add('unlocked');
+    }
+}
+
+function openInfo() {
+    openModal('infoModal');
+}
+
+function renderStats() {
+    const data = getData();
+    const s = data.stats;
+
+    document.getElementById('statTotalPulls').textContent = s.totalPulls || 0;
+    document.getElementById('statSSRCount').textContent = s.tierCounts?.SSR || 0;
+
+    // Update additional stats if elements exist
+    const srEl = document.getElementById('statSRCount');
+    if (srEl) srEl.textContent = s.tierCounts?.SR || 0;
+
+    const winsEl = document.getElementById('statGambleWins');
+    if (winsEl) winsEl.textContent = s.gambleWins || 0;
+
+    const withdrawnEl = document.getElementById('statWithdrawn');
+    if (withdrawnEl) withdrawnEl.textContent = formatNumber(s.totalWithdrawn || 0);
+}
+
+function renderHistory() {
+    const data = getData();
+    const list = document.getElementById('historyList');
+    list.innerHTML = '';
+
+    if (data.history.length === 0) {
+        list.innerHTML = '<li style="color:#888;font-style:italic;padding:1rem 0;">Chưa có lịch sử...</li>';
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    data.history.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'history-item';
+        if (item.action === 'gamble') {
+            li.classList.add(item.amount > 0 ? 'gain' : 'loss');
+        }
+        const timeStr = new Date(item.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+        const tierClass = item.tier.includes('GAMBLE') ? 'tier-SSR' : `tier-${item.tier}`;
+        li.innerHTML = `
+                    <span><span class="tier-badge ${tierClass}">${item.tier}</span> ${timeStr}</span>
+                    <span>${item.amount > 0 ? '+' : ''}${formatNumber(item.amount)}</span>
+                `;
+        fragment.appendChild(li);
+    });
+    list.appendChild(fragment);
+}
+
+// ==================== LEADERBOARD SYSTEM ====================
+const FUNNY_NAMES = [
+    "Anh Hai Lúa 🌾", "Cô Ba Sài Gòn 💃", "Chú Tư Đại Gia 💎",
+    "Bà Năm Vàng 🏆", "Ông Sáu SSR 🌟", "Em Bé Lucky 🍀",
+    "Thần Tài Online 💰", "Vua Lì Xì 🧧", "Thánh May Mắn ✨",
+    "Đại Ca Jackpot 🎰", "Nữ Hoàng Đỏ 👑", "Chiến Thần Gacha ⚔️",
+    "Phú Ông 4.0 📱", "Cậu Vàng 999 🥇", "Chị Đẹp Giàu Sang 💅",
+    "Bác Tám Hên Xui 🎲", "Cô Chín Phát Tài 🔥", "Anh Mười Tỷ 💵",
+    "Thánh Rút Tiền 🏧", "Cao Thủ Lắc 📳", "Siêu Nhân May 🦸",
+    "Boss Cuối Năm 🐉", "Vip Kim Cương 💠", "Đệ Nhất Hên 🌈",
+    "Hoàng Tử Đỏ 🔴", "Công Chúa Vàng 👸", "Tỷ Phú Tết 🎊",
+    "Thần Rồng Phát 🐲", "Phượng Hoàng Lửa 🔥", "Kỳ Lân May Mắn 🦄"
+];
+
+function generateLeaderboard() {
+    const data = getData();
+    const userScore = data.maxBalance || data.totalMoney || 0;
+
+    // Generate AI players with varied scores
+    const aiPlayers = [];
+    const scoreRanges = [
+        { min: 50000000, max: 100000000 },  // Top tier
+        { min: 20000000, max: 50000000 },   // High
+        { min: 10000000, max: 20000000 },   // Mid-high
+        { min: 5000000, max: 10000000 },    // Mid
+        { min: 2000000, max: 5000000 },     // Mid-low
+        { min: 1000000, max: 2000000 },     // Low
+        { min: 500000, max: 1000000 },      // Very low
+        { min: 200000, max: 500000 },       // Starter
+        { min: 50000, max: 200000 },        // Beginner
+    ];
+
+    // Pick 9 random unique names
+    const shuffledNames = [...FUNNY_NAMES].sort(() => Math.random() - 0.5);
+    for (let i = 0; i < 9; i++) {
+        const range = scoreRanges[i] || scoreRanges[scoreRanges.length - 1];
+        aiPlayers.push({
+            name: shuffledNames[i],
+            score: Math.floor(Math.random() * (range.max - range.min) + range.min),
+            isUser: false
+        });
+    }
+
+    // Add current user
+    aiPlayers.push({
+        name: "👤 Bạn",
+        score: userScore,
+        isUser: true
+    });
+
+    // Sort by score descending
+    aiPlayers.sort((a, b) => b.score - a.score);
+
+    return aiPlayers.slice(0, 10);  // Top 10
+}
+
+function renderLeaderboard() {
+    const list = document.getElementById('leaderboardList');
+    if (!list) return;
+
+    const leaderboard = generateLeaderboard();
+    list.innerHTML = '';
+
+    leaderboard.forEach((player, idx) => {
+        const rank = idx + 1;
+        let rankClass = '';
+        let rankIcon = rank;
+
+        if (rank === 1) { rankClass = 'gold'; rankIcon = '🥇'; }
+        else if (rank === 2) { rankClass = 'silver'; rankIcon = '🥈'; }
+        else if (rank === 3) { rankClass = 'bronze'; rankIcon = '🥉'; }
+
+        const item = document.createElement('div');
+        item.className = `leaderboard-item ${player.isUser ? 'current-user' : ''}`;
+        item.innerHTML = `
+                    <span class="leaderboard-rank ${rankClass}">${rankIcon}</span>
+                    <span class="leaderboard-name">${player.name}</span>
+                    <span class="leaderboard-score">${formatNumber(player.score)}</span>
+                `;
+        list.appendChild(item);
+    });
+}
+
+// ==================== LUCK METER (PITY SYSTEM) ====================
+const PITY_THRESHOLD = 25;      // Guaranteed SSR at this count
+const SOFT_PITY_START = 20;     // Bonus rate starts here
+const SOFT_PITY_BONUS = 0.03;   // +3% per pull after soft pity
+const BASE_SSR_RATE = 3;        // Base 3% SSR rate
+
+function updateLuckMeter() {
+    const data = getData();
+    const pity = data.stats.pityCounter || 0;
+    const percentage = Math.min((pity / PITY_THRESHOLD) * 100, 100);
+
+    const fill = document.getElementById('luckMeterFill');
+    const label = document.getElementById('luckMeterLabel');
+    const container = document.getElementById('luckMeterContainer');
+
+    if (fill) fill.style.width = `${percentage}%`;
+    if (label) {
+        if (pity >= SOFT_PITY_START) {
+            label.textContent = `🔥 Vận may: ${pity}/${PITY_THRESHOLD} (Sắp SSR!)`;
+        } else {
+            label.textContent = `🔥 Vận may: ${pity}/${PITY_THRESHOLD}`;
+        }
+    }
+
+    // Toggle near-pity glow effect
+    if (container) {
+        if (pity >= SOFT_PITY_START) {
+            container.classList.add('near-pity');
+        } else {
+            container.classList.remove('near-pity');
+        }
+    }
+}
+
+// ==================== TIER REVEAL ANIMATIONS ====================
+function playTierRevealAnimation(tier) {
+    const overlay = document.getElementById('revealOverlay');
+    if (!overlay) return Promise.resolve();
+
+    // Remove any existing animation classes
+    overlay.classList.remove('reveal-ssr', 'reveal-sr', 'reveal-r', 'active');
+
+    let duration = 300;  // Default for N tier
+
+    if (tier === 'SSR') {
+        overlay.classList.add('reveal-ssr', 'active');
+        duration = 1500;
+    } else if (tier === 'SR') {
+        overlay.classList.add('reveal-sr', 'active');
+        duration = 800;
+    } else if (tier === 'R') {
+        overlay.classList.add('reveal-r', 'active');
+        duration = 500;
+    }
+
+    return new Promise(resolve => {
+        setTimeout(() => {
+            overlay.classList.remove('reveal-ssr', 'reveal-sr', 'reveal-r', 'active');
+            resolve();
+        }, duration);
+    });
+}
+
+function getCardRevealClass(tier) {
+    if (tier === 'SSR') return 'reveal-anim-ssr';
+    if (tier === 'SR') return 'reveal-anim-sr';
+    if (tier === 'R') return 'reveal-anim-r';
+    return '';
+}
+
+// ==================== HOLOGRAPHIC CARD EFFECT ====================
+function initHoloEffect() {
+    const wrapper = document.getElementById('moneyStackWrapper');
+    if (!wrapper) return;
+
+    // Mouse movement for 3D tilt
+    wrapper.addEventListener('mousemove', handleHoloTilt);
+    wrapper.addEventListener('mouseleave', resetHoloTilt);
+
+    // Touch support
+    wrapper.addEventListener('touchmove', e => {
+        e.preventDefault(); // Prevent scrolling while interacting
+        if (e.touches.length === 1) {
+            const touch = e.touches[0];
+            handleHoloTilt({
+                clientX: touch.clientX,
+                clientY: touch.clientY,
+                currentTarget: wrapper
+            });
+        }
+    }, {
+        passive: false
+    });
+    wrapper.addEventListener('touchend', resetHoloTilt);
+
+    // Device Orientation (Gyroscope) Support for Mobile
+    // We set up the listener here, but on iOS it triggers after permission is granted
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', handleGyroscopeTilt);
+    }
+}
+
+// Request permission on iOS 13+ (must be called on user interaction)
+function requestMotionPermission() {
+    if (
+        typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function'
+    ) {
+        DeviceOrientationEvent.requestPermission()
+            .then(permissionState => {
+                if (permissionState === 'granted') {
+                    window.addEventListener('deviceorientation', handleGyroscopeTilt);
+                }
+            })
+            .catch(console.error);
+    }
+}
+
+function handleGyroscopeTilt(e) {
+    const wrapper = document.getElementById('moneyStackWrapper');
+    if (!wrapper) return;
+
+    // Beta: x-axis (front-to-back tilt) [-180, 180]
+    // Gamma: y-axis (left-to-right tilt) [-90, 90]
+    const tiltX = e.beta;
+    const tiltY = e.gamma;
+
+    // Normalize for effect
+    // Limit tilt to reasonable range for effect visibility
+    // X: 0 to 40 (tilted up), Y: -30 to 30
+
+    // We want 'neutral' holding position (approx 45deg) to be 0 rotation
+    // If phone is flat (0), rotateX should be positive?
+    // Let's just create a dynamic feel.
+
+    let rotateX = 0;
+    let rotateY = 0;
+
+    if (tiltX !== null && tiltY !== null) {
+        // Adjust beta so 45deg is 'center' (holding phone naturally)
+        rotateX = (tiltX - 45) * 0.5; // Sensitivity
+        rotateY = tiltY * 0.5;
+
+        // Clamp
+        rotateX = Math.max(-20, Math.min(20, rotateX));
+        rotateY = Math.max(-30, Math.min(30, rotateY));
+
+        wrapper.classList.add('holo-active');
+
+        const isFlipped = wrapper.classList.contains('flipped');
+        const baseRotateY = isFlipped ? 180 : 0;
+
+        // If flipped, invert rotateX for natural feel (or keep as is? Let's keep as is but add base rotation)
+        // Actually if flipped 180 around Y, X rotation might appear inverted. 
+        // Let's just add 180 to Y for now.
+
+        wrapper.style.transform = `perspective(1000px) rotateX(${-rotateX}deg) rotateY(${baseRotateY + rotateY}deg)`;
+
+        const cards = wrapper.querySelectorAll('.money-card');
+        cards.forEach(card => {
+            const shines = card.querySelectorAll('.holo-shine');
+            shines.forEach(shine => {
+                const isBackFace = shine.parentElement.classList.contains('money-back');
+
+                // Determine if this shine is on the currently VISIBLE face
+                // When flipped: back face is visible. When not flipped: front face is visible.
+                const isVisibleFace = isFlipped ? isBackFace : !isBackFace;
+
+                // Map rotation to 0-100% position
+                let xPos = 50 + (rotateY / 30) * 50;
+
+                if (isBackFace) {
+                    xPos = 100 - xPos;
+                }
+                const yPos = 50 + (rotateX / 20) * 50;
+
+                // Only actively animate the visible face's shine
+                if (isVisibleFace) {
+                    shine.style.backgroundPosition = `${xPos}% ${yPos}%`;
+                    shine.style.opacity = '1';
+                } else {
+                    // Reset hidden face shine to center
+                    shine.style.backgroundPosition = '50% 50%';
+                    shine.style.opacity = '0';
+                }
+            });
+        });
+    }
+}
+
+function handleHoloTilt(e) {
+    const wrapper = e.currentTarget;
+    const rect = wrapper.getBoundingClientRect();
+
+    // Use SCREEN coordinates for smoother, less sensitive control
+    const screenX = e.clientX;
+    const screenY = e.clientY;
+
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+
+    // X-axis movement controls Y-axis rotation (Spin)
+    // Range: Move from center to edge of screen = 180 degrees
+    const rotateY = ((screenX - centerX) / (window.innerWidth / 2)) * 180;
+
+    // Y-axis movement controls X-axis rotation (Tilt)
+    // Range: Max 20 degrees up/down
+    const rotateX = ((centerY - screenY) / (window.innerHeight / 2)) * 20;
+
+    // Apply tilt to the WHOLE wrapper
+    wrapper.classList.add('holo-active');
+
+    const isFlipped = wrapper.classList.contains('flipped');
+    const baseRotateY = isFlipped ? 180 : 0;
+
+    // Apply Transform
+    wrapper.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${baseRotateY + rotateY}deg)`;
+
+    // Update shine on individual cards
+    const cards = wrapper.querySelectorAll('.money-card');
+    cards.forEach(card => {
+        const shines = card.querySelectorAll('.holo-shine');
+        shines.forEach(shine => {
+            const isBackFace = shine.parentElement.classList.contains('money-back');
+
+            // Determine if this shine is on the currently VISIBLE face
+            // When flipped: back face is visible. When not flipped: front face is visible.
+            const isVisibleFace = isFlipped ? isBackFace : !isBackFace;
+
+            // Shine moves based on rotation angle [0-100%]
+            // rotateY is -180 to 180 based on screen width
+            let xPos = 50 + (rotateY / 180) * 50;
+
+            if (isBackFace) {
+                // Invert X movement for back face to match light source direction
+                // This compensates for the 180deg rotation of the back face
+                xPos = 100 - xPos;
+            }
+            const yPos = 50 + (rotateX / 20) * 50;
+
+            // Only actively animate the visible face's shine
+            if (isVisibleFace) {
+                shine.style.backgroundPosition = `${xPos}% ${yPos}%`;
+                shine.style.opacity = '1';
+            } else {
+                // Reset hidden face shine to center
+                shine.style.backgroundPosition = '50% 50%';
+                shine.style.opacity = '0';
+            }
+        });
+    });
+}
+
+function resetHoloTilt(e) {
+    const wrapper = e?.currentTarget || document.getElementById('moneyStackWrapper');
+    if (!wrapper) return;
+
+    // Remove active class to re-enable transition for smooth reset
+    wrapper.classList.remove('holo-active');
+    wrapper.style.transform = ''; // Clear inline transform
+
+    // Reset shines
+    const shines = wrapper.querySelectorAll('.holo-shine');
+    shines.forEach(shine => {
+        shine.style.opacity = '';
+        shine.style.backgroundPosition = '';
+    });
+}
+
+// ==================== TOAST QUEUE SYSTEM ====================
+// Handles both notifications and achievements with reliable animations
+const ToastQueue = {
+    queue: [],
+    isShowing: false,
+    currentToast: null,
+    currentTimeout: null,
+
+    // Force browser to acknowledge element before animating
+    forceReflow(element) {
+        // Reading offsetHeight forces a reflow
+        void element.offsetHeight;
+    },
+
+    // Show next toast in queue
+    showNext() {
+        if (this.queue.length === 0) {
+            this.isShowing = false;
+            return;
+        }
+
+        this.isShowing = true;
+        const { element, duration, onShow, onHide } = this.queue.shift();
+
+        // Remove any existing toast of same type
+        if (this.currentToast) {
+            this.currentToast.remove();
+        }
+
+        this.currentToast = element;
+        document.body.appendChild(element);
+
+        // Force reflow before adding show class
+        this.forceReflow(element);
+
+        // Use double rAF for maximum compatibility
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                element.classList.add('show');
+                if (onShow) onShow();
+            });
+        });
+
+        // Set up auto-hide
+        if (this.currentTimeout) clearTimeout(this.currentTimeout);
+        this.currentTimeout = setTimeout(() => {
+            this.hide(element, onHide);
+        }, duration);
+
+        // Click to dismiss
+        element.onclick = () => this.hide(element, onHide);
+    },
+
+    // Hide a toast
+    hide(element, onHide) {
+        if (!element || !element.parentNode) return;
+
+        element.classList.remove('show');
+
+        setTimeout(() => {
+            if (element.parentNode) element.remove();
+            if (onHide) onHide();
+            if (this.currentToast === element) {
+                this.currentToast = null;
+            }
+            // Show next in queue after a small gap
+            setTimeout(() => this.showNext(), 300);
+        }, 500); // Match CSS transition duration
+    },
+
+    // Add to queue
+    add(element, duration = 4000, onShow = null, onHide = null) {
+        this.queue.push({ element, duration, onShow, onHide });
+
+        // If not currently showing, start
+        if (!this.isShowing) {
+            this.showNext();
+        }
+    },
+
+    // Clear all pending toasts
+    clear() {
+        this.queue = [];
+        if (this.currentTimeout) clearTimeout(this.currentTimeout);
+        if (this.currentToast) {
+            this.currentToast.remove();
+            this.currentToast = null;
+        }
+        this.isShowing = false;
+    }
+};
+
+// Generic toast function
+function showToast(message, type = 'info', duration = 3000) {
+    const toast = document.createElement('div');
+    toast.className = `toast-notification ${type}`;
+    toast.innerHTML = `
+        <div class="toast-icon"></div>
+        <div class="toast-message">${message}</div>
+    `;
+    ToastQueue.add(toast, duration);
+}
+
+// ==================== ACHIEVEMENTS ====================
+const ACHIEVEMENTS = {
+    // Milestone achievements
+    'first_pull': { icon: '🎒', title: 'Khởi Đầu', desc: 'Mở lì xì lần đầu tiên' },
+    'pull_10': { icon: '🎯', title: 'Người Chơi Hệ Siêng', desc: 'Mở 10 lì xì' },
+    'pull_50': { icon: '🔥', title: 'Nghiện Lì Xì', desc: 'Mở 50 lì xì' },
+    'pull_100': { icon: '💯', title: 'Trăm Phát Trăm Trúng', desc: 'Mở 100 lì xì' },
+
+    // Money milestones (linked to skins)
+    'first_500k': { icon: '🥉', title: 'Khởi Nghiệp', desc: 'Có 500k trong ví' },
+    'millionaire': { icon: '🥇', title: 'Triệu Phú', desc: 'Có 1 Triệu trong ví', skin: 'gold' },
+    'five_million': { icon: '🌈', title: 'Đại Triệu Phú', desc: 'Có 5 Triệu trong ví', skin: 'holo' },
+    'multimillionaire': { icon: '💎', title: 'Tỷ Phú Mini', desc: 'Có 10 Triệu trong ví', skin: 'diamond' },
+
+    // Tier achievements
+    'first_ssr': { icon: '⭐', title: 'Vận May Đầu Tiên', desc: 'Nhận được SSR lần đầu' },
+    'ssr_3': { icon: '🌟', title: 'Sao Sáng', desc: 'Nhận được 3 SSR' },
+    'ssr_5': { icon: '✨', title: 'Thiên Mệnh', desc: 'Nhận được 5 SSR' },
+    'ssr_10': { icon: '🏆', title: 'Thần Tài Gõ Cửa', desc: 'Nhận được 10 SSR' },
+    'sr_10': { icon: '💜', title: 'Tím Lịm Tim', desc: 'Nhận được 10 SR' },
+
+    // Gambling achievements
+    'first_gamble_win': { icon: '🎰', title: 'Cờ Bạc Nhập Môn', desc: 'Thắng cược lần đầu' },
+    'gamble_win_3': { icon: '🃏', title: 'Tay Chơi Có Số', desc: 'Thắng cược 3 lần' },
+    'gamble_win_5': { icon: '👑', title: 'Vua Sòng Bài', desc: 'Thắng cược 5 lần' },
+    'gambler_fail_5': { icon: '💸', title: 'Cờ Bạc Bác Thằng Bần', desc: 'Thua cược 5 lần liên tiếp' },
+    'gambler_fail_10': { icon: '🕳️', title: 'Đáy Vực Sâu', desc: 'Thua cược 10 lần liên tiếp' },
+
+    // Unlucky achievements
+    'unlucky_5': { icon: '🌧️', title: 'Mưa Rơi', desc: '5 lần liên tiếp ra N' },
+    'unlucky_10': { icon: '⛈️', title: 'Thánh Nhọ', desc: '10 lần liên tiếp ra N' },
+    'unlucky_15': { icon: '🌪️', title: 'Bão Tố Nhọ Nhằn', desc: '15 lần liên tiếp ra N' },
+
+    // Special achievements
+    'first_withdraw': { icon: '🏧', title: 'Rút Tiền Thành Công', desc: 'Rút tiền lần đầu' },
+    'withdraw_1m': { icon: '💳', title: 'Triệu Phú Thực Thụ', desc: 'Tổng rút 1 triệu' },
+    'comeback': { icon: '🔄', title: 'Phượng Hoàng Tái Sinh', desc: 'Từ 0 đồng lên lại 500k' },
+    'all_tiers': { icon: '🎨', title: 'Sưu Tầm Đủ Bộ', desc: 'Nhận được tất cả tier N, R, SR, SSR' }
+};
+
+// Track which skins are unlocked via achievements
+function getUnlockedSkins(achievements) {
+    const skins = [];
+    if (achievements.includes('millionaire')) skins.push('gold');
+    if (achievements.includes('five_million')) skins.push('holo');
+    if (achievements.includes('multimillionaire')) skins.push('diamond');
+    return skins;
+}
+
+function checkAchievements(data) {
+    const newUnlocks = [];
+    const a = data.achievements;
+    const s = data.stats;
+
+    // First pull
+    if (s.totalPulls >= 1 && !a.includes('first_pull')) newUnlocks.push('first_pull');
+
+    // Pull milestones
+    if (s.totalPulls >= 10 && !a.includes('pull_10')) newUnlocks.push('pull_10');
+    if (s.totalPulls >= 50 && !a.includes('pull_50')) newUnlocks.push('pull_50');
+    if (s.totalPulls >= 100 && !a.includes('pull_100')) newUnlocks.push('pull_100');
+
+    // Money milestones (use maxBalance for skin persistence)
+    const balance = data.maxBalance || data.totalMoney;
+    if (balance >= 500000 && !a.includes('first_500k')) newUnlocks.push('first_500k');
+    if (balance >= 1000000 && !a.includes('millionaire')) newUnlocks.push('millionaire');
+    if (balance >= 5000000 && !a.includes('five_million')) newUnlocks.push('five_million');
+    if (balance >= 10000000 && !a.includes('multimillionaire')) newUnlocks.push('multimillionaire');
+
+    // SSR achievements
+    const ssrCount = s.tierCounts.SSR || 0;
+    if (ssrCount >= 1 && !a.includes('first_ssr')) newUnlocks.push('first_ssr');
+    if (ssrCount >= 3 && !a.includes('ssr_3')) newUnlocks.push('ssr_3');
+    if (ssrCount >= 5 && !a.includes('ssr_5')) newUnlocks.push('ssr_5');
+    if (ssrCount >= 10 && !a.includes('ssr_10')) newUnlocks.push('ssr_10');
+
+    // SR achievements
+    const srCount = s.tierCounts.SR || 0;
+    if (srCount >= 10 && !a.includes('sr_10')) newUnlocks.push('sr_10');
+
+    // Unlucky streaks
+    if (s.consecutiveN >= 5 && !a.includes('unlucky_5')) newUnlocks.push('unlucky_5');
+    if (s.consecutiveN >= 10 && !a.includes('unlucky_10')) newUnlocks.push('unlucky_10');
+    if (s.consecutiveN >= 15 && !a.includes('unlucky_15')) newUnlocks.push('unlucky_15');
+
+    // Gambling achievements
+    const wins = s.gambleWins || 0;
+    if (wins >= 1 && !a.includes('first_gamble_win')) newUnlocks.push('first_gamble_win');
+    if (wins >= 3 && !a.includes('gamble_win_3')) newUnlocks.push('gamble_win_3');
+    if (wins >= 5 && !a.includes('gamble_win_5')) newUnlocks.push('gamble_win_5');
+
+    // Gambling loss streaks
+    if (s.consecutiveLosses >= 5 && !a.includes('gambler_fail_5')) newUnlocks.push('gambler_fail_5');
+    if (s.consecutiveLosses >= 10 && !a.includes('gambler_fail_10')) newUnlocks.push('gambler_fail_10');
+
+    // First withdraw
+    if ((s.totalWithdrawn || 0) > 0 && !a.includes('first_withdraw')) newUnlocks.push('first_withdraw');
+    if ((s.totalWithdrawn || 0) >= 1000000 && !a.includes('withdraw_1m')) newUnlocks.push('withdraw_1m');
+
+    // Comeback achievement (was at 0, now at 500k+)
+    if (s.hitZero && data.totalMoney >= 500000 && !a.includes('comeback')) newUnlocks.push('comeback');
+
+    // All tiers collected
+    const hasAllTiers = (s.tierCounts.N || 0) > 0 &&
+        (s.tierCounts.R || 0) > 0 &&
+        (s.tierCounts.SR || 0) > 0 &&
+        (s.tierCounts.SSR || 0) > 0;
+    if (hasAllTiers && !a.includes('all_tiers')) newUnlocks.push('all_tiers');
+
+    if (newUnlocks.length > 0) {
+        data.achievements.push(...newUnlocks);
+        saveData(data);
+        // Queue all achievements - they'll show one by one automatically
+        newUnlocks.forEach(id => {
+            showAchievementToast(ACHIEVEMENTS[id]);
+        });
+    }
+}
+
+function renderAchievements() {
+    const data = getData();
+    const list = document.getElementById('achievementsList');
+    list.innerHTML = '';
+
+    if (data.achievements.length === 0) {
+        list.innerHTML = '<span style="color:#888;font-style:italic;">Chưa có thành tựu nào...</span>';
+        return;
+    }
+
+    // Sort achievements: skin unlocks first, then others
+    const sortedAchievements = [...data.achievements].sort((a, b) => {
+        const aHasSkin = ACHIEVEMENTS[a]?.skin ? 0 : 1;
+        const bHasSkin = ACHIEVEMENTS[b]?.skin ? 0 : 1;
+        return aHasSkin - bHasSkin;
+    });
+
+    sortedAchievements.forEach(id => {
+        const achi = ACHIEVEMENTS[id];
+        if (!achi) return;
+
+        const badge = document.createElement('div');
+        badge.className = 'achievement-badge';
+
+        // Add skin class if this achievement unlocks a skin
+        if (achi.skin) {
+            badge.classList.add(`skin-${achi.skin}`);
+        }
+
+        badge.innerHTML = `
+                    <span class="achi-icon">${achi.icon}</span>
+                    ${achi.skin ? `<span class="skin-indicator">${achi.skin === 'gold' ? '🥇' : achi.skin === 'holo' ? '🌈' : '💎'}</span>` : ''}
+                `;
+        badge.title = `${achi.title}: ${achi.desc}`;
+        list.appendChild(badge);
+    });
+
+    // Show progress
+    const totalAchievements = Object.keys(ACHIEVEMENTS).length;
+    const unlocked = data.achievements.length;
+    const progressEl = document.createElement('div');
+    progressEl.className = 'achievement-progress';
+    progressEl.innerHTML = `<small>Đã mở khóa: ${unlocked}/${totalAchievements}</small>`;
+    list.appendChild(progressEl);
+}
+
+function showAchievementToast(achi) {
+    if (!achi) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'achievement-toast';
+
+    // Check if this achievement unlocks a skin
+    const skinText = achi.skin ? `<div class="skin-unlock">🎨 Mở khóa Skin ${achi.skin === 'gold' ? 'Vàng' : achi.skin === 'holo' ? 'Hologram' : 'Kim Cương'}!</div>` : '';
+
+    toast.innerHTML = `
+                <div class="icon">${achi.icon}</div>
+                <div class="info">
+                    <div class="title">🏆 Thành Tựu Mới!</div>
+                    <div class="desc">${achi.title}: ${achi.desc}</div>
+                    ${skinText}
+                </div>
+            `;
+
+    const duration = achi.skin ? 5000 : 3500;
+
+    ToastQueue.add(toast, duration, () => {
+        // onShow callback
+        if (achi.skin) {
+            playSound('ssr');
+            vibrate([100, 50, 100, 50, 100]);
+            checkSkinUnlock();
+        } else {
+            playSound('coin');
+            vibrate(50);
+        }
+    });
+}
+
+// ==================== ZODIAC ====================
+const ZODIACS = [
+    { icon: '🐁', name: 'Tý' }, { icon: '🐂', name: 'Sửu' }, { icon: '🐅', name: 'Dần' }, { icon: '🐈', name: 'Mão' },
+    { icon: '🐉', name: 'Thìn' }, { icon: '🐍', name: 'Tỵ' }, { icon: '🐎', name: 'Ngọ' }, { icon: '🐐', name: 'Mùi' },
+    { icon: '🐒', name: 'Thân' }, { icon: '🐓', name: 'Dậu' }, { icon: '🐕', name: 'Tuất' }, { icon: '🐖', name: 'Hợi' }
+];
+
+function renderZodiac() {
+    const grid = document.getElementById('zodiacGrid');
+    if (grid.children.length > 0) return;
+
+    ZODIACS.forEach((z, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'zodiac-btn';
+        btn.textContent = z.icon;
+        btn.title = z.name;
+        btn.onclick = () => showFortune(idx);
+        grid.appendChild(btn);
+    });
+}
+
+function showFortune(zodiacIndex) {
+    const fortunes = [
+        "Đầu tư sinh lời, code không bug! 🚀",
+        "Tình duyên thăng hoa, server cũng 'kết nối' tốt! ❤️",
+        "Cẩn thận deadline, nhưng tiền về như nước! 💧",
+        "Quý nhân phù trợ, deploy một phát ăn ngay! ✨",
+        "Sức khỏe dồi dào, code xuyên đêm không mệt! 💪"
+    ];
+    const resultEl = document.getElementById('fortuneResult');
+    resultEl.style.display = 'block';
+    resultEl.textContent = `Vận mệnh tuổi ${ZODIACS[zodiacIndex].name}: ${fortunes[Math.floor(Math.random() * fortunes.length)]}`;
+}
+
+// ==================== FAKE NOTIFICATION ====================
+let notificationTimeout;
+
+function showFakeNotification(appName, msg, timeAgo, iconChar) {
+    // Remove any existing notification
+    const existing = document.querySelector('.fake-notification');
+    if (existing) {
+        existing.classList.remove('show');
+        setTimeout(() => existing.remove(), 300);
+    }
+
+    const notif = document.createElement('div');
+    notif.className = 'fake-notification';
+
+    let iconHtml = iconChar;
+    let iconStyle = '';
+    const bankInfo = BANKS_DATA.find(b => b.code === iconChar);
+
+    if (bankInfo) {
+        iconHtml = `<img src="images/banks/${iconChar}.png" style="width:100%;height:100%;object-fit:contain;" onerror="this.parentElement.textContent='${iconChar.substring(0, 2)}'">`;
+        iconStyle = 'background:white;padding:2px;';
+        appName = bankInfo.name;
+    }
+
+    notif.innerHTML = `
+                <div class="fake-notification-header">
+                    <div class="app-info">
+                        <div class="app-icon" style="${iconStyle}">${iconHtml}</div>
+                        <span class="app-name">${appName}</span>
+                    </div>
+                    <span class="time">${timeAgo}</span>
+                </div>
+                <div class="fake-notification-content">${msg}</div>
+            `;
+
+    notif.onclick = () => {
+        notif.classList.remove('show');
+        setTimeout(() => notif.remove(), 500);
+    };
+
+    document.body.appendChild(notif);
+
+    // Force reflow before adding show class (critical for mobile)
+    void notif.offsetHeight;
+
+    // Double rAF for maximum browser compatibility
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            notif.classList.add('show');
+        });
+    });
+
+    if (notificationTimeout) clearTimeout(notificationTimeout);
+    notificationTimeout = setTimeout(() => {
+        if (notif.parentNode) {
+            notif.classList.remove('show');
+            setTimeout(() => {
+                if (notif.parentNode) notif.remove();
+            }, 500);
+        }
+    }, 7000);
+}
+
+// ==================== ENVELOPE & GAME LOGIC ====================
+// (Keep your existing envelope, gacha, gambling, confetti logic here)
+// ... I'll include a simplified version
+
+function animateValue(element, start, end, duration) {
+    const range = end - start;
+    const startTime = performance.now();
+    function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(start + range * easeOut);
+        element.textContent = formatNumber(current);
+        if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+}
+
+function typeWriter(element, text, speed = 30) {
+    if (element._typingTimeout) clearTimeout(element._typingTimeout);
+    element.textContent = '';
+    element.classList.add('typing-cursor');
+    let i = 0;
+    function type() {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            element._typingTimeout = setTimeout(type, speed);
+        } else {
+            element.classList.remove('typing-cursor');
+        }
+    }
+    type();
+}
+
+function openEnvelope(luckBonus = 0) {
+    if (isOpened) return;
+    isOpened = true;
+
+    vibrate(50); // Haptic feedback
+    playSound('open');
+
+    const flap = document.querySelector('.envelope-flap');
+    flap.style.transform = '';
+    envelope.classList.add('opened');
+    clickHint.classList.add('hidden');
+
+    // Get current pity counter
+    const data = getData();
+    const pityCount = data.stats.pityCounter || 0;
+
+    // Calculate SSR rate with pity system
+    let ssrRate = BASE_SSR_RATE;  // Base 3%
+    if (pityCount >= SOFT_PITY_START) {
+        // Soft pity: +3% per pull after threshold
+        ssrRate += (pityCount - SOFT_PITY_START + 1) * (SOFT_PITY_BONUS * 100);
+    }
+
+    // Add Luck Bonus from Random Event
+    if (luckBonus > 0) {
+        ssrRate += luckBonus;
+        console.log('Luck Bonus Applied:', luckBonus, 'Total SSR Rate:', ssrRate);
+    }
+
+    // Hard pity: guaranteed SSR at threshold
+    const isHardPity = pityCount >= PITY_THRESHOLD - 1;
+
+    // Gacha Logic with dynamic rates
+    const gachaTiers = {
+        SSR: { chance: ssrRate, items: [moneyAmounts[5]] },
+        SR: { chance: 20, items: [moneyAmounts[4]] },
+        R: { chance: 37, items: [moneyAmounts[2], moneyAmounts[3]] },
+        N: { chance: 40, items: [moneyAmounts[0], moneyAmounts[1]] }
+    };
+
+    function getGachaResult() {
+        // FIXED AMOUNT OVERRIDE
+        if (customFixedAmount) {
+            const bill = moneyAmounts.find(m => m.value === customFixedAmount);
+            if (bill) {
+                let tier = 'N';
+                if (bill.value >= 500000) tier = 'SSR';
+                else if (bill.value >= 200000) tier = 'SR';
+                else if (bill.value >= 50000) tier = 'R';
+
+                return { tier: tier, bills: [bill], isPity: false };
+            }
+        }
+
+        // Custom Luck Overrides (Priority over Pity, but below Fixed Amount)
+        if (customLuckMode === 'rich') {
+            return { tier: 'SSR', bills: [getRandomItem(gachaTiers.SSR.items)], isPity: false };
+        }
+        if (customLuckMode === 'prank') {
+            return { tier: 'N', bills: [getRandomItem(gachaTiers.N.items)], isPity: false };
+        }
+
+        if (customLuckMode === 'high') {
+            // 50% chance for SSR
+            if (Math.random() * 100 < 50) {
+                return { tier: 'SSR', bills: [getRandomItem(gachaTiers.SSR.items)], isPity: false };
+            }
+        }
+
+        // Forced SSR on hard pity
+        if (isHardPity) {
+            return {
+                tier: 'SSR',
+                bills: [getRandomItem(gachaTiers.SSR.items)],
+                isPity: true
+            };
+        }
+
+        const rand = Math.random() * 100;
+        let tier = 'N';
+        let mainItem = gachaTiers.N.items[0];
+
+        // Cumulative chances
+        const ssrThreshold = gachaTiers.SSR.chance;
+        const srThreshold = ssrThreshold + gachaTiers.SR.chance;
+        const rThreshold = srThreshold + gachaTiers.R.chance;
+
+        if (rand < ssrThreshold) {
+            tier = 'SSR';
+            mainItem = getRandomItem(gachaTiers.SSR.items);
+        } else if (rand < srThreshold) {
+            tier = 'SR';
+            mainItem = getRandomItem(gachaTiers.SR.items);
+        } else if (rand < rThreshold) {
+            tier = 'R';
+            mainItem = getRandomItem(gachaTiers.R.items);
+        } else {
+            tier = 'N';
+            mainItem = getRandomItem(gachaTiers.N.items);
+        }
+
+        let bills = [mainItem];
+        let bonusChance = tier === 'N' ? 40 : tier === 'R' ? 30 : 20;
+        let maxBonus = tier === 'N' ? 5 : tier === 'R' ? 3 : 2;
+
+        for (let i = 0; i < maxBonus; i++) {
+            if (Math.random() * 100 < bonusChance) {
+                bills.push(mainItem);
+            }
+        }
+
+        return { tier, bills, isPity: false };
+    }
+
+    const happyResult = getGachaResult();
+    const totalValue = happyResult.bills.reduce((sum, bill) => sum + bill.value, 0);
+
+    // Update pity counter
+    if (happyResult.tier === 'SSR') {
+        data.stats.pityCounter = 0;  // Reset on SSR
+    } else {
+        data.stats.pityCounter = (data.stats.pityCounter || 0) + 1;
+    }
+    saveData(data);
+    updateLuckMeter();
+
+    currentResult = {
+        money: happyResult,
+        totalValue: totalValue,
+        wish: getNextWish()
+    };
+
+    // SYNCHRONIZATION: Wait for flap animation to finish before revealing result
+    let revealTriggered = false;
+
+    const triggerReveal = () => {
+        if (revealTriggered) return;
+        revealTriggered = true;
+
+        // Play tier-specific sounds EXACTLY when revealed
+        if (currentResult.money.tier === 'SSR') {
+            vibrate([50, 30, 50, 30, 100]); // Exciting pattern for SSR
+            playSound('ssr');
+        } else if (currentResult.money.tier === 'SR') playSound('sr');
+        else playSound('coin');
+
+        // Trigger visual reveal animation first
+        playTierRevealAnimation(currentResult.money.tier).then(() => {
+            resultCard.classList.add('show');
+            // Add specific reveal animation class
+            const revealClass = getCardRevealClass(currentResult.money.tier);
+            if (revealClass) resultCard.classList.add(revealClass);
+            resultCard.setAttribute('data-rarity', currentResult.money.tier);
+
+            updateStats(currentResult.money.tier, currentResult.totalValue);
+            addToHistory({
+                timestamp: Date.now(),
+                amount: currentResult.totalValue,
+                tier: 'PULL',
+                action: 'pull'
+            });
+
+            renderMoneyStack(currentResult.money.bills, currentResult.money.tier);
+            animateValue(amountEl, 0, totalValue, 1500);
+            addToWallet(totalValue);
+            typeWriter(wishEl, currentResult.wish);
+
+            // Initialize holo effect if multiple cards
+            setTimeout(() => initHoloEffect(), 100);
+
+            requestAnimationFrame(() => {
+                // Force layout check to ensure element is considered visible by browser
+                const _ = resultCard.offsetHeight;
+
+                setTimeout(() => {
+                    resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            });
+
+            // Confetti timing based on tier
+            const confettiDelay = currentResult.money.tier === 'SSR' ? 1000 : 500;
+
+            setTimeout(() => {
+                createConfetti();
+                if (currentResult.money.tier === 'SSR') {
+                    triggerJackpot();
+                }
+            }, confettiDelay);
+        });
+    };
+
+    // Use transitionend for perfect sync
+    const onTransitionEnd = (e) => {
+        if (e.propertyName !== 'transform') return;
+        flap.removeEventListener('transitionend', onTransitionEnd);
+        triggerReveal();
+    };
+
+    flap.addEventListener('transitionend', onTransitionEnd);
+
+    // Fallback safety timer in case transitionend missed (e.g. background tab)
+    // 600ms is CSS transition time + 50ms buffer
+    setTimeout(triggerReveal, 650);
+}
+
+function renderMoneyStack(bills, tier = 'N') {
+    const container = document.getElementById('moneyStackWrapper');
+    container.innerHTML = '';
+
+    // Reset flip state
+    container.classList.remove('flipped');
+
+    const count = bills.length;
+    const visualCount = Math.min(count, 3);
+
+    // ALWAYS remove existing badge first (fixes ghost badge bug)
+    const staticContainer = document.getElementById('moneyStackContainer');
+    const existingBadge = staticContainer.querySelector('.stack-badge');
+    if (existingBadge) existingBadge.remove();
+
+    for (let i = 0; i < visualCount; i++) {
+        const card = document.createElement('div');
+        card.className = 'money-card';
+
+        let randomRot = 0, offsetX = 0, offsetY = 0;
+        if (count > 1) {
+            randomRot = (Math.random() - 0.5) * 12;
+            offsetX = i * 6;
+            offsetY = i * -6;
+        }
+
+        card.style.setProperty('--stack-transform', `translate3d(${offsetX}px, ${offsetY}px, ${i * 2}px) rotate(${randomRot}deg)`);
+        card.style.zIndex = i;
+        card.style.transitionDelay = `${(visualCount - 1 - i) * 0.05}s`;
+
+        const billIndex = visualCount - 1 - i;
+        const currentBill = bills[billIndex] || bills[0];
+
+        card.innerHTML = `
+                    <div class="money-face money-front">
+                        <img src="${currentBill.front}" alt="Mặt trước" loading="lazy">
+                        <div class="holo-shine ${tier}"></div>
+                    </div>
+                    <div class="money-face money-back">
+                        <img src="${currentBill.back}" alt="Mặt sau" loading="lazy">
+                        <div class="holo-shine ${tier}"></div>
+                    </div>
+                `;
+        container.appendChild(card);
+    }
+
+    // Only ADD badge if multiple bills
+    if (count > 1) {
+        const badge = document.createElement('div');
+        badge.className = 'stack-badge';
+        badge.textContent = `x${count}`;
+        badge.style.cssText = `
+                    position:absolute;top:-10px;right:-10px;
+                    background:var(--red-primary);color:#fff;font-weight:bold;
+                    padding:0.25rem 0.5rem;border-radius:12px;z-index:100;
+                    box-shadow:0 2px 5px rgba(0,0,0,0.3);border:2px solid #fff;
+                    animation:bounce 0.5s cubic-bezier(0.175,0.885,0.32,1.275) 0.5s both;
+                `;
+        staticContainer.appendChild(badge);
+    }
+}
+
+function triggerJackpot() {
+    document.body.classList.add('jackpot-active');
+    const container = document.querySelector('.container');
+    container.style.animation = 'none';
+    container.offsetHeight;
+    container.style.animation = 'shake-hard 0.8s ease-in-out';
+
+    for (let i = 0; i < 3; i++) {
+        setTimeout(() => createConfetti(true), i * 300);
+    }
+
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+            if (!isMuted) {
+                const clone = sounds.coin.cloneNode();
+                clone.volume = 0.4;
+                clone.play().catch(e => { });
+            }
+        }, i * 150);
+    }
+}
+
+
+function resetEnvelope() {
+    isOpened = false;
+    resultCard.classList.remove('show');
+    document.body.classList.remove('jackpot-active');
+    document.getElementById('gambleBtn').disabled = false;
+    amountEl.style.color = '';
+
+    setTimeout(() => {
+        envelope.classList.remove('opened');
+        clickHint.classList.remove('hidden');
+        checkSkinUnlock();
+
+        const wBtn = document.getElementById('actionWithdrawBtn');
+        if (wBtn) {
+            wBtn.disabled = false;
+            wBtn.textContent = '💸 Rút Tiền';
+        }
+    }, 300);
+}
+
+function gambleAll() {
+    // Confirmation dialog
+    showConfirm('⚠️ Cược Tất Tay!\n\nTỷ lệ thắng: 10% (gấp đôi)\nTỷ lệ thua: 90% (mất hết)\n\nBạn có chắc không?', () => {
+        const btn = document.getElementById('gambleBtn');
+        btn.disabled = true;
+
+        const currentAmount = currentResult.totalValue;
+        const isWin = Math.random() < 0.1;
+
+        if (isWin) {
+            vibrate([100, 50, 100, 50, 200]); // Victory pattern
+            const newAmount = currentAmount * 2;
+            const data = getData();
+            data.stats.consecutiveLosses = 0;
+            data.stats.gambleWins = (data.stats.gambleWins || 0) + 1;
+            saveData(data);
+            checkAchievements(data);
+
+            addToHistory({ timestamp: Date.now(), amount: newAmount, tier: 'GAMBLE_WIN', action: 'gamble' });
+            addToWallet(currentAmount);
+            currentResult.totalValue = newAmount;
+            amountEl.style.color = '#00FF00';
+            amountEl.textContent = formatNumber(newAmount);
+            playSound('ssr');
+            wishEl.textContent = "🎉 KHÔNG TIN ĐƯỢC! Bạn đã thắng cược và gấp đôi tài sản! 🎲";
+            createConfetti(true);
+        } else {
+            vibrate(300); // Long buzz for loss
+            const data = getData();
+            data.stats.consecutiveLosses = (data.stats.consecutiveLosses || 0) + 1;
+            saveData(data);
+
+            addToHistory({ timestamp: Date.now(), amount: -currentAmount, tier: 'GAMBLE_LOSE', action: 'gamble' });
+            addToWallet(-currentAmount);
+
+            // Track if user hits zero
+            const updatedData = getData();
+            if (updatedData.totalMoney <= 0) {
+                updatedData.stats.hitZero = true;
+                saveData(updatedData);
+            }
+            checkAchievements(updatedData);
+
+            currentResult.totalValue = 0;
+            amountEl.style.color = '#555';
+            amountEl.textContent = "0";
+            wishEl.textContent = "💸 Tiếc quá! Chúc bạn may mắn lần sau. (Mất trắng!)";
+        }
+    });
+}
+
+function checkSkinUnlock() {
+    const data = getData();
+    const achievements = data.achievements || [];
+    envelope.classList.remove('skin-gold', 'skin-holo', 'skin-diamond');
+
+    // Custom Skin Override (Priority)
+    if (customSkin) {
+        envelope.classList.add(`skin-${customSkin}`);
+        return;
+    }
+
+    // Skins are unlocked via achievements
+    if (achievements.includes('multimillionaire')) {
+        envelope.classList.add('skin-diamond');
+    } else if (achievements.includes('five_million')) {
+        envelope.classList.add('skin-holo');
+    } else if (achievements.includes('millionaire')) {
+        envelope.classList.add('skin-gold');
+    }
+}
+
+function resetData() {
+    showConfirm('Bạn có chắc chắn muốn xóa toàn bộ dữ liệu?', () => {
+        Storage.remove('luckyMoneyData_v2');
+        Storage.remove('luckyMoney_data');
+        location.reload();
+    });
+}
+
+// ==================== SOUND ====================
+function updateMuteUI() {
+    const btn = document.getElementById('muteBtn');
+    if (!btn) return;
+    const icon = btn.querySelector('i');
+    if (icon) {
+        icon.className = isMuted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
+    }
+    if (isMuted) {
+        btn.classList.add('muted');
+    } else {
+        btn.classList.remove('muted');
+    }
+}
+
+function toggleMute() {
+    isMuted = !isMuted;
+    Storage.set('luckyMoney_muted', isMuted);
+    updateMuteUI();
+}
+
+// ==================== SHARE ====================
+let qrcodeObj = null;
+
+function getSmartShareUrl() {
+    const url = new URL(window.location.href);
+    return url.toString();
+}
+
+function showShareModal(customUrl = null) {
+    const modal = document.getElementById('shareModal');
+    const qrContainer = document.getElementById('qrcode');
+    const shareUrl = customUrl || getSmartShareUrl();
+
+    modal.style.display = 'flex';
+    document.getElementById('shareUrl').textContent = shareUrl;
+    qrContainer.innerHTML = '';
+
+    qrcodeObj = new QRCode(qrContainer, {
+        text: shareUrl,
+        width: 180,
+        height: 180,
+        colorDark: "#d90429",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    // Check native share support
+    if (navigator.share) {
+        document.getElementById('nativeShareBtn').style.display = 'flex';
+    }
+}
+
+function hideShareModal() {
+    document.getElementById('shareModal').style.display = 'none';
+}
+
+function copyLink() {
+    navigator.clipboard.writeText(getSmartShareUrl()).then(() => {
+        const btn = document.querySelector('.btn-copy');
+        const original = btn.innerHTML;
+        btn.innerHTML = '✅ Đã chép';
+        setTimeout(() => btn.innerHTML = original, 2000);
+    });
+}
+
+function downloadQR() {
+    const canvas = document.querySelector('#qrcode canvas');
+    if (canvas) {
+        const link = document.createElement('a');
+        link.download = 'lucky-money-qr.png';
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    }
+}
+
+async function nativeShare() {
+    const url = document.getElementById('shareUrl').textContent;
+    try {
+        await navigator.share({
+            title: '🧧 Lì Xì May Mắn',
+            text: 'Nhận lì xì ngay! Chúc mừng năm mới 2026!',
+            url: url
+        });
+    } catch (err) {
+        console.log('Share failed:', err);
+    }
+}
+
+// ==================== PARTICLES ====================
+
+
+// ==================== HAPTIC FEEDBACK ====================
+function vibrate(pattern = 50) {
+    if ('vibrate' in navigator) {
+        navigator.vibrate(pattern);
+    }
+}
+
+function toggleLuckInput() {
+    const amount = document.getElementById('customAmountInput').value;
+    const luckGroup = document.getElementById('luckInputGroup');
+    if (amount !== 'random') {
+        luckGroup.style.opacity = '0.5';
+        luckGroup.style.pointerEvents = 'none';
+    } else {
+        luckGroup.style.opacity = '1';
+        luckGroup.style.pointerEvents = 'auto';
+    }
+}
+
+function openCustomizeModal() {
+    openModal('customizeModal');
+}
+
+function createCustomLink() {
+    const wish = document.getElementById('customWishInput').value.trim();
+    const luck = document.getElementById('customLuckInput').value;
+    const name = document.getElementById('customNameInput').value.trim();
+    const amount = document.getElementById('customAmountInput').value;
+    const skin = document.getElementById('customSkinInput').value;
+    const customBg = document.getElementById('customBgInput').value.trim();
+    const customEnvelope = document.getElementById('customEnvelopeInput').value.trim();
+
+
+    if (!wish) {
+        showToast('Vui lòng nhập lời chúc của bạn!', 'warning');
+        return;
+    }
+
+    // Use href to avoid issues with 'origin' being null on some file:// openings
+    const url = new URL(window.location.href);
+    // Clear existing params to start fresh
+    url.search = '';
+
+    // URLSearchParams automatically handles encoding - no need to manually encodeURIComponent
+    url.searchParams.set('customWish', wish);
+
+    if (luck !== 'random' && amount === 'random') {
+        url.searchParams.set('customLuck', luck);
+    }
+
+    if (name) {
+        url.searchParams.set('receiverName', name);
+    }
+
+    if (amount !== 'random') {
+        url.searchParams.set('fixedAmount', amount);
+    }
+
+    if (skin !== 'default') {
+        url.searchParams.set('skin', skin);
+    }
+
+    if (customBg) {
+        url.searchParams.set('customBg', customBg);
+    }
+
+    if (customEnvelope) {
+        url.searchParams.set('customEnvelope', customEnvelope);
+    }
+
+    // Show share modal with this Custom URL
+    const finalUrl = url.toString();
+    showShareModal(finalUrl);
+    closeModal('customizeModal');
+}
+
+// ==================== THEME & YEAR INIT ====================
+function initTheme() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const theme = urlParams.get('theme');
+
+    // Dynamic Year
+    const paramYear = parseInt(urlParams.get('year'));
+    const currentYear = !isNaN(paramYear) ? paramYear : new Date().getFullYear();
+
+    // Lunar year calculation
+    const can = ['Canh', 'Tân', 'Nhâm', 'Quý', 'Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ'];
+    const chi = ['Thân', 'Dậu', 'Tuất', 'Hợi', 'Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi'];
+    const emojis = { 'Tý': '🐭', 'Sửu': '🐮', 'Dần': '🐯', 'Mão': '🐱', 'Thìn': '🐉', 'Tỵ': '🐍', 'Ngọ': '🐎', 'Mùi': '🐐', 'Thân': '🐵', 'Dậu': '🐓', 'Tuất': '🐶', 'Hợi': '🐷' };
+
+    const lunarCan = can[currentYear % 10];
+    const lunarChi = chi[currentYear % 12];
+    const lunarEmoji = emojis[lunarChi] || '🎆';
+    const lunarName = `${lunarCan} ${lunarChi}`;
+
+    // Update header
+    const headerDesc = document.querySelector('.header p');
+    if (headerDesc) headerDesc.textContent = `Chúc Mừng Năm Mới ${currentYear} - Xuân ${lunarName} ${lunarEmoji}`;
+
+    const yearTitle = document.getElementById('yearTitle');
+    if (yearTitle) yearTitle.textContent = `Năm Mới ${lunarName} ${lunarEmoji}`;
+
+    // Apply theme
+    // Apply theme (Normal by default)
+    document.body.classList.add('theme-normal');
+    document.title = '🧧 Lì Xì May Mắn';
+
+    // Remove hospital specific elements if they exist (legacy cleanup)
+    const badge = document.querySelector('.department-badge');
+    if (badge) badge.remove();
+    const ecg = document.querySelector('.ecg-line');
+    if (ecg) ecg.remove();
+
+    // Custom Luck Feature
+    const customWish = urlParams.get('customWish');
+    if (customWish) {
+        // URLSearchParams automatically decodes, so we use the value directly
+        wishes = [customWish];
+        // Show notification? 
+        setTimeout(() => {
+            const toast = document.createElement('div');
+            toast.className = 'achievement-toast show';
+            toast.innerHTML = `
+                        <div class="icon">📩</div>
+                        <div class="info">
+                            <div class="title">Lì Xì Đặc Biệt</div>
+                            <div class="desc">Bạn nhận được lời chúc riêng!</div>
+                        </div>
+                    `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }, 1000);
+    }
+
+    const customLuck = urlParams.get('customLuck');
+    if (customLuck) {
+        customLuckMode = customLuck;
+    }
+
+    // Handle Receiver Name
+    const nameParam = urlParams.get('receiverName');
+    if (nameParam) {
+        receiverName = decodeURIComponent(nameParam);
+        // Update generic header
+        const headerDesc = document.querySelector('.header p');
+        if (headerDesc) {
+            headerDesc.innerHTML = `🧧 Lì xì gửi riêng cho <strong>${receiverName}</strong>!`;
+            headerDesc.style.color = 'var(--gold-primary)';
+        }
+    }
+
+    // Handle Fixed Amount
+    const amountParam = urlParams.get('fixedAmount');
+    if (amountParam) {
+        const amount = parseInt(amountParam);
+        if (!isNaN(amount) && [10000, 20000, 50000, 100000, 200000, 500000].includes(amount)) {
+            customFixedAmount = amount;
+        }
+    }
+
+    // Handle Custom Skin
+    const skinParam = urlParams.get('skin');
+    if (skinParam && ['gold', 'holo', 'diamond'].includes(skinParam)) {
+        customSkin = skinParam;
+    }
+
+    // Handle Custom Background
+    const customBg = urlParams.get('customBg');
+    if (customBg) {
+        document.body.style.backgroundImage = `url('${customBg}')`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundRepeat = 'no-repeat';
+        // Add a class to body to indicate custom bg is active (optional, for other css adjustments)
+        document.body.classList.add('has-custom-bg');
+    }
+
+    // Handle Custom Envelope
+    const customEnvelope = urlParams.get('customEnvelope');
+    if (customEnvelope) {
+        const envelopeBody = document.querySelector('.envelope-body');
+        if (envelopeBody) {
+            envelopeBody.style.backgroundImage = `url('${customEnvelope}')`;
+            envelopeBody.style.backgroundSize = 'cover';
+            envelopeBody.style.backgroundPosition = 'center';
+            // Hide the original pattern if needed, or let it blend
+            // For a clean custom look, we might want to hide the pattern
+            const pattern = document.querySelector('.envelope-pattern');
+            if (pattern) pattern.style.display = 'none';
+        }
+    }
+
+    wishDeck = []; // Reset wish deck
+}
+
+// ==================== SHAKE DETECTION ====================
+let lastX, lastY, lastZ, lastShakeTime = 0;
+const SHAKE_THRESHOLD = 25;
+
+function handleMotion(event) {
+    if (isOpened) return;
+    const current = event.accelerationIncludingGravity;
+    if (!current) return;
+
+    const currentTime = Date.now();
+    if ((currentTime - lastShakeTime) > 100) {
+        lastShakeTime = currentTime;
+
+        if (lastX === undefined) {
+            lastX = current.x;
+            lastY = current.y;
+            lastZ = current.z;
+            return;
+        }
+
+        const deltaX = Math.abs(lastX - current.x);
+        const deltaY = Math.abs(lastY - current.y);
+        const deltaZ = Math.abs(lastZ - current.z);
+
+        if (deltaX > SHAKE_THRESHOLD || deltaY > SHAKE_THRESHOLD || deltaZ > SHAKE_THRESHOLD) {
+            vibrate(100);
+            openEnvelope();
+        }
+
+        lastX = current.x;
+        lastY = current.y;
+        lastZ = current.z;
+    }
+}
+
+function initShakeDetection() {
+    if (typeof DeviceMotionEvent === 'undefined') return;
+
+    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+        // iOS 13+ requires permission
+        const permissionHandler = () => {
+            DeviceMotionEvent.requestPermission()
+                .then(response => {
+                    if (response === 'granted') {
+                        window.addEventListener('devicemotion', handleMotion, true);
+                    }
+                })
+                .catch(console.error);
+            document.body.removeEventListener('click', permissionHandler);
+        };
+        document.body.addEventListener('click', permissionHandler);
+    } else {
+        window.addEventListener('devicemotion', handleMotion, true);
+    }
+}
+
+// ==================== DRAG TO OPEN ====================
+function initDragToOpen() {
+    const flap = document.querySelector('.envelope-flap');
+    let isDragging = false;
+    let startY = 0;
+    let currentRotation = 0;
+
+    function startDrag(e) {
+        if (isOpened) return;
+        isDragging = true;
+        startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+        flap.style.transition = 'none';
+        if (e.cancelable) e.preventDefault();
+    }
+
+    function onDrag(e) {
+        if (!isDragging || isOpened) return;
+        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+        const deltaY = clientY - startY;
+
+        if (deltaY > 0) {
+            currentRotation = Math.min((deltaY / 150) * 180, 180);
+            flap.style.transform = `rotateX(${currentRotation}deg)`;
+        }
+    }
+
+    function endDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        flap.style.transition = 'transform 0.6s ease';
+
+        if (currentRotation > 90) {
+            vibrate(100);
+            openEnvelope();
+        } else {
+            flap.style.transform = 'rotateX(0deg)';
+        }
+        currentRotation = 0;
+    }
+
+    flap.addEventListener('mousedown', startDrag);
+    window.addEventListener('mousemove', onDrag);
+    window.addEventListener('mouseup', endDrag);
+    flap.addEventListener('touchstart', startDrag, { passive: false });
+    window.addEventListener('touchmove', onDrag, { passive: false });
+    window.addEventListener('touchend', endDrag);
+}
+
+// ==================== INIT ====================
+// ==================== RANDOM EVENT LOGIC ====================
+let isTapEventActive = false;
+let tapEventTimer = null;
+let tapEventCount = 0;
+let tapEventDuration = 2000; // 2 seconds (Reduced from 3s for more intensity)
+
+async function tryOpenEnvelope() {
+    if (isOpened) return;
+
+    // Try to request Gyro permission on this interaction (iOS)
+    requestMotionPermission();
+
+    const now = Date.now(); // 20% chance to trigger random event if not in jackpot mode
+    // and not already having this event
+    if (!isTapEventActive && Math.random() < 0.2) {
+        startTapEvent();
+    } else {
+        if (isTapEventActive) {
+            handleTapEventClick();
+        } else {
+            openEnvelope();
+        }
+    }
+}
+
+function startTapEvent() {
+    isTapEventActive = true;
+    tapEventCount = 0;
+
+    // Show Overlay
+    const overlay = document.getElementById('tapEventOverlay');
+    const timerFill = document.getElementById('tapTimerFill');
+    const luckDisplay = document.getElementById('tapLuckDisplay');
+
+    overlay.classList.add('active');
+    luckDisplay.textContent = '+0%';
+
+    // Animate Timer
+    // Reset width first
+    timerFill.style.transition = 'none';
+    timerFill.style.width = '100%';
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            timerFill.style.transition = `width ${tapEventDuration}ms linear`;
+            timerFill.style.width = '0%';
+        });
+    });
+
+    // Start Timer
+    tapEventTimer = setTimeout(() => {
+        endTapEvent();
+    }, tapEventDuration);
+}
+
+function handleTapEventClick() {
+    tapEventCount++;
+
+    // Visual Feedback
+    const luckBonus = Math.min(tapEventCount * 3, 50); // 5% per tap, max 50%
+    document.getElementById('tapLuckDisplay').textContent = `+${luckBonus}%`;
+
+    // Shake Envelope
+    envelope.classList.remove('shake-extreme');
+    void envelope.offsetWidth; // force reflow
+    envelope.classList.add('shake-extreme');
+
+    // Haptic & Sound
+    vibrate(50);
+    playSound('coin'); // Use coin sound for taps
+
+    // Remove shake class after animation
+    setTimeout(() => {
+        envelope.classList.remove('shake-extreme');
+    }, 200);
+}
+
+function endTapEvent() {
+    isTapEventActive = false;
+    document.getElementById('tapEventOverlay').classList.remove('active');
+
+    // Reset timer bar for next time
+    document.getElementById('tapTimerFill').style.width = '100%';
+    document.getElementById('tapTimerFill').style.transition = 'none';
+
+    // Calculate Bonus
+    const luckBonus = Math.min(tapEventCount * 3, 50); // Max 50% bonus
+
+    // Open Envelope with Bonus
+    openEnvelope(luckBonus);
+}
+
+function init() {
+    // Initialize muted state from storage
+    isMuted = Storage.get('luckyMoney_muted') === 'true';
+
+    // Theme and year first
+    initTheme();
+
+    initParticles();
+    updateWalletDisplay();
+    updateMuteUI();
+    checkSkinUnlock();
+
+    // Event listeners
+    envelopeContainer.addEventListener('click', tryOpenEnvelope);
+
+    // Holographic Spin enabled - click to flip reinstated
+    const wrapper = document.getElementById('moneyStackWrapper');
+    if (wrapper) {
+        wrapper.addEventListener('click', function () {
+            this.classList.toggle('flipped');
+            // Haptic feedback
+            vibrate([20]);
+        });
+    }
+
+    // Preload images
+    moneyAmounts.forEach(item => {
+        new Image().src = item.front;
+        new Image().src = item.back;
+    });
+
+    // Pre-render banks for instant modal
+    setTimeout(() => renderBanks(), 500);
+
+    // Initialize shake and drag features
+    initShakeDetection();
+    initDragToOpen();
+}
+
+// Start
+init();
+
+// ==================== CANVAS CONFETTI SYSTEM ====================
+function createConfetti(isJackpot = false) {
+    if (isJackpot) {
+        // Intense burst for jackpot
+        const duration = 3 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 2000 };
+
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        const interval = setInterval(function () {
+            const timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
+            }
+
+            const particleCount = 50 * (timeLeft / duration);
+            // since particles fall down, start a bit higher than random
+            confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+            confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+        }, 250);
+    } else {
+        // Normal reveal burst
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            zIndex: 2000
+        });
+    }
+}
+
