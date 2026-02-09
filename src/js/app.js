@@ -1904,7 +1904,7 @@ function showShareModal(customUrl = null) {
         height: 256,
         colorDark: "#d90429",
         colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
+        correctLevel: QRCode.CorrectLevel.L
     });
 
     // Check native share support
