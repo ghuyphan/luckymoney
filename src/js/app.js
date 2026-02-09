@@ -1996,31 +1996,42 @@ function createCustomLink() {
     // Clear existing params to start fresh
     url.search = '';
 
-    // URLSearchParams automatically handles encoding - no need to manually encodeURIComponent
-    url.searchParams.set('customWish', wish);
+    // URLSearchParams automatically handles encoding
+    // SHORT KEYS:
+    // w = wish (customWish)
+    // l = luck (customLuck) [h=high, p=prank, r=rich]
+    // n = name (receiverName)
+    // a = amount (fixedAmount)
+    // s = skin (skin) [g=gold, h=holo, d=diamond]
+    // b = background (customBg)
+    // e = envelope (customEnvelope)
+
+    url.searchParams.set('w', wish);
 
     if (luck !== 'random' && amount === 'random') {
-        url.searchParams.set('customLuck', luck);
+        const luckMap = { 'high': 'h', 'prank': 'p', 'rich': 'r' };
+        url.searchParams.set('l', luckMap[luck] || luck);
     }
 
     if (name) {
-        url.searchParams.set('receiverName', name);
+        url.searchParams.set('n', name);
     }
 
     if (amount !== 'random') {
-        url.searchParams.set('fixedAmount', amount);
+        url.searchParams.set('a', amount);
     }
 
     if (skin !== 'default') {
-        url.searchParams.set('skin', skin);
+        const skinMap = { 'gold': 'g', 'holo': 'h', 'diamond': 'd' };
+        url.searchParams.set('s', skinMap[skin] || skin);
     }
 
     if (customBg) {
-        url.searchParams.set('customBg', customBg);
+        url.searchParams.set('b', customBg);
     }
 
     if (customEnvelope) {
-        url.searchParams.set('customEnvelope', customEnvelope);
+        url.searchParams.set('e', customEnvelope);
     }
 
     // Show share modal with this Custom URL
@@ -2080,12 +2091,10 @@ function initTheme() {
     const ecg = document.querySelector('.ecg-line');
     if (ecg) ecg.remove();
 
-    // Custom Luck Feature
-    const customWish = urlParams.get('customWish');
+    // Custom Luck Feature & URL Parsing (Supports both short and long keys)
+    const customWish = urlParams.get('w') || urlParams.get('customWish');
     if (customWish) {
-        // URLSearchParams automatically decodes, so we use the value directly
         wishes = [customWish];
-        // Show notification? 
         setTimeout(() => {
             const toast = document.createElement('div');
             toast.className = 'achievement-toast show';
@@ -2101,13 +2110,14 @@ function initTheme() {
         }, 1000);
     }
 
-    const customLuck = urlParams.get('customLuck');
+    const customLuck = urlParams.get('l') || urlParams.get('customLuck');
     if (customLuck) {
-        customLuckMode = customLuck;
+        const luckMap = { 'h': 'high', 'p': 'prank', 'r': 'rich' };
+        customLuckMode = luckMap[customLuck] || customLuck;
     }
 
     // Handle Receiver Name
-    const nameParam = urlParams.get('receiverName');
+    const nameParam = urlParams.get('n') || urlParams.get('receiverName');
     if (nameParam) {
         receiverName = decodeURIComponent(nameParam);
         // Update generic header
@@ -2119,7 +2129,7 @@ function initTheme() {
     }
 
     // Handle Fixed Amount
-    const amountParam = urlParams.get('fixedAmount');
+    const amountParam = urlParams.get('a') || urlParams.get('fixedAmount');
     if (amountParam) {
         const amount = parseInt(amountParam);
         if (!isNaN(amount) && [10000, 20000, 50000, 100000, 200000, 500000].includes(amount)) {
@@ -2128,32 +2138,34 @@ function initTheme() {
     }
 
     // Handle Custom Skin
-    const skinParam = urlParams.get('skin');
-    if (skinParam && ['gold', 'holo', 'diamond'].includes(skinParam)) {
-        customSkin = skinParam;
+    const skinParam = urlParams.get('s') || urlParams.get('skin');
+    if (skinParam) {
+        const skinMap = { 'g': 'gold', 'h': 'holo', 'd': 'diamond' };
+        const skinValue = skinMap[skinParam] || skinParam;
+
+        if (['gold', 'holo', 'diamond'].includes(skinValue)) {
+            customSkin = skinValue;
+        }
     }
 
     // Handle Custom Background
-    const customBg = urlParams.get('customBg');
+    const customBg = urlParams.get('b') || urlParams.get('customBg');
     if (customBg) {
         document.body.style.backgroundImage = `url('${customBg}')`;
         document.body.style.backgroundSize = 'cover';
         document.body.style.backgroundPosition = 'center';
         document.body.style.backgroundRepeat = 'no-repeat';
-        // Add a class to body to indicate custom bg is active (optional, for other css adjustments)
         document.body.classList.add('has-custom-bg');
     }
 
     // Handle Custom Envelope
-    const customEnvelope = urlParams.get('customEnvelope');
+    const customEnvelope = urlParams.get('e') || urlParams.get('customEnvelope');
     if (customEnvelope) {
         const envelopeBody = document.querySelector('.envelope-body');
         if (envelopeBody) {
             envelopeBody.style.backgroundImage = `url('${customEnvelope}')`;
             envelopeBody.style.backgroundSize = 'cover';
             envelopeBody.style.backgroundPosition = 'center';
-            // Hide the original pattern if needed, or let it blend
-            // For a clean custom look, we might want to hide the pattern
             const pattern = document.querySelector('.envelope-pattern');
             if (pattern) pattern.style.display = 'none';
         }
