@@ -160,19 +160,19 @@
 
                 <div class="form-group" style="margin-top: 1rem;">
                     <label>Ảnh Nền Tùy Chỉnh (URL) 🖼️</label>
-                    <input type="url" id="customBgInput" placeholder="https://example.com/background.jpg"
-                        class="form-input" oninput="updatePreview('bg', this.value)">
-                    <div id="bgPreview" class="url-preview"
-                        style="display:none; margin-top:0.5rem; height: 100px; background-size: cover; background-position: center; border-radius: 8px; border: 2px solid #ddd;">
+                    <div class="input-with-preview">
+                        <input type="url" id="customBgInput" placeholder="https://example.com/background.jpg"
+                            class="form-input" oninput="updatePreview('bg', this.value)">
+                        <div id="bgPreview" class="mini-preview"></div>
                     </div>
                 </div>
 
                 <div class="form-group" style="margin-top: 1rem;">
                     <label>Ảnh Bao Lì Xì Tùy Chỉnh (URL) 🧧</label>
-                    <input type="url" id="customEnvelopeInput" placeholder="https://example.com/envelope.jpg"
-                        class="form-input" oninput="updatePreview('envelope', this.value)">
-                    <div id="envelopePreview" class="url-preview"
-                        style="display:none; margin-top:0.5rem; height: 150px; background-size: cover; background-position: center; border-radius: 12px; border: 2px solid #ddd; width: 100px; margin-left: auto; margin-right: auto;">
+                    <div class="input-with-preview">
+                        <input type="url" id="customEnvelopeInput" placeholder="https://example.com/envelope.jpg"
+                            class="form-input" oninput="updatePreview('envelope', this.value)">
+                        <div id="envelopePreview" class="mini-preview"></div>
                     </div>
                 </div>
 

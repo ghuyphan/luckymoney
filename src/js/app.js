@@ -2031,13 +2031,15 @@ function createCustomLink() {
 
 function updatePreview(type, url) {
     const previewEl = type === 'bg' ? document.getElementById('bgPreview') : document.getElementById('envelopePreview');
+
     if (!url) {
-        previewEl.style.display = 'none';
+        previewEl.classList.remove('active');
+        // Clear background after transition to avoid flicker, but for simplicity just leave it
         return;
     }
 
-    // Simple check to see if it might be an image
-    previewEl.style.display = 'block';
+    // Add active class to animate width
+    previewEl.classList.add('active');
     previewEl.style.backgroundImage = `url('${url}')`;
 }
 
