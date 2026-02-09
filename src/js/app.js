@@ -1900,8 +1900,8 @@ function showShareModal(customUrl = null) {
 
     qrcodeObj = new QRCode(qrContainer, {
         text: shareUrl,
-        width: 180,
-        height: 180,
+        width: 256,
+        height: 256,
         colorDark: "#d90429",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H
@@ -1918,7 +1918,8 @@ function hideShareModal() {
 }
 
 function copyLink() {
-    navigator.clipboard.writeText(getSmartShareUrl()).then(() => {
+    const urlToCopy = document.getElementById('shareUrl').textContent;
+    navigator.clipboard.writeText(urlToCopy).then(() => {
         const btn = document.querySelector('.btn-copy');
         const original = btn.innerHTML;
         btn.innerHTML = '✅ Đã chép';
@@ -2026,6 +2027,18 @@ function createCustomLink() {
     const finalUrl = url.toString();
     showShareModal(finalUrl);
     closeModal('customizeModal');
+}
+
+function updatePreview(type, url) {
+    const previewEl = type === 'bg' ? document.getElementById('bgPreview') : document.getElementById('envelopePreview');
+    if (!url) {
+        previewEl.style.display = 'none';
+        return;
+    }
+
+    // Simple check to see if it might be an image
+    previewEl.style.display = 'block';
+    previewEl.style.backgroundImage = `url('${url}')`;
 }
 
 // ==================== THEME & YEAR INIT ====================
